@@ -32,9 +32,7 @@ class ASSET_OT_batch_generate_previews(Operator, ImportHelper):
 
     def execute(self, context):
         p = pathlib.Path(str(os.path.dirname(self.filepath)))
-        print(p)
         blends = [fp for fp in p.glob("**/*.blend") if fp.is_file()]
-        print(blends)
         bpy.app.timers.register(functools.partial(in_x_seconds, blends), first_interval=2.0)
 
         return {"FINISHED"}
