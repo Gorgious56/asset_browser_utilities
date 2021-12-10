@@ -11,7 +11,6 @@ bl_info = {
     "category": "Import-Export",
 }
 
-import os
 import pathlib
 import bpy
 import functools
