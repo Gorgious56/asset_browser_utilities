@@ -3,7 +3,7 @@
 bl_info = {
     "name": "Batch Generate Asset Browser Previews ",
     "author": "Gorgious",
-    "description": "Batch generate default previews for the Asset Browser from selected files",
+    "description": "Batch generate default previews for the Asset Browser from selected folder",
     "blender": (3, 0, 0),
     "version": (0, 0, 2),
     "location": "",
