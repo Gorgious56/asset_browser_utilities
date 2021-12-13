@@ -5,19 +5,21 @@ bl_info = {
     "author": "Gorgious",
     "description": "Batch generate default previews for the Asset Browser from selected files",
     "blender": (3, 0, 0),
-    "version": (0, 0, 1),
+    "version": (0, 0, 2),
     "location": "",
     "warning": "",
     "category": "Import-Export",
 }
 
-import os
-import pathlib
+from pathlib import Path
 import bpy
 import functools
 from bpy_extras.io_utils import ImportHelper
 from bpy.props import StringProperty
 from bpy.types import Operator
+
+
+INTERVAL = 1.0
 
 
 class ASSET_OT_batch_generate_previews(Operator, ImportHelper):
@@ -30,31 +32,47 @@ class ASSET_OT_batch_generate_previews(Operator, ImportHelper):
         maxlen=255,  # Max internal buffer length, longer would be clamped.
     )
 
+    recursive: bpy.props.BoolProperty(
+        default=True,
+        name="Recursive",
+        description="Operate on blend files located in sub folders recursively\nIf unchecked it will only treat files in this folder",
+    )
+
     def execute(self, context):
-        p = pathlib.Path(str(os.path.dirname(self.filepath)))
-        blends = [fp for fp in p.glob("**/*.blend") if fp.is_file()]
-        bpy.app.timers.register(functools.partial(in_x_seconds, blends), first_interval=2.0)
+        folder = Path(self.filepath)
+        if not folder.is_dir():
+            folder = folder.parent
+        if self.recursive:
+            blends = [fp for fp in folder.glob("**/*.blend") if fp.is_file()]
+        else:
+            blends = [fp for fp in folder.glob("*.blend") if fp.is_file()]
+        do_blends(blends)
 
         return {"FINISHED"}
 
 
-def in_x_seconds(blends, save=None):
+def do_blends(blends, save=None):
     if save is not None:
         bpy.ops.wm.save_as_mainfile(filepath=str(save))
 
     if not blends:
         print("Batch conversion completed")
         return
+    print(f"{len(blends)} files left")
 
     blend = blends.pop(0)
     bpy.ops.wm.open_mainfile(filepath=str(blend))
 
-    for obj in bpy.data.objects:
+    bpy.app.timers.register(functools.partial(do_objs, blends, blend, [o for o in bpy.data.objects]))
+
+def do_objs(blends, blend, objs):
+    if objs:
+        obj = objs.pop(0)
         obj.asset_mark()
         bpy.ops.ed.lib_id_generate_preview({"id": obj})
-
-    bpy.app.timers.register(functools.partial(in_x_seconds, blends, blend), first_interval=2.0)
-    print(f"{len(blends)} files left")
+        return INTERVAL
+    do_blends(blends, blend)
+    return None
 
 
 def menu_func_import(self, context):
