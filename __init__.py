@@ -59,9 +59,9 @@ class ASSET_OT_batch_generate_previews(Operator, ImportHelper):
             blends = [fp for fp in folder.glob("*.blend") if fp.is_file()]
 
         mark_filters = []
-        for filter in ("objects", "materials", "actions", "worlds"):
-            if getattr(self, "mark_" + filter):
-                mark_filters.append(filter)
+        for a_filter in ("objects", "materials", "actions", "worlds"):
+            if getattr(self, "mark_" + a_filter):
+                mark_filters.append(a_filter)
 
         do_blends(blends, mark_filters, generate_previews=self.generate_previews)
 
@@ -81,8 +81,8 @@ def do_blends(blends, mark_filters, generate_previews=True, save=None):
     bpy.ops.wm.open_mainfile(filepath=str(blend))
 
     assets = []
-    for filter in mark_filters:
-        assets.extend([o for o in getattr(bpy.data, filter)])
+    for a_filter in mark_filters:
+        assets.extend([o for o in getattr(bpy.data, a_filter)])
 
     if not generate_previews:
         [asset.asset_mark() for asset in assets]
