@@ -38,6 +38,11 @@ class ASSET_OT_batch_generate_previews(Operator, ImportHelper):
         description="Operate on blend files located in sub folders recursively\nIf unchecked it will only treat files in this folder",
     )
 
+    mark_objects: bpy.props.BoolProperty(default=True, name="Mark Objects")
+    mark_materials: bpy.props.BoolProperty(default=False, name="Mark Materials")
+    mark_actions: bpy.props.BoolProperty(default=False, name="Mark Actions")
+    mark_worlds: bpy.props.BoolProperty(default=False, name="Mark Worlds")
+
     def execute(self, context):
         folder = Path(self.filepath)
         if not folder.is_dir():
@@ -46,12 +51,18 @@ class ASSET_OT_batch_generate_previews(Operator, ImportHelper):
             blends = [fp for fp in folder.glob("**/*.blend") if fp.is_file()]
         else:
             blends = [fp for fp in folder.glob("*.blend") if fp.is_file()]
-        do_blends(blends)
+
+        mark_filters = []
+        for filter in ("objects", "materials", "actions", "worlds"):
+            if getattr(self, "mark_" + filter):
+                mark_filters.append(filter)
+
+        do_blends(blends, mark_filters)
 
         return {"FINISHED"}
 
 
-def do_blends(blends, save=None):
+def do_blends(blends, mark_filters, save=None):
     if save is not None:
         bpy.ops.wm.save_as_mainfile(filepath=str(save))
 
@@ -63,15 +74,35 @@ def do_blends(blends, save=None):
     blend = blends.pop(0)
     bpy.ops.wm.open_mainfile(filepath=str(blend))
 
-    bpy.app.timers.register(functools.partial(do_objs, blends, blend, [o for o in bpy.data.objects]))
+    assets = []
+    for filter in mark_filters:
+        assets.extend([o for o in getattr(bpy.data, filter)])
 
-def do_objs(blends, blend, objs):
-    if objs:
-        obj = objs.pop(0)
-        obj.asset_mark()
-        bpy.ops.ed.lib_id_generate_preview({"id": obj})
+    bpy.app.timers.register(functools.partial(do_assets, blends, blend, assets, mark_filters))
+
+
+def message_popup(self, context, messages):
+    for message in messages:
+        self.layout.label(text=message)
+
+
+def do_assets(blends, blend, assets, mark_filters):
+    if assets:
+        asset = assets.pop(0)
+        bpy.context.window_manager.popup_menu(
+            lambda s, c: message_popup(s, c, (type(asset).__name__, asset.name, f"{len(assets)} to go")),
+            title="Asset Marked",
+            icon="INFO",
+        )
+        asset.asset_mark()
+        bpy.ops.ed.lib_id_generate_preview({"id": asset})
         return INTERVAL
-    do_blends(blends, blend)
+    do_blends(blends, mark_filters, save=blend)    
+    bpy.context.window_manager.popup_menu(
+        lambda s, c: message_popup(s, c, ("Done !", )),
+        title="Update",
+        icon="INFO",
+    )
     return None
 
 
