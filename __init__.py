@@ -37,6 +37,12 @@ class ASSET_OT_batch_generate_previews(Operator, ImportHelper):
         name="Recursive",
         description="Operate on blend files located in sub folders recursively\nIf unchecked it will only treat files in this folder",
     )
+    
+    generate_previews: bpy.props.BoolProperty(
+        default=True,
+        name="Generate Previews",
+        description="When marking assets, automatically generate a preview\nUncheck to mark assets really fast",
+    )
 
     mark_objects: bpy.props.BoolProperty(default=True, name="Mark Objects")
     mark_materials: bpy.props.BoolProperty(default=False, name="Mark Materials")
@@ -57,12 +63,12 @@ class ASSET_OT_batch_generate_previews(Operator, ImportHelper):
             if getattr(self, "mark_" + filter):
                 mark_filters.append(filter)
 
-        do_blends(blends, mark_filters)
+        do_blends(blends, mark_filters, generate_previews=self.generate_previews)
 
         return {"FINISHED"}
 
 
-def do_blends(blends, mark_filters, save=None):
+def do_blends(blends, mark_filters, generate_previews=True, save=None):
     if save is not None:
         bpy.ops.wm.save_as_mainfile(filepath=str(save))
 
@@ -78,7 +84,11 @@ def do_blends(blends, mark_filters, save=None):
     for filter in mark_filters:
         assets.extend([o for o in getattr(bpy.data, filter)])
 
-    bpy.app.timers.register(functools.partial(do_assets, blends, blend, assets, mark_filters))
+    if not generate_previews:
+        [asset.asset_mark() for asset in assets]
+        do_blends(blends, mark_filters, generate_previews=False, save=blend)
+    else:
+        bpy.app.timers.register(functools.partial(do_assets, blends, blend, assets, mark_filters))
 
 
 def message_popup(self, context, messages):
