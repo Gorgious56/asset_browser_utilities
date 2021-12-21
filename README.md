@@ -6,15 +6,25 @@ However marking objects as assets using python doesn't automatically generate th
 
 This aims to mark all objects as assets and generate the preview of all files in the folder the user selects.
 
-It might bug out if the file contains hundreds of objects. It is recommended to keep a low number of objects per file.
-
 Go to File > Import > Batch Generate Previews
 
 ![image](https://user-images.githubusercontent.com/25156105/145441833-549197a3-848d-4ea7-acc4-8f570075c27e.png)
 
-In the file selector, navigate to the folder where the blend files are located. Validate.
+1. In the file selector, navigate to the folder where the blend files are located. 
 
-Count ~ 2 seconds per file to generate their assets and previews.
+On the right hand side you have a few options :
+
+- Recursively search in subfolders (and sub-sub folders, etc.) of the selected folder
+- Generate previews (Unchecking simply marks objects as assets without generating a preview, which is way faster)
+- And a few toggles to choose which data types you want to mark as assets
+
+![image](https://user-images.githubusercontent.com/25156105/147004393-2739eee7-03d1-4a6a-813a-0fadda78227b.png)
+
+
+2. Validate by clicking on the Blue button.
+
+Count ~ 1 second per asset to generate their assets and previews. It should be quasi-instantaneous if you uncheck the setting to generate previews.
+
 It's a good idea to enable the console with Window > Toggle System Console beforehand so you can see how many files you have marked yet.
 
 Example Result :
