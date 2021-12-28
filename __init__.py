@@ -38,7 +38,7 @@ class ASSET_OT_batch_generate_previews(Operator, ImportHelper):
         name="Recursive",
         description="Operate on blend files located in sub folders recursively\nIf unchecked it will only treat files in this folder",
     )
-    
+
     prevent_backup: bpy.props.BoolProperty(
         name="Remove Backup",
         description="Check to automatically delete the creation of backup files when 'Save Versions' is enabled in the preferences\nThis will prevent duplicating files when they are overwritten\nWarning : Backup files will be deleted permantently",
@@ -50,6 +50,13 @@ class ASSET_OT_batch_generate_previews(Operator, ImportHelper):
         description="Check to re-mark assets and re-generate preview if the item is already an asset",
         default=False,
     )
+
+    unmark: bpy.props.BoolProperty(
+        name="Unmark",
+        description="Check to unmark existing assets rather than marking items",
+        default=False,
+    )
+
     generate_previews: bpy.props.BoolProperty(
         default=True,
         name="Generate Previews",
@@ -75,7 +82,7 @@ class ASSET_OT_batch_generate_previews(Operator, ImportHelper):
             if getattr(self, "mark_" + a_filter):
                 mark_filters.append(a_filter)
 
-        do_blends(blends, context, mark_filters, {"prevent_backup": self.prevent_backup, "overwrite": self.overwrite, "generate_previews": self.generate_previews})
+        do_blends(blends, context, mark_filters, {"prevent_backup": self.prevent_backup, "overwrite": self.overwrite, "generate_previews": self.generate_previews, "unmark": self.unmark})
 
         return {"FINISHED"}
 
@@ -98,18 +105,24 @@ def do_blends(blends, context, mark_filters, settings, save=None):
     bpy.ops.wm.open_mainfile(filepath=str(blend))
 
     assets = []
-    for a_filter in mark_filters:
-        assets.extend([o for o in getattr(bpy.data, a_filter) if o.asset_data is None or settings["overwrite"]])
-    if not assets:  # We don't mark any assets, so don't bother saving the file
-        print("No asset to mark")
-        do_blends(blends, context, mark_filters, settings, save=None)
-        return
-
-    if not settings["generate_previews"]:
-        [asset.asset_mark() for asset in assets]
+    if settings["unmark"]:
+        for a_filter in mark_filters:
+            assets.extend([o for o in getattr(bpy.data, a_filter) if o.asset_data])
+        [asset.asset_clear() for asset in assets]
         do_blends(blends, context, mark_filters, settings, save=blend)
     else:
-        bpy.app.timers.register(functools.partial(do_assets, context, blends, blend, assets, mark_filters, settings))
+        for a_filter in mark_filters:
+            assets.extend([o for o in getattr(bpy.data, a_filter) if o.asset_data is None or settings["overwrite"]])
+        if not assets:  # We don't mark any assets, so don't bother saving the file
+            print("No asset to mark")
+            do_blends(blends, context, mark_filters, settings, save=None)
+            return
+
+        if not settings["generate_previews"]:
+            [asset.asset_mark() for asset in assets]
+            do_blends(blends, context, mark_filters, settings, save=blend)
+        else:
+            bpy.app.timers.register(functools.partial(do_assets, context, blends, blend, assets, mark_filters, settings))
 
 def do_assets(context, blends, blend, assets, mark_filters, settings):
     if assets:
@@ -117,7 +130,7 @@ def do_assets(context, blends, blend, assets, mark_filters, settings):
         asset.asset_mark()
         asset.asset_generate_preview()
         return INTERVAL
-    do_blends(blends, context, mark_filters, settings, save=blend)    
+    do_blends(blends, context, mark_filters, settings, save=blend)
     return None
 
 
