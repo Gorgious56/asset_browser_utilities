@@ -115,7 +115,7 @@ def do_assets(context, blends, blend, assets, mark_filters, settings):
     if assets:
         asset = assets.pop(0)
         asset.asset_mark()
-        bpy.ops.ed.lib_id_generate_preview({"id": asset})
+        asset.asset_generate_preview()
         return INTERVAL
     do_blends(blends, context, mark_filters, settings, save=blend)    
     return None
