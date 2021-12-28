@@ -75,7 +75,7 @@ class ASSET_OT_batch_generate_previews(Operator, ImportHelper):
             if getattr(self, "mark_" + a_filter):
                 mark_filters.append(a_filter)
 
-        do_blends(blends, context, mark_filters, self)
+        do_blends(blends, context, mark_filters, {"prevent_backup": self.prevent_backup, "overwrite": self.overwrite, "generate_previews": self.generate_previews})
 
         return {"FINISHED"}
 
@@ -83,7 +83,7 @@ class ASSET_OT_batch_generate_previews(Operator, ImportHelper):
 def do_blends(blends, context, mark_filters, settings, save=None):
     if save is not None:
         bpy.ops.wm.save_as_mainfile(filepath=str(save))
-        if settings.prevent_backup:
+        if settings["prevent_backup"]:
             backup = str(save) + "1"
             if os.path.exists(backup):
                 print("Removing backup " + backup)
@@ -99,41 +99,25 @@ def do_blends(blends, context, mark_filters, settings, save=None):
 
     assets = []
     for a_filter in mark_filters:
-        assets.extend([o for o in getattr(bpy.data, a_filter) if o.asset_data is None or settings.overwrite])
+        assets.extend([o for o in getattr(bpy.data, a_filter) if o.asset_data is None or settings["overwrite"]])
     if not assets:  # We don't mark any assets, so don't bother saving the file
         print("No asset to mark")
         do_blends(blends, context, mark_filters, settings, save=None)
         return
 
-    if not settings.generate_previews:
+    if not settings["generate_previews"]:
         [asset.asset_mark() for asset in assets]
         do_blends(blends, context, mark_filters, settings, save=blend)
     else:
         bpy.app.timers.register(functools.partial(do_assets, context, blends, blend, assets, mark_filters, settings))
 
-# FIXME : Commenting this out since this seems to cause hard crashes. Need to find a way to inform user to how many assets are left to mark.
-# def message_popup(self, context, messages):
-#     for message in messages:
-#         self.layout.label(text=message)
-
-
 def do_assets(context, blends, blend, assets, mark_filters, settings):
     if assets:
         asset = assets.pop(0)
-        # context.window_manager.popup_menu(
-        #     lambda s, c: message_popup(s, c, (type(asset).__name__, asset.name, f"{len(assets)} to go")),
-        #     title="Asset Marked",
-        #     icon="INFO",
-        # )
         asset.asset_mark()
         bpy.ops.ed.lib_id_generate_preview({"id": asset})
         return INTERVAL
     do_blends(blends, context, mark_filters, settings, save=blend)    
-    # context.window_manager.popup_menu(
-    #     lambda s, c: message_popup(s, c, ("Done !", )),
-    #     title="Update",
-    #     icon="INFO",
-    # )
     return None
 
 
