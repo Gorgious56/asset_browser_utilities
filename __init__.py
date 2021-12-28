@@ -38,6 +38,11 @@ class ASSET_OT_batch_generate_previews(Operator, ImportHelper):
         description="Operate on blend files located in sub folders recursively\nIf unchecked it will only treat files in this folder",
     )
     
+    prevent_backup: bpy.props.BoolProperty(
+        name="Remove Backup",
+        description="Check to automatically delete the creation of backup files when 'Save Versions' is enabled in the preferences\nThis will prevent duplicating files when they are overwritten\nWarning : Backup files will be deleted permantently",
+        default=False,
+    )
     generate_previews: bpy.props.BoolProperty(
         default=True,
         name="Generate Previews",
@@ -71,6 +76,11 @@ class ASSET_OT_batch_generate_previews(Operator, ImportHelper):
 def do_blends(blends, mark_filters, generate_previews=True, save=None):
     if save is not None:
         bpy.ops.wm.save_as_mainfile(filepath=str(save))
+        if settings.prevent_backup:
+            backup = str(save) + "1"
+            if os.path.exists(backup):
+                print("Removing backup " + backup)
+                os.remove(backup) 
 
     if not blends:
         print("Batch conversion completed")
