@@ -90,29 +90,28 @@ def do_blends(blends, mark_filters, generate_previews=True, save=None):
     else:
         bpy.app.timers.register(functools.partial(do_assets, blends, blend, assets, mark_filters))
 
-
-def message_popup(self, context, messages):
-    for message in messages:
-        self.layout.label(text=message)
+# FIXME : Commenting this out since this seems to cause hard crashes. Need to find a way to inform user to how many assets are left to mark.
+# def message_popup(self, context, messages):
+#     for message in messages:
+#         self.layout.label(text=message)
 
 
 def do_assets(blends, blend, assets, mark_filters):
     if assets:
         asset = assets.pop(0)
-        bpy.context.window_manager.popup_menu(
-            lambda s, c: message_popup(s, c, (type(asset).__name__, asset.name, f"{len(assets)} to go")),
-            title="Asset Marked",
-            icon="INFO",
-        )
+        # context.window_manager.popup_menu(
+        #     lambda s, c: message_popup(s, c, (type(asset).__name__, asset.name, f"{len(assets)} to go")),
+        #     title="Asset Marked",
+        #     icon="INFO",
+        # )
         asset.asset_mark()
         bpy.ops.ed.lib_id_generate_preview({"id": asset})
         return INTERVAL
-    do_blends(blends, mark_filters, save=blend)    
-    bpy.context.window_manager.popup_menu(
-        lambda s, c: message_popup(s, c, ("Done !", )),
-        title="Update",
-        icon="INFO",
-    )
+    # context.window_manager.popup_menu(
+    #     lambda s, c: message_popup(s, c, ("Done !", )),
+    #     title="Update",
+    #     icon="INFO",
+    # )
     return None
 
 
