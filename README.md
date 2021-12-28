@@ -15,10 +15,14 @@ This aims to mark all objects as assets and generate the preview of all files in
 On the right hand side you have a few options :
 
 - Recursively search in subfolders (and sub-sub folders, etc.) of the selected folder
+- Prevent creation of file.blend1 backup file when saving library file
+- Prevent overwriting items that have already been marked as assets
+- Unmark assets instead of marking items
 - Generate previews (Unchecking simply marks objects as assets without generating a preview, which is way faster)
 - And a few toggles to choose which data types you want to mark as assets
 
-![image](https://user-images.githubusercontent.com/25156105/147004393-2739eee7-03d1-4a6a-813a-0fadda78227b.png)
+
+![image](https://user-images.githubusercontent.com/25156105/147601200-6c676a3e-8736-4aa8-983f-9dee73af01ce.png)
 
 
 3. Validate by clicking on the Blue button.
