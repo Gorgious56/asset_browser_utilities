@@ -75,12 +75,12 @@ class ASSET_OT_batch_generate_previews(Operator, ImportHelper):
             if getattr(self, "mark_" + a_filter):
                 mark_filters.append(a_filter)
 
-        do_blends(blends, mark_filters, generate_previews=self.generate_previews)
+        do_blends(blends, context, mark_filters, self)
 
         return {"FINISHED"}
 
 
-def do_blends(blends, mark_filters, generate_previews=True, save=None):
+def do_blends(blends, context, mark_filters, settings, save=None):
     if save is not None:
         bpy.ops.wm.save_as_mainfile(filepath=str(save))
         if settings.prevent_backup:
@@ -105,11 +105,11 @@ def do_blends(blends, mark_filters, generate_previews=True, save=None):
         do_blends(blends, context, mark_filters, settings, save=None)
         return
 
-    if not generate_previews:
+    if not settings.generate_previews:
         [asset.asset_mark() for asset in assets]
-        do_blends(blends, mark_filters, generate_previews=False, save=blend)
+        do_blends(blends, context, mark_filters, settings, save=blend)
     else:
-        bpy.app.timers.register(functools.partial(do_assets, blends, blend, assets, mark_filters))
+        bpy.app.timers.register(functools.partial(do_assets, context, blends, blend, assets, mark_filters, settings))
 
 # FIXME : Commenting this out since this seems to cause hard crashes. Need to find a way to inform user to how many assets are left to mark.
 # def message_popup(self, context, messages):
@@ -117,7 +117,7 @@ def do_blends(blends, mark_filters, generate_previews=True, save=None):
 #         self.layout.label(text=message)
 
 
-def do_assets(blends, blend, assets, mark_filters):
+def do_assets(context, blends, blend, assets, mark_filters, settings):
     if assets:
         asset = assets.pop(0)
         # context.window_manager.popup_menu(
@@ -128,6 +128,7 @@ def do_assets(blends, blend, assets, mark_filters):
         asset.asset_mark()
         bpy.ops.ed.lib_id_generate_preview({"id": asset})
         return INTERVAL
+    do_blends(blends, context, mark_filters, settings, save=blend)    
     # context.window_manager.popup_menu(
     #     lambda s, c: message_popup(s, c, ("Done !", )),
     #     title="Update",
