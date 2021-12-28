@@ -12,6 +12,7 @@ bl_info = {
 }
 
 from pathlib import Path
+import os
 import bpy
 import functools
 from bpy_extras.io_utils import ImportHelper
@@ -41,6 +42,12 @@ class ASSET_OT_batch_generate_previews(Operator, ImportHelper):
     prevent_backup: bpy.props.BoolProperty(
         name="Remove Backup",
         description="Check to automatically delete the creation of backup files when 'Save Versions' is enabled in the preferences\nThis will prevent duplicating files when they are overwritten\nWarning : Backup files will be deleted permantently",
+        default=False,
+    )
+
+    overwrite: bpy.props.BoolProperty(
+        name="Overwrite assets",
+        description="Check to re-mark assets and re-generate preview if the item is already an asset",
         default=False,
     )
     generate_previews: bpy.props.BoolProperty(
@@ -92,7 +99,11 @@ def do_blends(blends, mark_filters, generate_previews=True, save=None):
 
     assets = []
     for a_filter in mark_filters:
-        assets.extend([o for o in getattr(bpy.data, a_filter)])
+        assets.extend([o for o in getattr(bpy.data, a_filter) if o.asset_data is None or settings.overwrite])
+    if not assets:  # We don't mark any assets, so don't bother saving the file
+        print("No asset to mark")
+        do_blends(blends, context, mark_filters, settings, save=None)
+        return
 
     if not generate_previews:
         [asset.asset_mark() for asset in assets]
