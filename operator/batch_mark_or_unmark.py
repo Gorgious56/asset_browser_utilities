@@ -5,18 +5,24 @@ from bpy_extras.io_utils import ImportHelper
 from bpy.props import StringProperty
 from bpy.types import Operator
 import os
+import numpy as np
 
-INTERVAL = 1.0
+INTERVAL = 0.2
 
 
-class ASSET_OT_batch_mark(Operator, ImportHelper):
-    bl_idname = "asset.batch_mark"
-    bl_label = "Batch Mark Assets"
+class ASSET_OT_batch_mark_or_unmark(Operator, ImportHelper):
+    bl_idname = "asset.batch_mark_or_unmark"
+    bl_label = "Batch Mark or Unmark Assets"
 
     filter_glob: StringProperty(
         default="",
         options={"HIDDEN"},
         maxlen=255,  # Max internal buffer length, longer would be clamped.
+    )
+
+    this_file_only: bpy.props.BoolProperty(
+        default=False,
+        name="Act only on this file",
     )
 
     recursive: bpy.props.BoolProperty(
@@ -27,8 +33,8 @@ class ASSET_OT_batch_mark(Operator, ImportHelper):
 
     prevent_backup: bpy.props.BoolProperty(
         name="Remove Backup",
-        description="Check to automatically delete the creation of backup files when 'Save Versions' is enabled in the preferences\nThis will prevent duplicating files when they are overwritten\nWarning : Backup files will be deleted permantently",
-        default=False,
+        description="Check to automatically delete the creation of backup files when 'Save Versions' is enabled in the preferences\nThis will prevent duplicating files when they are overwritten\nWarning : Backup files ending in .blend1 will be deleted permantently",
+        default=True,
     )
 
     overwrite: bpy.props.BoolProperty(
@@ -37,9 +43,9 @@ class ASSET_OT_batch_mark(Operator, ImportHelper):
         default=False,
     )
 
-    unmark: bpy.props.BoolProperty(
-        name="Unmark",
-        description="Check to unmark existing assets rather than marking items",
+    mark: bpy.props.BoolProperty(
+        name="Mark",
+        description="Check to Mark existing assets rather than unmarking items",
         default=False,
     )
 
@@ -54,14 +60,26 @@ class ASSET_OT_batch_mark(Operator, ImportHelper):
     mark_actions: bpy.props.BoolProperty(default=False, name="Mark Actions")
     mark_worlds: bpy.props.BoolProperty(default=False, name="Mark Worlds")
 
-    def execute(self, context):
-        folder = Path(self.filepath)
-        if not folder.is_dir():
-            folder = folder.parent
-        if self.recursive:
-            blends = [fp for fp in folder.glob("**/*.blend") if fp.is_file()]
+    def invoke(self, context, event):
+        if self.this_file_only:
+            return context.window_manager.invoke_props_dialog(self)
         else:
-            blends = [fp for fp in folder.glob("*.blend") if fp.is_file()]
+            context.window_manager.fileselect_add(self)
+            return {"RUNNING_MODAL"}
+
+    def execute(self, context):
+        if bpy.data.is_saved:
+            bpy.ops.wm.save_mainfile()
+        if self.this_file_only:
+            blends = [str(bpy.data.filepath)]
+        else:
+            folder = Path(self.filepath)
+            if not folder.is_dir():
+                folder = folder.parent
+            if self.recursive:
+                blends = [fp for fp in folder.glob("**/*.blend") if fp.is_file()]
+            else:
+                blends = [fp for fp in folder.glob("*.blend") if fp.is_file()]
 
         mark_filters = []
         for a_filter in ("objects", "materials", "actions", "worlds"):
@@ -76,7 +94,7 @@ class ASSET_OT_batch_mark(Operator, ImportHelper):
                 "prevent_backup": self.prevent_backup,
                 "overwrite": self.overwrite,
                 "generate_previews": self.generate_previews,
-                "unmark": self.unmark,
+                "mark": self.mark,
             },
         )
 
@@ -85,10 +103,12 @@ class ASSET_OT_batch_mark(Operator, ImportHelper):
     def draw(self, context):
         layout = self.layout
 
-        layout.prop(self, "recursive", icon="FOLDER_REDIRECT")
+        if not self.this_file_only:
+            layout.prop(self, "recursive", icon="FOLDER_REDIRECT")
         layout.prop(self, "prevent_backup", icon="TRASH")
-        layout.prop(self, "overwrite", icon="ASSET_MANAGER")
-        layout.prop(self, "generate_previews", icon="RESTRICT_RENDER_OFF")
+        if self.mark:
+            layout.prop(self, "overwrite", icon="ASSET_MANAGER")
+            layout.prop(self, "generate_previews", icon="RESTRICT_RENDER_OFF")
 
         box = layout.box()
         box.label(text="Mark :")
@@ -97,6 +117,7 @@ class ASSET_OT_batch_mark(Operator, ImportHelper):
         col.prop(self, "mark_materials", text="Materials", icon="MATERIAL")
         col.prop(self, "mark_objects", text="Objects", icon="OBJECT_DATA")
         col.prop(self, "mark_worlds", text="Worlds", icon="WORLD")
+
 
 def do_blends(blends, context, mark_filters, settings, save=None):
     if save is not None:
@@ -116,12 +137,7 @@ def do_blends(blends, context, mark_filters, settings, save=None):
     bpy.ops.wm.open_mainfile(filepath=str(blend))
 
     assets = []
-    if settings["unmark"]:
-        for a_filter in mark_filters:
-            assets.extend([o for o in getattr(bpy.data, a_filter) if o.asset_data])
-        [asset.asset_clear() for asset in assets]
-        do_blends(blends, context, mark_filters, settings, save=blend)
-    else:
+    if settings["mark"]:
         for a_filter in mark_filters:
             assets.extend([o for o in getattr(bpy.data, a_filter) if o.asset_data is None or settings["overwrite"]])
         if not assets:  # We don't mark any assets, so don't bother saving the file
@@ -136,13 +152,36 @@ def do_blends(blends, context, mark_filters, settings, save=None):
             bpy.app.timers.register(
                 functools.partial(do_assets, context, blends, blend, assets, mark_filters, settings)
             )
+    else:
+        for a_filter in mark_filters:
+            assets.extend([o for o in getattr(bpy.data, a_filter) if o.asset_data])
+        [asset.asset_clear() for asset in assets]
+        do_blends(blends, context, mark_filters, settings, save=blend)
 
 
 def do_assets(context, blends, blend, assets, mark_filters, settings):
+    last_asset = do_assets.last_asset
+    if last_asset is not None:
+        # Check if the last preview has successfully generated
+        preview = last_asset.preview
+        arr = np.zeros((preview.image_size[0] * preview.image_size[1]) * 4, dtype=np.float32)
+        preview.image_pixels_float.foreach_get(arr)
+        if np.all((arr == 0)):
+            # print(f"Asset preview was not generated. Waiting for {INTERVAL * do_assets.last_check} seconds")
+            do_assets.last_check += 1
+            return INTERVAL * do_assets.last_check
+        else:
+            do_assets.last_asset = None
+            do_assets.last_check = 1
     if assets:
         asset = assets.pop(0)
         asset.asset_mark()
         asset.asset_generate_preview()
+        do_assets.last_asset = asset
         return INTERVAL
     do_blends(blends, context, mark_filters, settings, save=blend)
     return None
+
+
+do_assets.last_asset = None
+do_assets.last_check = 1
