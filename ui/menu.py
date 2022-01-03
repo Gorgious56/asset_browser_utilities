@@ -1,36 +1,57 @@
 import bpy
-from bpy_extras.asset_utils import SpaceAssetInfo
 
 
-class BGABP_MT_menu(bpy.types.Menu):
-    bl_idname = "BGABP_MT_menu"
-    bl_label = "Batch Operations"
-
+class AssetBrowserMenu:
+    # from space_filebrowser.py
     @classmethod
     def poll(cls, context):
+        from bpy_extras.asset_utils import SpaceAssetInfo
+
         return SpaceAssetInfo.is_asset_browser_poll(context)
+
+
+class BGABP_MT_library(AssetBrowserMenu, bpy.types.Menu):
+    bl_idname = "BGABP_MT_library"
+    bl_label = "External Library"
 
     def draw(self, context):
         layout = self.layout
 
-        mark_op = layout.operator("asset.batch_mark_or_unmark", text="Mark Assets in External Library")
+        mark_op = layout.operator("asset.batch_mark_or_unmark", text="Mark Assets")
         mark_op.this_file_only = False
         mark_op.mark = True
 
-        unmark_op = layout.operator("asset.batch_mark_or_unmark", text="Unmark Assets in External Library")
+        unmark_op = layout.operator("asset.batch_mark_or_unmark", text="Unmark Assets")
         unmark_op.this_file_only = False
         unmark_op.mark = False
 
+
+class BGABP_MT_this_file(AssetBrowserMenu, bpy.types.Menu):
+    bl_idname = "BGABP_MT_this_file"
+    bl_label = "This File"
+
+    def draw(self, context):
+        layout = self.layout
         if bpy.data.is_saved:
-            mark_op = layout.operator("asset.batch_mark_or_unmark", text="Mark Assets in this File")
+            mark_op = layout.operator("asset.batch_mark_or_unmark", text="Mark Assets")
             mark_op.this_file_only = True
             mark_op.mark = True
 
-            unmark_op = layout.operator("asset.batch_mark_or_unmark", text="Unmark Assets in this File")
+            unmark_op = layout.operator("asset.batch_mark_or_unmark", text="Unmark Assets")
             unmark_op.this_file_only = True
             unmark_op.mark = False
         else:
-            layout.label(text="Make sure to save this file to enable marking assets", icon="QUESTION")
+            layout.label(text="Save this file to disk to enable marking assets", icon="QUESTION")
+
+
+class BGABP_MT_menu(AssetBrowserMenu, bpy.types.Menu):
+    bl_idname = "BGABP_MT_menu"
+    bl_label = "Batch Operations"
+
+    def draw(self, context):
+        layout = self.layout
+        layout.menu("BGABP_MT_library")
+        layout.menu("BGABP_MT_this_file")
 
 
 def menu_draw(self, context):
