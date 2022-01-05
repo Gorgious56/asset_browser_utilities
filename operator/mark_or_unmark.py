@@ -85,20 +85,16 @@ class ASSET_OT_batch_mark_or_unmark(Operator, ImportHelper):
             else:
                 blends = [fp for fp in folder.glob("*.blend") if fp.is_file()]
 
-        mark_filters = []
-        for filter_type in self.filter_types.items:
-            if filter_type.value:
-                mark_filters.append(filter_type.name.lower())
-
         settings = {
             "prevent_backup": self.prevent_backup,
             "overwrite": self.overwrite,
             "generate_previews": self.generate_previews,
             "mark": self.mark,
-            "filter_name": self.filter_name
+            "filter_name": self.filter_name,
+            "filter_types": self.filter_types,
         }
 
-        do_blends(blends, context, mark_filters, settings)
+        do_blends(blends, context, settings)
 
         return {"FINISHED"}
 
@@ -116,22 +112,7 @@ class ASSET_OT_batch_mark_or_unmark(Operator, ImportHelper):
         self.filter_name.draw(layout)
 
 
-def is_name_valid(name, filter_type, filter):
-    if filter != "":
-        if filter_type == "Prefix":
-            if not name.startswith(filter):
-                return False
-        elif filter_type == "Contains":
-            print(filter in name)
-            if filter not in name:
-                return False
-        elif filter_type == "Suffix":
-            if not name.endswith(filter):
-                return False
-    return True
-    
-
-def do_blends(blends, context, mark_filters, settings, save=None):
+def do_blends(blends, context, settings, save=None):
     if save is not None:
         bpy.ops.wm.save_as_mainfile(filepath=str(save))
         if settings["prevent_backup"]:
@@ -149,26 +130,23 @@ def do_blends(blends, context, mark_filters, settings, save=None):
     if bpy.data.filepath != str(blend):
         bpy.ops.wm.open_mainfile(filepath=str(blend))
 
+
+    do_blends_callback = lambda _save: do_blends(blends, context, settings, save=_save)
+
     assets = []
-    filter_name_value = settings["filter_name"].value
-    filter_name_method = settings["filter_name"].method
+    settings["filter_types"].populate(assets)
+    settings["filter_name"].filter(assets)
 
-    do_blends_callback = lambda _save: do_blends(blends, context, mark_filters, settings, save=_save)
+    if settings["mark"]:        
+        assets = [a for a in assets if a.asset_data is None or settings["overwrite"]]
 
-    if settings["mark"]:
-        for a_filter in mark_filters:
-            for o in getattr(bpy.data, a_filter):
-                if not is_name_valid(o.name, filter_name_method, filter_name_value):
-                    continue
-                if o.asset_data is None or settings["overwrite"]:
-                    assets.append(o)
-        if not assets:  # We don't mark any assets, so don't bother saving the file
+        if not assets:  # We don't mark any asset, don't bother saving the file
             print("No asset to mark")
             do_blends_callback(None)
             return
 
         if settings["generate_previews"]:
-            for asset in assets:
+            for asset in assets:                
                 asset.asset_mark()                
                 asset.asset_generate_preview()
                 print(f"Mark {asset.name}")
@@ -184,12 +162,16 @@ def do_blends(blends, context, mark_filters, settings, save=None):
             do_blends_callback(blend)
                      
     else:  # Unmark assets
-        for a_filter in mark_filters:
-            for o in getattr(bpy.data, a_filter):
-                if not is_name_valid(o.name, filter_name_method, filter_name_value):
-                    continue
-                o.asset_clear()
-                print(f"Unmark {o.name}")
+        assets = [a for a in assets if a.asset_data is not None]
+
+        if not assets:  # We don't unmark any asset, don't bother saving the file
+            print("No asset to unmark")
+            do_blends_callback(None)
+            return
+
+        for asset in assets:
+            asset.asset_clear()
+            print(f"Unmark {asset.name}")
         do_blends_callback(blend)
 
 

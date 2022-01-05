@@ -1,3 +1,4 @@
+import bpy
 from bpy.types import PropertyGroup
 from bpy.props import BoolProperty, StringProperty, CollectionProperty
 
@@ -28,3 +29,10 @@ class FilterTypes(PropertyGroup):
         col = box.column(align=True)        
         for filter_type in self.items:
             col.prop(filter_type, "value", text=filter_type.name, toggle=True, icon=filter_type.icon)
+
+    def populate(self, items):        
+        for filter_type in self.items:
+            if not filter_type.value:
+                continue
+            for item in getattr(bpy.data, filter_type.name.lower()):
+                items.append(item)

@@ -24,4 +24,17 @@ class FilterName(PropertyGroup):
             box.prop(self, "value", text="Text")
             row = box.row(align=True)
             row.props_enum(self, "method")
-        
+    
+    def filter(self, items):
+        if self.active:
+            for i in range(len(items) - 1, -1, -1):
+                name = items[i].name
+                if self.method == "Prefix":
+                    if not name.startswith(self.value):
+                        items.pop(i)
+                elif self.method == "Contains":
+                    if self.value not in name:
+                        items.pop(i)
+                elif self.method == "Suffix":
+                    if not name.endswith(self.value):
+                        items.pop(i)
