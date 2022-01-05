@@ -55,6 +55,18 @@ class ASSET_OT_batch_mark_or_unmark(Operator, ImportHelper):
         description="When marking assets, automatically generate a preview\nUncheck to mark assets really fast",
     )
 
+    filter_name_by: bpy.props.EnumProperty(
+        name="Filter Name By",
+        items=(
+            ("Prefix",) * 3,
+            ("Contains",) * 3,
+            ("Suffix",) * 3,
+        ),
+        default="Contains",
+    )
+
+    filter_name_value: bpy.props.StringProperty(name="Name Filter Value", description="Filter assets by name\nLeave empty for no filter")
+
     mark_objects: bpy.props.BoolProperty(default=True, name="Mark Objects")
     mark_materials: bpy.props.BoolProperty(default=False, name="Mark Materials")
     mark_actions: bpy.props.BoolProperty(default=False, name="Mark Actions")
@@ -95,6 +107,8 @@ class ASSET_OT_batch_mark_or_unmark(Operator, ImportHelper):
                 "overwrite": self.overwrite,
                 "generate_previews": self.generate_previews,
                 "mark": self.mark,
+                "filter_name_by": self.filter_name_by,
+                "filter_name_value": self.filter_name_value,
             },
         )
 
@@ -111,12 +125,18 @@ class ASSET_OT_batch_mark_or_unmark(Operator, ImportHelper):
             layout.prop(self, "generate_previews", icon="RESTRICT_RENDER_OFF")
 
         box = layout.box()
-        box.label(text="Mark :")
+        box.label(text="Filter By Type")
         col = box.column(align=True)
         col.prop(self, "mark_actions", text="Actions", icon="ACTION")
         col.prop(self, "mark_materials", text="Materials", icon="MATERIAL")
         col.prop(self, "mark_objects", text="Objects", icon="OBJECT_DATA")
         col.prop(self, "mark_worlds", text="Worlds", icon="WORLD")
+
+        box = layout.box()
+        box.label(text="Filter By Name")
+        box.prop(self, "filter_name_value", text="Text")
+        row = box.row(align=True)
+        row.props_enum(self, "filter_name_by")
 
 
 def do_blends(blends, context, mark_filters, settings, save=None):
@@ -138,8 +158,22 @@ def do_blends(blends, context, mark_filters, settings, save=None):
 
     assets = []
     if settings["mark"]:
+        filter_name_value = settings["filter_name_value"]
+        filter_name_by = settings["filter_name_by"]
         for a_filter in mark_filters:
-            assets.extend([o for o in getattr(bpy.data, a_filter) if o.asset_data is None or settings["overwrite"]])
+            for o in getattr(bpy.data, a_filter):
+                if filter_name_value != "":
+                    if filter_name_by == "Prefix":
+                        if not o.name.startswith(filter_name_value):
+                            continue
+                    elif filter_name_by == "Contains":
+                        if not filter_name_value in o.name:
+                            continue
+                    elif filter_name_by == "Suffix":
+                        if not o.name.endswith(filter_name_value):
+                            continue
+                if o.asset_data is None or settings["overwrite"]:
+                    assets.append(o)
         if not assets:  # We don't mark any assets, so don't bother saving the file
             print("No asset to mark")
             do_blends(blends, context, mark_filters, settings, save=None)
