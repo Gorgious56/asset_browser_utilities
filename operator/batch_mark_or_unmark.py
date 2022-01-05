@@ -139,6 +139,21 @@ class ASSET_OT_batch_mark_or_unmark(Operator, ImportHelper):
         row.props_enum(self, "filter_name_by")
 
 
+def is_name_valid(name, filter_type, filter):
+    if filter != "":
+        if filter_type == "Prefix":
+            if not name.startswith(filter):
+                return False
+        elif filter_type == "Contains":
+            print(filter in name)
+            if filter not in name:
+                return False
+        elif filter_type == "Suffix":
+            if not name.endswith(filter):
+                return False
+    return True
+    
+
 def do_blends(blends, context, mark_filters, settings, save=None):
     if save is not None:
         bpy.ops.wm.save_as_mainfile(filepath=str(save))
@@ -157,21 +172,14 @@ def do_blends(blends, context, mark_filters, settings, save=None):
     bpy.ops.wm.open_mainfile(filepath=str(blend))
 
     assets = []
+    filter_name_value = settings["filter_name_value"]
+    filter_name_by = settings["filter_name_by"]
+
     if settings["mark"]:
-        filter_name_value = settings["filter_name_value"]
-        filter_name_by = settings["filter_name_by"]
         for a_filter in mark_filters:
             for o in getattr(bpy.data, a_filter):
-                if filter_name_value != "":
-                    if filter_name_by == "Prefix":
-                        if not o.name.startswith(filter_name_value):
-                            continue
-                    elif filter_name_by == "Contains":
-                        if not filter_name_value in o.name:
-                            continue
-                    elif filter_name_by == "Suffix":
-                        if not o.name.endswith(filter_name_value):
-                            continue
+                if not is_name_valid(o.name, filter_name_by, filter_name_value):
+                    continue
                 if o.asset_data is None or settings["overwrite"]:
                     assets.append(o)
         if not assets:  # We don't mark any assets, so don't bother saving the file
@@ -186,9 +194,13 @@ def do_blends(blends, context, mark_filters, settings, save=None):
             bpy.app.timers.register(
                 functools.partial(do_assets, context, blends, blend, assets, mark_filters, settings)
             )
-    else:
+    else:  # Unmark assets
         for a_filter in mark_filters:
-            assets.extend([o for o in getattr(bpy.data, a_filter) if o.asset_data])
+            for o in getattr(bpy.data, a_filter):
+                if not is_name_valid(o.name, filter_name_by, filter_name_value):
+                    continue
+                if o.asset_data:
+                    assets.append(o)
         [asset.asset_clear() for asset in assets]
         do_blends(blends, context, mark_filters, settings, save=blend)
 
