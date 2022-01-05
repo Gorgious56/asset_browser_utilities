@@ -40,6 +40,8 @@ class BGABP_MT_this_file(AssetBrowserMenu, bpy.types.Menu):
             unmark_op = layout.operator("asset.batch_mark_or_unmark", text="Unmark Assets")
             unmark_op.this_file_only = True
             unmark_op.mark = False
+            
+            export_op = layout.operator("asset.export", text="Export Assets")
         else:
             layout.label(text="Save this file to disk to enable marking assets", icon="QUESTION")
 
@@ -50,8 +52,8 @@ class BGABP_MT_menu(AssetBrowserMenu, bpy.types.Menu):
 
     def draw(self, context):
         layout = self.layout
-        layout.menu("BGABP_MT_library")
         layout.menu("BGABP_MT_this_file")
+        layout.menu("BGABP_MT_library")
 
 
 def menu_draw(self, context):
