@@ -5,7 +5,7 @@ bl_info = {
     "author": "Gorgious",
     "description": "Batch generate default previews for the Asset Browser from selected folder",
     "blender": (3, 0, 0),
-    "version": (0, 0, 5),
+    "version": (0, 0, 6),
     "location": "",
     "warning": "",
     "category": "Import-Export",
