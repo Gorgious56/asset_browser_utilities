@@ -4,10 +4,11 @@ import numpy as np
 from pathlib import Path
 import bpy
 from bpy_extras.io_utils import ImportHelper
-from bpy.props import StringProperty, BoolProperty, EnumProperty, PointerProperty, CollectionProperty
+from bpy.props import StringProperty, BoolProperty, PointerProperty
 from bpy.types import Operator
 
-from asset_browser_utilities.prop.filter_type import FilterType, initialize_filter_types
+from asset_browser_utilities.prop.filter_type import FilterTypes
+from asset_browser_utilities.prop.filter_name import FilterName
 
 
 INTERVAL = 0.2
@@ -58,22 +59,12 @@ class ASSET_OT_batch_mark_or_unmark(Operator, ImportHelper):
         description="When marking assets, automatically generate a preview\nUncheck to mark assets really fast",
     )
 
-    filter_name_by: EnumProperty(
-        name="Filter Name By",
-        items=(
-            ("Prefix",) * 3,
-            ("Contains",) * 3,
-            ("Suffix",) * 3,
-        ),
-        default="Contains",
-    )
+    filter_name: PointerProperty(type=FilterName)
 
-    filter_name_value: StringProperty(name="Name Filter Value", description="Filter assets by name\nLeave empty for no filter")
-    
-    filter_types: CollectionProperty(type=FilterType)
+    filter_types: PointerProperty(type=FilterTypes)
 
     def invoke(self, context, event):
-        initialize_filter_types(self.filter_types)
+        self.filter_types.initialize()
         if self.this_file_only:
             return context.window_manager.invoke_props_dialog(self)
         else:
@@ -81,7 +72,7 @@ class ASSET_OT_batch_mark_or_unmark(Operator, ImportHelper):
             return {"RUNNING_MODAL"}
 
     def execute(self, context):
-        if bpy.data.is_saved:
+        if bpy.data.is_saved and bpy.data.is_dirty:
             bpy.ops.wm.save_mainfile()
         if self.this_file_only:
             blends = [str(bpy.data.filepath)]
@@ -95,23 +86,19 @@ class ASSET_OT_batch_mark_or_unmark(Operator, ImportHelper):
                 blends = [fp for fp in folder.glob("*.blend") if fp.is_file()]
 
         mark_filters = []
-        for filter_type in self.filter_types:
+        for filter_type in self.filter_types.items:
             if filter_type.value:
                 mark_filters.append(filter_type.name.lower())
 
-        do_blends(
-            blends,
-            context,
-            mark_filters,
-            {
-                "prevent_backup": self.prevent_backup,
-                "overwrite": self.overwrite,
-                "generate_previews": self.generate_previews,
-                "mark": self.mark,
-                "filter_name_by": self.filter_name_by,
-                "filter_name_value": self.filter_name_value,
-            },
-        )
+        settings = {
+            "prevent_backup": self.prevent_backup,
+            "overwrite": self.overwrite,
+            "generate_previews": self.generate_previews,
+            "mark": self.mark,
+            "filter_name": self.filter_name
+        }
+
+        do_blends(blends, context, mark_filters, settings)
 
         return {"FINISHED"}
 
@@ -124,18 +111,9 @@ class ASSET_OT_batch_mark_or_unmark(Operator, ImportHelper):
         if self.mark:
             layout.prop(self, "overwrite", icon="ASSET_MANAGER")
             layout.prop(self, "generate_previews", icon="RESTRICT_RENDER_OFF")
-
-        box = layout.box()
-        box.label(text="Filter By Type", icon="FILTER")
-        col = box.column(align=True)        
-        for filter_type in self.filter_types:
-            col.prop(filter_type, "value", text=filter_type.name, toggle=True, icon=filter_type.icon)
-
-        box = layout.box()
-        box.label(text="Filter By Name", icon="FILTER")
-        box.prop(self, "filter_name_value", text="Text")
-        row = box.row(align=True)
-        row.props_enum(self, "filter_name_by")
+        
+        self.filter_types.draw(layout)
+        self.filter_name.draw(layout)
 
 
 def is_name_valid(name, filter_type, filter):
@@ -168,19 +146,19 @@ def do_blends(blends, context, mark_filters, settings, save=None):
     print(f"{len(blends)} file{'s' if len(blends) > 1 else ''} left")
 
     blend = blends.pop(0)
-    bpy.ops.wm.open_mainfile(filepath=str(blend))
-    print(f"Open {blend}")
+    if bpy.data.filepath != str(blend):
+        bpy.ops.wm.open_mainfile(filepath=str(blend))
 
     assets = []
-    filter_name_value = settings["filter_name_value"]
-    filter_name_by = settings["filter_name_by"]
+    filter_name_value = settings["filter_name"].value
+    filter_name_method = settings["filter_name"].method
 
     do_blends_callback = lambda _save: do_blends(blends, context, mark_filters, settings, save=_save)
 
     if settings["mark"]:
         for a_filter in mark_filters:
             for o in getattr(bpy.data, a_filter):
-                if not is_name_valid(o.name, filter_name_by, filter_name_value):
+                if not is_name_valid(o.name, filter_name_method, filter_name_value):
                     continue
                 if o.asset_data is None or settings["overwrite"]:
                     assets.append(o)
@@ -208,7 +186,7 @@ def do_blends(blends, context, mark_filters, settings, save=None):
     else:  # Unmark assets
         for a_filter in mark_filters:
             for o in getattr(bpy.data, a_filter):
-                if not is_name_valid(o.name, filter_name_by, filter_name_value):
+                if not is_name_valid(o.name, filter_name_method, filter_name_value):
                     continue
                 o.asset_clear()
                 print(f"Unmark {o.name}")

@@ -1,19 +1,30 @@
 from bpy.types import PropertyGroup
-from bpy.props import BoolProperty, StringProperty
+from bpy.props import BoolProperty, StringProperty, CollectionProperty
 
 class FilterType(PropertyGroup):
     value: BoolProperty()
     icon: StringProperty()
 
 
-def initialize_filter_types(filter_types):
-    for name, (value, icon) in {
-        "Actions": (False, "ACTION"),
-        "Materials": (False, "MATERIAL"),
-        "Objects": (True, "OBJECT_DATA"),
-        "Worlds": (False, "WORLD"),
-    }.items():
-        new = filter_types.add()
-        new.name = name
-        new.value = value
-        new.icon = icon
+class FilterTypes(PropertyGroup):
+    items: CollectionProperty(type=FilterType)
+
+    def initialize(self):
+        self.items.clear()
+        for name, (value, icon) in {
+            "Actions": (False, "ACTION"),
+            "Materials": (False, "MATERIAL"),
+            "Objects": (True, "OBJECT_DATA"),
+            "Worlds": (False, "WORLD"),
+        }.items():
+            new = self.items.add()
+            new.name = name
+            new.value = value
+            new.icon = icon
+    
+    def draw(self, layout):        
+        box = layout.box()
+        box.label(text="Filter By Type", icon="FILTER")
+        col = box.column(align=True)        
+        for filter_type in self.items:
+            col.prop(filter_type, "value", text=filter_type.name, toggle=True, icon=filter_type.icon)
