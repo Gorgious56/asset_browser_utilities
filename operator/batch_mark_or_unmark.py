@@ -125,7 +125,7 @@ class ASSET_OT_batch_mark_or_unmark(Operator, ImportHelper):
             layout.prop(self, "generate_previews", icon="RESTRICT_RENDER_OFF")
 
         box = layout.box()
-        box.label(text="Filter By Type")
+        box.label(text="Filter By Type", icon="FILTER")
         col = box.column(align=True)
         col.prop(self, "mark_actions", text="Actions", icon="ACTION")
         col.prop(self, "mark_materials", text="Materials", icon="MATERIAL")
@@ -133,7 +133,7 @@ class ASSET_OT_batch_mark_or_unmark(Operator, ImportHelper):
         col.prop(self, "mark_worlds", text="Worlds", icon="WORLD")
 
         box = layout.box()
-        box.label(text="Filter By Name")
+        box.label(text="Filter By Name", icon="FILTER")
         box.prop(self, "filter_name_value", text="Text")
         row = box.row(align=True)
         row.props_enum(self, "filter_name_by")
@@ -166,14 +166,17 @@ def do_blends(blends, context, mark_filters, settings, save=None):
     if not blends:
         print("Batch conversion completed")
         return
-    print(f"{len(blends)} files left")
+    print(f"{len(blends)} file{'s' if len(blends) > 1 else ''} left")
 
     blend = blends.pop(0)
     bpy.ops.wm.open_mainfile(filepath=str(blend))
+    print(f"Open {blend}")
 
     assets = []
     filter_name_value = settings["filter_name_value"]
     filter_name_by = settings["filter_name_by"]
+
+    do_blends_callback = lambda _save: do_blends(blends, context, mark_filters, settings, save=_save)
 
     if settings["mark"]:
         for a_filter in mark_filters:
@@ -184,50 +187,45 @@ def do_blends(blends, context, mark_filters, settings, save=None):
                     assets.append(o)
         if not assets:  # We don't mark any assets, so don't bother saving the file
             print("No asset to mark")
-            do_blends(blends, context, mark_filters, settings, save=None)
+            do_blends_callback(None)
             return
 
-        if not settings["generate_previews"]:
-            [asset.asset_mark() for asset in assets]
-            do_blends(blends, context, mark_filters, settings, save=blend)
-        else:
+        if settings["generate_previews"]:
+            for asset in assets:
+                asset.asset_mark()                
+                asset.asset_generate_preview()
+                print(f"Mark {asset.name}")
             bpy.app.timers.register(
-                functools.partial(do_assets, context, blends, blend, assets, mark_filters, settings)
-            )
+                functools.partial(
+                    sleep_until_previews_are_done, 
+                    assets, 
+                    lambda: do_blends_callback(blend))
+            )  
+        else:
+            [asset.asset_mark() for asset in assets]
+            print(f"Mark {len(assets)} assets without previews")
+            do_blends_callback(blend)
+                     
     else:  # Unmark assets
         for a_filter in mark_filters:
             for o in getattr(bpy.data, a_filter):
                 if not is_name_valid(o.name, filter_name_by, filter_name_value):
                     continue
-                if o.asset_data:
-                    assets.append(o)
-        [asset.asset_clear() for asset in assets]
-        do_blends(blends, context, mark_filters, settings, save=blend)
+                o.asset_clear()
+                print(f"Unmark {o.name}")
+        do_blends_callback(blend)
 
 
-def do_assets(context, blends, blend, assets, mark_filters, settings):
-    last_asset = do_assets.last_asset
-    if last_asset is not None:
-        # Check if the last preview has successfully generated
-        preview = last_asset.preview
+def sleep_until_previews_are_done(assets, callback):
+    while assets:  # Check if all previews have been generated
+        preview = assets[0].preview
         arr = np.zeros((preview.image_size[0] * preview.image_size[1]) * 4, dtype=np.float32)
         preview.image_pixels_float.foreach_get(arr)
         if np.all((arr == 0)):
-            # print(f"Asset preview was not generated. Waiting for {INTERVAL * do_assets.last_check} seconds")
-            do_assets.last_check += 1
-            return INTERVAL * do_assets.last_check
+            # print(f"Asset preview for {assets[0].name} was not generated. Waiting for {INTERVAL} seconds")
+            return INTERVAL
         else:
-            do_assets.last_asset = None
-            do_assets.last_check = 1
-    if assets:
-        asset = assets.pop(0)
-        asset.asset_mark()
-        asset.asset_generate_preview()
-        do_assets.last_asset = asset
-        return INTERVAL
-    do_blends(blends, context, mark_filters, settings, save=blend)
+            # print(f"Asset preview for {assets[0].name} was generated. Removing it from pool")
+            assets.pop(0)
+    callback()
     return None
-
-
-do_assets.last_asset = None
-do_assets.last_check = 1
