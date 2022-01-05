@@ -1,9 +1,9 @@
 # This is released under CC0 licence. Do with it what you wish. No result guaranteed whatsoever.
 
 bl_info = {
-    "name": "Batch Generate Asset Browser Previews ",
+    "name": "Asset Browser Utilities ",
     "author": "Gorgious",
-    "description": "Batch generate default previews for the Asset Browser from selected folder",
+    "description": "A collection of Asset Browers QOL utilities",
     "blender": (3, 0, 0),
     "version": (0, 0, 6),
     "location": "",
