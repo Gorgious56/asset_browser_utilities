@@ -1,11 +1,14 @@
 import functools
+import os
+import numpy as np
 from pathlib import Path
 import bpy
 from bpy_extras.io_utils import ImportHelper
-from bpy.props import StringProperty
+from bpy.props import StringProperty, BoolProperty, EnumProperty, PointerProperty, CollectionProperty
 from bpy.types import Operator
-import os
-import numpy as np
+
+from asset_browser_utilities.prop.filter_type import FilterType, initialize_filter_types
+
 
 INTERVAL = 0.2
 
@@ -20,42 +23,42 @@ class ASSET_OT_batch_mark_or_unmark(Operator, ImportHelper):
         maxlen=255,  # Max internal buffer length, longer would be clamped.
     )
 
-    this_file_only: bpy.props.BoolProperty(
+    this_file_only: BoolProperty(
         default=False,
         name="Act only on this file",
     )
 
-    recursive: bpy.props.BoolProperty(
+    recursive: BoolProperty(
         default=True,
         name="Recursive",
         description="Operate on blend files located in sub folders recursively\nIf unchecked it will only treat files in this folder",
     )
 
-    prevent_backup: bpy.props.BoolProperty(
+    prevent_backup: BoolProperty(
         name="Remove Backup",
         description="Check to automatically delete the creation of backup files when 'Save Versions' is enabled in the preferences\nThis will prevent duplicating files when they are overwritten\nWarning : Backup files ending in .blend1 will be deleted permantently",
         default=True,
     )
 
-    overwrite: bpy.props.BoolProperty(
+    overwrite: BoolProperty(
         name="Overwrite assets",
         description="Check to re-mark assets and re-generate preview if the item is already an asset",
         default=False,
     )
 
-    mark: bpy.props.BoolProperty(
+    mark: BoolProperty(
         name="Mark",
         description="Check to Mark existing assets rather than unmarking items",
         default=False,
     )
 
-    generate_previews: bpy.props.BoolProperty(
+    generate_previews: BoolProperty(
         default=True,
         name="Generate Previews",
         description="When marking assets, automatically generate a preview\nUncheck to mark assets really fast",
     )
 
-    filter_name_by: bpy.props.EnumProperty(
+    filter_name_by: EnumProperty(
         name="Filter Name By",
         items=(
             ("Prefix",) * 3,
@@ -65,14 +68,12 @@ class ASSET_OT_batch_mark_or_unmark(Operator, ImportHelper):
         default="Contains",
     )
 
-    filter_name_value: bpy.props.StringProperty(name="Name Filter Value", description="Filter assets by name\nLeave empty for no filter")
-
-    mark_objects: bpy.props.BoolProperty(default=True, name="Mark Objects")
-    mark_materials: bpy.props.BoolProperty(default=False, name="Mark Materials")
-    mark_actions: bpy.props.BoolProperty(default=False, name="Mark Actions")
-    mark_worlds: bpy.props.BoolProperty(default=False, name="Mark Worlds")
+    filter_name_value: StringProperty(name="Name Filter Value", description="Filter assets by name\nLeave empty for no filter")
+    
+    filter_types: CollectionProperty(type=FilterType)
 
     def invoke(self, context, event):
+        initialize_filter_types(self.filter_types)
         if self.this_file_only:
             return context.window_manager.invoke_props_dialog(self)
         else:
@@ -94,9 +95,9 @@ class ASSET_OT_batch_mark_or_unmark(Operator, ImportHelper):
                 blends = [fp for fp in folder.glob("*.blend") if fp.is_file()]
 
         mark_filters = []
-        for a_filter in ("objects", "materials", "actions", "worlds"):
-            if getattr(self, "mark_" + a_filter):
-                mark_filters.append(a_filter)
+        for filter_type in self.filter_types:
+            if filter_type.value:
+                mark_filters.append(filter_type.name.lower())
 
         do_blends(
             blends,
@@ -126,11 +127,9 @@ class ASSET_OT_batch_mark_or_unmark(Operator, ImportHelper):
 
         box = layout.box()
         box.label(text="Filter By Type", icon="FILTER")
-        col = box.column(align=True)
-        col.prop(self, "mark_actions", text="Actions", icon="ACTION")
-        col.prop(self, "mark_materials", text="Materials", icon="MATERIAL")
-        col.prop(self, "mark_objects", text="Objects", icon="OBJECT_DATA")
-        col.prop(self, "mark_worlds", text="Worlds", icon="WORLD")
+        col = box.column(align=True)        
+        for filter_type in self.filter_types:
+            col.prop(filter_type, "value", text=filter_type.name, toggle=True, icon=filter_type.icon)
 
         box = layout.box()
         box.label(text="Filter By Name", icon="FILTER")
