@@ -1,14 +1,12 @@
-When dealing with hundreds of library files it becomes tedious to mark their contents as assets.
+This add-on aims to provide several utilities to reduce the time it takes to do operations on large libraries
 
-Using python to automate the process is a perfect fit for such task.
+___ _Batch Mark (or Unmark) Objects as Assets_ ___
 
-However marking objects as assets using python doesn't automatically generate their previews like using the interface does.
-
-This aims to mark all objects as assets and generate the preview of all files in the folder the user selects.
+Mark Objects as assets and generate the preview of all assets in the folder the user selects.
 
 1. Go to the Asset Browser Editor and look for the add-on menu in the header
 
-![image](https://user-images.githubusercontent.com/25156105/147928603-027e3546-adef-449d-9db8-931d91e18f31.png)
+![image](https://user-images.githubusercontent.com/25156105/148301139-7daf3546-229d-4fb1-872b-e2f1d6617f37.png)
 
 2. 
  - If you choose an external library : In the file selector, navigate to the folder where the blend files are located. 
@@ -19,20 +17,33 @@ On the right hand side you have a few options :
 - Recursively search in subfolders (and sub-sub folders, etc.) of the selected folder
 - Prevent creation of file.blend1 backup file when saving library file
 - Prevent overwriting items that have already been marked as assets
-- Unmark assets instead of marking items
 - Generate previews (Unchecking simply marks objects as assets without generating a preview, which is way faster)
-- And a few toggles to choose which data types you want to mark as assets
+- Filter by Item Type(s)
+- Filter by name, using a prefix, suffix or simply checking if the name contains specified text
 
-
-![image](https://user-images.githubusercontent.com/25156105/147601200-6c676a3e-8736-4aa8-983f-9dee73af01ce.png)
-
+![image](https://user-images.githubusercontent.com/25156105/148301410-34eee9cc-e0dd-468e-b31d-48c3704b1539.png)
 
 3. Validate by clicking on the Blue button.
 
-Count ~ 1 second per item to be marked as asset and their preview to generate. It should be quasi-instantaneous if you uncheck the setting to generate previews.
+the whole process should be really fast, but one has to wait a little bit for heavier object previews to generate.
 
 It's a good idea to enable the console with Window > Toggle System Console beforehand so you can see how many files you have marked yet.
 
 Example Result :
 
 ![image](https://user-images.githubusercontent.com/25156105/145268274-c65c2c7d-3378-48cf-980c-ce7ef79a566f.png)
+
+
+___ _Export Assets_ ___ (new in V0.0.6)
+ 
+ You can now export assets from the current file.
+ 
+ ![image](https://user-images.githubusercontent.com/25156105/148301735-4ddb73d1-d73b-4396-9bb5-d0cd293c77d4.png)
+ 
+All filters are additive.
+- Filter by selection (export only selected objects)
+- Filter by Item Type(s)
+- Filter by name, using a prefix, suffix or simply checking if the name contains specified text
+
+You can choose an existing file to append the assets to, or a new filepath will create a brand new file with the assets.
+
