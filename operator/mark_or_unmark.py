@@ -94,7 +94,7 @@ class ASSET_OT_batch_mark_or_unmark(Operator, ImportHelper):
             "filter_types": self.filter_types,
         }
 
-        do_blends(blends, context, settings)
+        do_blends(blends, settings)
 
         return {"FINISHED"}
 
@@ -131,7 +131,7 @@ def do_blends(blends, context, settings, save=None):
         bpy.ops.wm.open_mainfile(filepath=str(blend))
 
 
-    do_blends_callback = lambda _save: do_blends(blends, context, settings, save=_save)
+    do_blends_callback = lambda _save: do_blends(blends, settings, save=_save)
 
     assets = []
     settings["filter_types"].populate(assets)
