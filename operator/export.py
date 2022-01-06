@@ -29,7 +29,6 @@ class ASSET_OT_export(Operator, ExportHelper):
         self.filter_types.initialize()
         context.window_manager.fileselect_add(self)
         return {"RUNNING_MODAL"}
-        return context.window_manager.invoke_props_dialog(self)
         
     def execute(self, context):
         filepath = self.filepath

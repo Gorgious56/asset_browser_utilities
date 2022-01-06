@@ -9,6 +9,7 @@ from bpy.types import Operator
 
 from asset_browser_utilities.prop.filter_type import FilterTypes
 from asset_browser_utilities.prop.filter_name import FilterName
+from asset_browser_utilities.ui.message import message_box
 
 
 INTERVAL = 0.2
@@ -112,7 +113,7 @@ class ASSET_OT_batch_mark_or_unmark(Operator, ImportHelper):
         self.filter_name.draw(layout)
 
 
-def do_blends(blends, context, settings, save=None):
+def do_blends(blends, settings, save=None):
     if save is not None:
         bpy.ops.wm.save_as_mainfile(filepath=str(save))
         if settings["prevent_backup"]:
@@ -122,7 +123,8 @@ def do_blends(blends, context, settings, save=None):
                 os.remove(backup)
 
     if not blends:
-        print("Batch conversion completed")
+        print("Work completed")
+        message_box(message="Work completed !")
         return
     print(f"{len(blends)} file{'s' if len(blends) > 1 else ''} left")
 

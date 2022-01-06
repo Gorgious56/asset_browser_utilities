@@ -19,7 +19,7 @@ class FilterName(PropertyGroup):
     
     def draw(self, layout):        
         box = layout.box()
-        box.prop(self, "active", text="Filter By Name", icon="FILTER", toggle=False)
+        box.prop(self, "active", text="Filter By Name", icon="FILTER")
         if self.active:        
             box.prop(self, "value", text="Text")
             row = box.row(align=True)
