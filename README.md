@@ -3,12 +3,14 @@ This add-on aims to provide several utilities to reduce the time it takes to do 
 Available tools :
 
 
-___ _Batch Mark (or Unmark) Objects as Assets_ ___
-___ _Export Assets_ ___
-___ _Batch Add or Remove tags_ ___ (new in V0.0.7)
+1. __Batch Mark (or Unmark) Objects as Assets__
+
+2. __Export Assets__
+
+3. __Batch Add or Remove tags__ (new inV0.0.7)
 
 
-___ _Batch Mark (or Unmark) Objects as Assets_ ___
+___ __Batch Mark (or Unmark) Objects as Assets__ ___
 
 Mark Objects as assets and generate the preview of all assets in the folder the user selects.
 
@@ -42,7 +44,7 @@ Example Result :
 ![image](https://user-images.githubusercontent.com/25156105/145268274-c65c2c7d-3378-48cf-980c-ce7ef79a566f.png)
 
 
-___ _Export Assets_ ___
+___ __Export Assets__ ___
  
  Export assets from the current file.
  
@@ -56,7 +58,7 @@ All filters are additive.
 You can choose an existing file to append the assets to, or a new filepath will create a brand new file with the assets.
 
 
-___ _Batch Add or Remove tags_ ___ (new in V0.0.7)
+___ __Batch Add or Remove tags__ ___ (new in V0.0.7)
 
 Batch add or remove tags from assets in current file or external library. You can filter assets like the other tools. Up to 10 tags can be added or removed at a time :
 
