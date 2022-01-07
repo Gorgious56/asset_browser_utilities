@@ -113,7 +113,7 @@ def do_blends(blends, settings, save=None):
 
     do_blends_callback = lambda _save: do_blends(blends, settings, save=_save)
 
-    assets = settings["asset_filter_settings"].query()
+    assets = settings["filter_settings"].query()
 
     if settings["mark"]:        
         assets = [a for a in assets if a.asset_data is None or settings["overwrite"]]

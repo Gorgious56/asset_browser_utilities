@@ -4,7 +4,6 @@ from bpy.props import BoolProperty, PointerProperty
 from asset_browser_utilities.prop.filter_type import FilterTypes
 from asset_browser_utilities.prop.filter_name import FilterName
 
-
 class AssetFilterSettings(PropertyGroup):
     filter_types: PointerProperty(type=FilterTypes)
     filter_name: PointerProperty(type=FilterName)
