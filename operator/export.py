@@ -5,8 +5,7 @@ from bpy_extras.io_utils import ExportHelper
 from bpy.types import Operator
 from bpy.props import StringProperty, BoolProperty, EnumProperty, PointerProperty
 
-from asset_browser_utilities.prop.filter_type import FilterTypes
-from asset_browser_utilities.prop.filter_name import FilterName
+from asset_browser_utilities.prop.filter_settings import AssetFilterSettings
 
 
 class ASSET_OT_export(Operator, ExportHelper):
@@ -21,12 +20,10 @@ class ASSET_OT_export(Operator, ExportHelper):
     
     filename_ext = ".blend"   
      
-    filter_types: PointerProperty(type=FilterTypes)
-    filter_name: PointerProperty(type=FilterName)
-    filter_selection: BoolProperty()
+    asset_filter_settings: PointerProperty(type=AssetFilterSettings)
     
     def invoke(self, context, event):
-        self.filter_types.initialize()
+        self.asset_filter_settings.init(filter_selection=True)
         context.window_manager.fileselect_add(self)
         return {"RUNNING_MODAL"}
         
@@ -38,11 +35,7 @@ class ASSET_OT_export(Operator, ExportHelper):
         if bpy.data.is_saved and bpy.data.is_dirty:
             bpy.ops.wm.save_mainfile()
 
-        assets = []
-        self.filter_types.populate(assets)
-        self.filter_name.filter(assets)
-        if self.filter_selection:
-            assets = [a for a in assets if a.select_get()]
+        assets = self.asset_filter_settings.query()
 
         asset_names = [a.name for a in assets]
         asset_types = [type(a).__name__ for a in assets]
@@ -70,9 +63,7 @@ class ASSET_OT_export(Operator, ExportHelper):
     def draw(self, context):
         layout = self.layout
 
-        layout.prop(self, "filter_selection", text="Only Selected", icon="RESTRICT_SELECT_OFF")
-        self.filter_types.draw(layout)
-        self.filter_name.draw(layout)
+        self.asset_filter_settings.draw(layout)
  
 def append(filepath, directory, filename):          
     bpy.ops.wm.append(

@@ -6,6 +6,7 @@ from bpy_extras.io_utils import ImportHelper
 from bpy.props import StringProperty, BoolProperty, PointerProperty
 from bpy.types import Operator
 
+from asset_browser_utilities.prop.filter_settings import AssetFilterSettings
 from asset_browser_utilities.prop.path import LibraryExportSettings
 from asset_browser_utilities.ui.message import message_box
 from asset_browser_utilities.helper.path import get_blend_files
@@ -50,11 +51,14 @@ class ASSET_OT_batch_mark_or_unmark(Operator, ImportHelper):
     )
 
     library_export_settings: PointerProperty(type=LibraryExportSettings)
+    asset_filter_settings: PointerProperty(type=AssetFilterSettings)
 
     def invoke(self, context, event):
         if self.library_export_settings.this_file_only:
+            self.asset_filter_settings.init(filter_selection=True)
             return context.window_manager.invoke_props_dialog(self)
         else:
+            self.asset_filter_settings.init(filter_selection=False)
             context.window_manager.fileselect_add(self)
             return {"RUNNING_MODAL"}
 
@@ -68,8 +72,7 @@ class ASSET_OT_batch_mark_or_unmark(Operator, ImportHelper):
             "overwrite": self.overwrite,
             "generate_previews": self.generate_previews,
             "mark": self.mark,
-            "filter_name": self.filter_name,
-            "filter_types": self.filter_types,
+            "filter_settings": self.asset_filter_settings
         }
 
         do_blends(blends, settings)
@@ -84,9 +87,8 @@ class ASSET_OT_batch_mark_or_unmark(Operator, ImportHelper):
         if self.mark:
             layout.prop(self, "overwrite", icon="ASSET_MANAGER")
             layout.prop(self, "generate_previews", icon="RESTRICT_RENDER_OFF")
-        
-        self.filter_types.draw(layout)
-        self.filter_name.draw(layout)
+
+        self.asset_filter_settings.draw(layout)
 
 
 def do_blends(blends, settings, save=None):
@@ -111,9 +113,7 @@ def do_blends(blends, settings, save=None):
 
     do_blends_callback = lambda _save: do_blends(blends, settings, save=_save)
 
-    assets = []
-    settings["filter_types"].populate(assets)
-    settings["filter_name"].filter(assets)
+    assets = settings["asset_filter_settings"].query()
 
     if settings["mark"]:        
         assets = [a for a in assets if a.asset_data is None or settings["overwrite"]]
