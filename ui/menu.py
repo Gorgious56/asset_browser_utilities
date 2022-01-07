@@ -25,6 +25,14 @@ class BGABP_MT_library(AssetBrowserMenu, bpy.types.Menu):
         unmark_op.library_export_settings.this_file_only = False
         unmark_op.mark = False
 
+        add_tags_op = layout.operator("asset.tags_add_or_remove", text="Add Tags")
+        add_tags_op.library_export_settings.this_file_only = False
+        add_tags_op.add = True        
+        
+        remove_tags_op = layout.operator("asset.tags_add_or_remove", text="Remove Tags")
+        remove_tags_op.library_export_settings.this_file_only = False
+        remove_tags_op.add = False
+
 
 class BGABP_MT_this_file(AssetBrowserMenu, bpy.types.Menu):
     bl_idname = "BGABP_MT_this_file"
@@ -42,8 +50,16 @@ class BGABP_MT_this_file(AssetBrowserMenu, bpy.types.Menu):
             unmark_op.mark = False
             
             export_op = layout.operator("asset.export", text="Export Assets")
+
+            add_tags_op = layout.operator("asset.tags_add_or_remove", text="Add Tags")
+            add_tags_op.library_export_settings.this_file_only = True
+            add_tags_op.add = True
+
+            remove_tags_op = layout.operator("asset.tags_add_or_remove", text="Remove Tags")
+            remove_tags_op.library_export_settings.this_file_only = True
+            remove_tags_op.add = False
         else:
-            layout.label(text="Save this file to disk to enable marking assets", icon="QUESTION")
+            layout.label(text="Save this file to disk to enable operations", icon="QUESTION")
 
 
 class BGABP_MT_menu(AssetBrowserMenu, bpy.types.Menu):
