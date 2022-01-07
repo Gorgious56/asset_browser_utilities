@@ -58,6 +58,6 @@ You can choose an existing file to append the assets to, or a new filepath will 
 
 ___ _Batch Add or Remove tags_ ___ (new in V0.0.7)
 
-Batch add or remove tags from assets in current file or external library. You can filter assets like the other tools. Up to 10 assets can be added or removed at a time :
+Batch add or remove tags from assets in current file or external library. You can filter assets like the other tools. Up to 10 tags can be added or removed at a time :
 
 ![image](https://user-images.githubusercontent.com/25156105/148535455-bedbfb62-9767-473c-95cc-c27a2b88ed63.png)
