@@ -18,11 +18,11 @@ class BGABP_MT_library(AssetBrowserMenu, bpy.types.Menu):
         layout = self.layout
 
         mark_op = layout.operator("asset.batch_mark_or_unmark", text="Mark Assets")
-        mark_op.this_file_only = False
+        mark_op.library_export_settings.this_file_only = False
         mark_op.mark = True
 
         unmark_op = layout.operator("asset.batch_mark_or_unmark", text="Unmark Assets")
-        unmark_op.this_file_only = False
+        unmark_op.library_export_settings.this_file_only = False
         unmark_op.mark = False
 
 
@@ -34,11 +34,11 @@ class BGABP_MT_this_file(AssetBrowserMenu, bpy.types.Menu):
         layout = self.layout
         if bpy.data.is_saved:
             mark_op = layout.operator("asset.batch_mark_or_unmark", text="Mark Assets")
-            mark_op.this_file_only = True
+            mark_op.library_export_settings.this_file_only = True
             mark_op.mark = True
 
             unmark_op = layout.operator("asset.batch_mark_or_unmark", text="Unmark Assets")
-            unmark_op.this_file_only = True
+            unmark_op.library_export_settings.this_file_only = True
             unmark_op.mark = False
             
             export_op = layout.operator("asset.export", text="Export Assets")

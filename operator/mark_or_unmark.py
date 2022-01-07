@@ -1,15 +1,14 @@
 import functools
 import os
 import numpy as np
-from pathlib import Path
 import bpy
 from bpy_extras.io_utils import ImportHelper
 from bpy.props import StringProperty, BoolProperty, PointerProperty
 from bpy.types import Operator
 
-from asset_browser_utilities.prop.filter_type import FilterTypes
-from asset_browser_utilities.prop.filter_name import FilterName
+from asset_browser_utilities.prop.path import LibraryExportSettings
 from asset_browser_utilities.ui.message import message_box
+from asset_browser_utilities.helper.path import get_blend_files
 
 
 INTERVAL = 0.2
@@ -25,16 +24,6 @@ class ASSET_OT_batch_mark_or_unmark(Operator, ImportHelper):
         maxlen=255,  # Max internal buffer length, longer would be clamped.
     )
 
-    this_file_only: BoolProperty(
-        default=False,
-        name="Act only on this file",
-    )
-
-    recursive: BoolProperty(
-        default=True,
-        name="Recursive",
-        description="Operate on blend files located in sub folders recursively\nIf unchecked it will only treat files in this folder",
-    )
 
     prevent_backup: BoolProperty(
         name="Remove Backup",
@@ -60,13 +49,10 @@ class ASSET_OT_batch_mark_or_unmark(Operator, ImportHelper):
         description="When marking assets, automatically generate a preview\nUncheck to mark assets really fast",
     )
 
-    filter_name: PointerProperty(type=FilterName)
-
-    filter_types: PointerProperty(type=FilterTypes)
+    library_export_settings: PointerProperty(type=LibraryExportSettings)
 
     def invoke(self, context, event):
-        self.filter_types.initialize()
-        if self.this_file_only:
+        if self.library_export_settings.this_file_only:
             return context.window_manager.invoke_props_dialog(self)
         else:
             context.window_manager.fileselect_add(self)
@@ -75,16 +61,7 @@ class ASSET_OT_batch_mark_or_unmark(Operator, ImportHelper):
     def execute(self, context):
         if bpy.data.is_saved and bpy.data.is_dirty:
             bpy.ops.wm.save_mainfile()
-        if self.this_file_only:
-            blends = [str(bpy.data.filepath)]
-        else:
-            folder = Path(self.filepath)
-            if not folder.is_dir():
-                folder = folder.parent
-            if self.recursive:
-                blends = [fp for fp in folder.glob("**/*.blend") if fp.is_file()]
-            else:
-                blends = [fp for fp in folder.glob("*.blend") if fp.is_file()]
+        blends = get_blend_files(self)
 
         settings = {
             "prevent_backup": self.prevent_backup,
@@ -102,8 +79,7 @@ class ASSET_OT_batch_mark_or_unmark(Operator, ImportHelper):
     def draw(self, context):
         layout = self.layout
 
-        if not self.this_file_only:
-            layout.prop(self, "recursive", icon="FOLDER_REDIRECT")
+        self.library_export_settings.draw(layout)
         layout.prop(self, "prevent_backup", icon="TRASH")
         if self.mark:
             layout.prop(self, "overwrite", icon="ASSET_MANAGER")
