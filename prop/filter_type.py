@@ -10,18 +10,18 @@ class FilterType(PropertyGroup):
 class FilterTypes(PropertyGroup):
     items: CollectionProperty(type=FilterType)
 
-    def initialize(self):
-        self.items.clear()
-        for name, (value, icon) in {
-            "Actions": (False, "ACTION"),
-            "Materials": (False, "MATERIAL"),
-            "Objects": (True, "OBJECT_DATA"),
-            "Worlds": (False, "WORLD"),
-        }.items():
-            new = self.items.add()
-            new.name = name
-            new.value = value
-            new.icon = icon
+    def init(self):
+        if not self.items:
+            for name, (value, icon) in {
+                "Actions": (False, "ACTION"),
+                "Materials": (False, "MATERIAL"),
+                "Objects": (True, "OBJECT_DATA"),
+                "Worlds": (False, "WORLD"),
+            }.items():
+                new = self.items.add()
+                new.name = name
+                new.value = value
+                new.icon = icon
     
     def draw(self, layout):        
         box = layout.box()
