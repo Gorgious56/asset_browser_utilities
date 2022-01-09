@@ -6,7 +6,11 @@ from bpy.types import Operator
 from bpy.props import StringProperty, BoolProperty, EnumProperty, PointerProperty
 
 from asset_browser_utilities.prop.filter_settings import AssetFilterSettings
-
+from asset_browser_utilities.helper.path import (
+    is_this_current_file, 
+    save_if_possible_and_necessary, 
+    create_new_file_and_set_as_current,
+)
 
 class ASSET_OT_export(Operator, ExportHelper):
     bl_idname = "asset.export"
@@ -29,28 +33,26 @@ class ASSET_OT_export(Operator, ExportHelper):
         
     def execute(self, context):
         filepath = self.filepath
-        if bpy.data.filepath == filepath:
+        if is_this_current_file(filepath):
             return {'FINISHED'}   
         source_file = bpy.data.filepath
-        if bpy.data.is_saved and bpy.data.is_dirty:
-            bpy.ops.wm.save_mainfile()
+        save_if_possible_and_necessary()
 
-        assets = self.asset_filter_settings.query()
+        assets = self.asset_filter_settings.get_objects_that_satisfy_filters()
 
         asset_names = [a.name for a in assets]
         asset_types = [type(a).__name__ for a in assets]
-            
+
         if os.path.isfile(filepath):
             bpy.ops.wm.open_mainfile(filepath=filepath)
         else:
-            bpy.ops.wm.read_homefile(app_template="")
-            bpy.ops.wm.save_as_mainfile(filepath=filepath)
+            create_new_file_and_set_as_current(filepath)
 
         del assets  # Don't keep this in memory since it has been invalidated by loading a new file
         for name, _type in zip(asset_names, asset_types):
             bpy.app.timers.register(
                 functools.partial(
-                    append,
+                    append_object_from_source,
                     os.path.join(source_file, _type, name), 
                     os.path.join(source_file, _type), 
                     name),
@@ -65,7 +67,7 @@ class ASSET_OT_export(Operator, ExportHelper):
 
         self.asset_filter_settings.draw(layout)
  
-def append(filepath, directory, filename):          
+def append_object_from_source(filepath, directory, filename):          
     bpy.ops.wm.append(
         filepath=filepath,
         directory=directory,

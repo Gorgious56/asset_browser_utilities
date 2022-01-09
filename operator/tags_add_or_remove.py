@@ -48,7 +48,7 @@ class ASSET_OT_export(Operator, ImportHelper):
             if bpy.data.filepath != str(blend):
                 bpy.ops.wm.open_mainfile(filepath=str(blend))
 
-            objs = self.asset_filter_settings.query()
+            objs = self.asset_filter_settings.get_objects_that_satisfy_filters()
             for obj in objs:
                 asset = obj.asset_data
                 asset_tags = asset.tags

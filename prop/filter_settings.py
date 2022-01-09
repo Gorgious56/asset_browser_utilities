@@ -14,7 +14,7 @@ class AssetFilterSettings(PropertyGroup):
         self.filter_selection_allow = filter_selection
         self.filter_types.init()
 
-    def query(self):
+    def get_objects_that_satisfy_filters(self):
         assets = []
 
         self.filter_types.populate(assets)
