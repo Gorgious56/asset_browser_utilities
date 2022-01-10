@@ -45,12 +45,19 @@ class BatchMarkOrUnmarkProperties(PropertyGroup):
         description="When marking assets, automatically generate a preview\nUncheck to mark assets really fast",
     )
     
+    force_previews: BoolProperty(
+        default=False,
+        name="Re-generate Previews",
+        description="Enable to force re-generating previews on all assets without needing to unmark/remark it"
+    )
+    
     def draw(self, layout):
         layout.prop(self, "prevent_backup", icon="TRASH")
         if self.mark:
             layout.prop(self, "overwrite", icon="ASSET_MANAGER")
-            layout.prop(self, "generate_previews", icon="RESTRICT_RENDER_OFF")
-
+            row = layout.row(align=True)
+            row.prop(self, "generate_previews", icon="RESTRICT_RENDER_OFF")
+            row.prop(self, "force_previews", icon="FILE_REFRESH", text="")
 
 
 class ASSET_OT_batch_mark_or_unmark(Operator, ImportHelper):
@@ -103,12 +110,14 @@ class OperatorLogic:
         self.overwrite = operator_settings.overwrite
         self.mark = operator_settings.mark
         self.generate_previews = operator_settings.generate_previews
+        self.force_previews = operator_settings.force_previews
 
         self.filter_settings = filter_settings
 
         self.blends = blends
         self.blend = None
         self.assets = []
+        self.assets_to_only_preview = []
 
     def execute_next_blend(self):
         if not self.blends:
@@ -137,10 +146,16 @@ class OperatorLogic:
         self.blend = self.blends.pop(0)
         open_file_if_different_from_current(str(self.blend))
 
-    def mark_assets(self):    
-        self.assets = [a for a in self.assets if a.asset_data is None or self.overwrite]
+    def mark_assets(self):
+        if not self.overwrite:
+            for i in range(len(self.assets) - 1, -1, -1):
+                if self.assets[i].asset_data is not None:   
+                    asset = self.assets.pop(i)
+                    if self.force_previews:
+                        asset.asset_generate_preview()
+                        self.assets_to_only_preview.append(asset)
 
-        if not self.assets:  # We don't mark any asset, don't bother saving the file
+        if not self.assets and not self.assets_to_only_preview:  # We don't mark any asset, don't bother saving the file
             print("No asset to mark")
             self.execute_next_blend()
             return
@@ -159,19 +174,27 @@ class OperatorLogic:
         
     def sleep_until_previews_are_done(self):
         while self.assets:  # Check if all previews have been generated
-            preview = self.assets[0].preview
-            if not preview:
-                self.assets[0].asset_generate_preview()
-            arr = np.zeros((preview.image_size[0] * preview.image_size[1]) * 4, dtype=np.float32)
-            preview.image_pixels_float.foreach_get(arr)
-            if np.all((arr == 0)):
-                return INTERVAL
-            else:
+            if self.is_preview_generated(self.assets[0]):
                 self.assets.pop(0)
+            else:
+                return INTERVAL                
+        while self.assets_to_only_preview:  # Check if all previews have been generated
+            if self.is_preview_generated(self.assets_to_only_preview[0]):
+                self.assets_to_only_preview.pop(0)
+            else:
+                return INTERVAL
         print("All previews have been generated !")
         self.save_file()
         self.execute_next_blend()
         return None
+
+    def is_preview_generated(self, asset):
+        preview = asset.preview
+        if not preview:
+            asset.asset_generate_preview()
+        arr = np.zeros((preview.image_size[0] * preview.image_size[1]) * 4, dtype=np.float32)
+        preview.image_pixels_float.foreach_get(arr)
+        return np.any((arr != 0))
 
     def mark_assets_without_previews(self):
         [asset.asset_mark() for asset in self.assets]
