@@ -1,31 +1,27 @@
 import functools
-import os
 import numpy as np
 import bpy
 from bpy_extras.io_utils import ImportHelper
 from bpy.props import StringProperty, BoolProperty, PointerProperty
-from bpy.types import Operator
+from bpy.types import Operator, PropertyGroup
 
 from asset_browser_utilities.prop.filter_settings import AssetFilterSettings
 from asset_browser_utilities.prop.path import LibraryExportSettings
 from asset_browser_utilities.ui.message import message_box
-from asset_browser_utilities.helper.path import get_blend_files
+from asset_browser_utilities.core.preferences.helper import write_to_cache, get_from_cache
+from asset_browser_utilities.helper.path import (
+    get_blend_files,
+    save_if_possible_and_necessary,
+    save_file_as,
+    open_file_if_different_from_current,
+)
+
 
 
 INTERVAL = 0.2
 
 
-class ASSET_OT_batch_mark_or_unmark(Operator, ImportHelper):
-    bl_idname = "asset.batch_mark_or_unmark"
-    bl_label = "Batch Mark or Unmark Assets"
-
-    filter_glob: StringProperty(
-        default="",
-        options={"HIDDEN"},
-        maxlen=255,  # Max internal buffer length, longer would be clamped.
-    )
-
-
+class BatchMarkOrUnmarkProperties(PropertyGroup):
     prevent_backup: BoolProperty(
         name="Remove Backup",
         description="Check to automatically delete the creation of backup files when 'Save Versions' is enabled in the preferences\nThis will prevent duplicating files when they are overwritten\nWarning : Backup files ending in .blend1 will be deleted permantently",
@@ -49,7 +45,26 @@ class ASSET_OT_batch_mark_or_unmark(Operator, ImportHelper):
         name="Generate Previews",
         description="When marking assets, automatically generate a preview\nUncheck to mark assets really fast",
     )
+    
+    def draw(self, layout):
+        layout.prop(self, "prevent_backup", icon="TRASH")
+        if self.mark:
+            layout.prop(self, "overwrite", icon="ASSET_MANAGER")
+            layout.prop(self, "generate_previews", icon="RESTRICT_RENDER_OFF")
 
+
+
+class ASSET_OT_batch_mark_or_unmark(Operator, ImportHelper):
+    bl_idname = "asset.batch_mark_or_unmark"
+    bl_label = "Batch Mark or Unmark Assets"
+
+    filter_glob: StringProperty(
+        default="",
+        options={"HIDDEN"},
+        maxlen=255,  # Max internal buffer length, longer would be clamped.
+    )
+
+    operator_settings: PointerProperty(type=BatchMarkOrUnmarkProperties)
     library_export_settings: PointerProperty(type=LibraryExportSettings)
     asset_filter_settings: PointerProperty(type=AssetFilterSettings)
 
@@ -63,19 +78,15 @@ class ASSET_OT_batch_mark_or_unmark(Operator, ImportHelper):
             return {"RUNNING_MODAL"}
 
     def execute(self, context):
-        if bpy.data.is_saved and bpy.data.is_dirty:
-            bpy.ops.wm.save_mainfile()
-        blends = get_blend_files(self)
-
-        settings = {
-            "prevent_backup": self.prevent_backup,
-            "overwrite": self.overwrite,
-            "generate_previews": self.generate_previews,
-            "mark": self.mark,
-            "filter_settings": self.asset_filter_settings
-        }
-
-        do_blends(blends, settings)
+        # We write settings to cache in addon properties because this instance's properties are lost on new file load
+        write_to_cache(self.asset_filter_settings, context)
+        
+        save_if_possible_and_necessary()
+        OperatorLogic(
+            blends=get_blend_files(self), 
+            operator_settings=self.operator_settings,
+            filter_settings=get_from_cache(AssetFilterSettings, context),
+        ).execute_next_blend()
 
         return {"FINISHED"}
 
@@ -83,86 +94,101 @@ class ASSET_OT_batch_mark_or_unmark(Operator, ImportHelper):
         layout = self.layout
 
         self.library_export_settings.draw(layout)
-        layout.prop(self, "prevent_backup", icon="TRASH")
-        if self.mark:
-            layout.prop(self, "overwrite", icon="ASSET_MANAGER")
-            layout.prop(self, "generate_previews", icon="RESTRICT_RENDER_OFF")
-
+        self.operator_settings.draw(layout)
         self.asset_filter_settings.draw(layout)
 
 
-def do_blends(blends, settings, save=None):
-    if save is not None:
-        bpy.ops.wm.save_as_mainfile(filepath=str(save))
-        if settings["prevent_backup"]:
-            backup = str(save) + "1"
-            if os.path.exists(backup):
-                print("Removing backup " + backup)
-                os.remove(backup)
+class OperatorLogic:
+    def __init__(self, blends, operator_settings, filter_settings):
+        self.prevent_backup = operator_settings.prevent_backup
+        self.overwrite = operator_settings.overwrite
+        self.mark = operator_settings.mark
+        self.generate_previews = operator_settings.generate_previews
 
-    if not blends:
-        print("Work completed")
-        message_box(message="Work completed !")
-        return
-    print(f"{len(blends)} file{'s' if len(blends) > 1 else ''} left")
+        self.filter_settings = filter_settings
 
-    blend = blends.pop(0)
-    if bpy.data.filepath != str(blend):
-        bpy.ops.wm.open_mainfile(filepath=str(blend))
+        self.blends = blends
+        self.blend = None
+        self.assets = []
 
-
-    do_blends_callback = lambda _save: do_blends(blends, settings, save=_save)
-
-    assets = settings["filter_settings"].query()
-
-    if settings["mark"]:        
-        assets = [a for a in assets if a.asset_data is None or settings["overwrite"]]
-
-        if not assets:  # We don't mark any asset, don't bother saving the file
-            print("No asset to mark")
-            do_blends_callback(None)
+    def execute_next_blend(self):
+        if not self.blends:
+            print("Work completed")
+            message_box(message="Work completed !")
             return
+        print(f"{len(self.blends)} file{'s' if len(self.blends) > 1 else ''} left")
 
-        if settings["generate_previews"]:
-            for asset in assets:                
-                asset.asset_mark()                
-                asset.asset_generate_preview()
-                print(f"Mark {asset.name}")
-            bpy.app.timers.register(
-                functools.partial(
-                    sleep_until_previews_are_done, 
-                    assets, 
-                    lambda: do_blends_callback(blend))
-            )  
+        self.open_next_blend()
+        self.assets = self.filter_settings.get_objects_that_satisfy_filters()
+
+        # Give slight delay otherwise stack overflow
+        bpy.app.timers.register(self.mark_or_unmark, first_interval=INTERVAL)
+
+    def mark_or_unmark(self):
+        if self.mark:
+            self.mark_assets()
         else:
-            [asset.asset_mark() for asset in assets]
-            print(f"Mark {len(assets)} assets without previews")
-            do_blends_callback(blend)
-                     
-    else:  # Unmark assets
-        assets = [a for a in assets if a.asset_data is not None]
+            self.unmark_assets()
+            self.execute_next_blend()
 
-        if not assets:  # We don't unmark any asset, don't bother saving the file
-            print("No asset to unmark")
-            do_blends_callback(None)
+    def save_file(self):
+        save_file_as(str(self.blend), remove_backup=self.prevent_backup)
+
+    def open_next_blend(self):        
+        self.blend = self.blends.pop(0)
+        open_file_if_different_from_current(str(self.blend))
+
+    def mark_assets(self):    
+        self.assets = [a for a in self.assets if a.asset_data is None or self.overwrite]
+
+        if not self.assets:  # We don't mark any asset, don't bother saving the file
+            print("No asset to mark")
+            self.execute_next_blend()
             return
 
-        for asset in assets:
+        if self.generate_previews:
+            self.mark_assets_with_previews()
+        else:
+            self.mark_assets_without_previews()
+
+    def mark_assets_with_previews(self):
+        for asset in self.assets:                
+            asset.asset_mark()                
+            asset.asset_generate_preview()
+            print(f"Mark {asset.name}")
+        bpy.app.timers.register(self.sleep_until_previews_are_done)
+        
+    def sleep_until_previews_are_done(self):
+        while self.assets:  # Check if all previews have been generated
+            preview = self.assets[0].preview
+            if not preview:
+                self.assets[0].asset_generate_preview()
+            arr = np.zeros((preview.image_size[0] * preview.image_size[1]) * 4, dtype=np.float32)
+            preview.image_pixels_float.foreach_get(arr)
+            if np.all((arr == 0)):
+                return INTERVAL
+            else:
+                self.assets.pop(0)
+        print("All previews have been generated !")
+        self.save_file()
+        self.execute_next_blend()
+        return None
+
+    def mark_assets_without_previews(self):
+        [asset.asset_mark() for asset in self.assets]
+        print(f"Mark {len(self.assets)} assets without previews")
+        self.save_file()
+        self.execute_next_blend()
+
+    def unmark_assets(self):
+        self.assets = [a for a in self.assets if a.asset_data is not None]
+
+        if not self.assets:  # We don't unmark any asset, don't bother saving the file
+            print("No asset to unmark")
+            return
+
+        for asset in self.assets:
             asset.asset_clear()
             print(f"Unmark {asset.name}")
-        do_blends_callback(blend)
 
-
-def sleep_until_previews_are_done(assets, callback):
-    while assets:  # Check if all previews have been generated
-        preview = assets[0].preview
-        arr = np.zeros((preview.image_size[0] * preview.image_size[1]) * 4, dtype=np.float32)
-        preview.image_pixels_float.foreach_get(arr)
-        if np.all((arr == 0)):
-            # print(f"Asset preview for {assets[0].name} was not generated. Waiting for {INTERVAL} seconds")
-            return INTERVAL
-        else:
-            # print(f"Asset preview for {assets[0].name} was generated. Removing it from pool")
-            assets.pop(0)
-    callback()
-    return None
+        self.save_file()

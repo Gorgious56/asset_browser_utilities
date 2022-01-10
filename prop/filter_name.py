@@ -17,6 +17,11 @@ class FilterName(PropertyGroup):
 
     value: StringProperty(name="Name Filter Value", description="Filter assets by name\nLeave empty for no filter")
     
+    def copy(self, other):
+        self.active = other.active
+        self.method = other.method
+        self.value = other.value
+
     def draw(self, layout):        
         box = layout.box()
         box.prop(self, "active", text="Filter By Name", icon="FILTER")

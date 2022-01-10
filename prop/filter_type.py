@@ -23,6 +23,14 @@ class FilterTypes(PropertyGroup):
                 new.value = value
                 new.icon = icon
     
+    def copy(self, other):
+        self.items.clear()
+        for item in other.items:
+            new = self.items.add()
+            new.value = item.value
+            new.name = item.name
+            new.icon = item.icon
+
     def draw(self, layout):        
         box = layout.box()
         box.label(text="Filter By Type", icon="FILTER")

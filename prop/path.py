@@ -15,3 +15,7 @@ class LibraryExportSettings(PropertyGroup):
     def draw(self, layout):        
         if not self.this_file_only:
             layout.prop(self, "recursive", icon="FOLDER_REDIRECT")
+    
+    def copy(self, other):
+        self.this_file_only = other.this_file_only
+        self.recursive = other.recursive

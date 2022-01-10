@@ -29,3 +29,9 @@ class AssetFilterSettings(PropertyGroup):
             layout.prop(self, "filter_selection", text="Only Selected", icon="RESTRICT_SELECT_OFF")
         self.filter_types.draw(layout)
         self.filter_name.draw(layout)
+
+    def copy(self, other):
+        self.filter_types.copy(other.filter_types)
+        self.filter_name.copy(other.filter_name)
+        self.filter_selection = other.filter_selection
+        self.filter_selection_allow = other.filter_selection_allow
