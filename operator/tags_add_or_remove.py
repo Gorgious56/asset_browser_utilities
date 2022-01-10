@@ -9,7 +9,7 @@ from asset_browser_utilities.prop.tag_collection import TagCollection
 from asset_browser_utilities.helper.path import get_blend_files
 
 
-class ASSET_OT_export(Operator, ImportHelper):
+class ASSET_OT_tags_add_or_remove(Operator, ImportHelper):
     bl_idname = "asset.tags_add_or_remove"
     bl_label = "Execute"
 
