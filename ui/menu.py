@@ -49,7 +49,7 @@ class BGABP_MT_this_file(AssetBrowserMenu, bpy.types.Menu):
             unmark_op.library_export_settings.this_file_only = True
             unmark_op.operator_settings.mark = False
             
-            export_op = layout.operator("asset.export", text="Export Assets")
+            export_op = layout.operator("asset.export", text="Export")
 
             add_tags_op = layout.operator("asset.tags_add_or_remove", text="Add Tags")
             add_tags_op.library_export_settings.this_file_only = True

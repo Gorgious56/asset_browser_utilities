@@ -5,7 +5,7 @@ from bpy_extras.io_utils import ExportHelper
 from bpy.types import Operator
 from bpy.props import StringProperty, BoolProperty, EnumProperty, PointerProperty
 
-from asset_browser_utilities.prop.filter_settings import AssetFilterSettings
+from asset_browser_utilities.prop.filter.settings import AssetFilterSettings
 from asset_browser_utilities.helper.path import (
     is_this_current_file, 
     save_if_possible_and_necessary, 
@@ -23,11 +23,11 @@ class ASSET_OT_export(Operator, ExportHelper):
     )
     
     filename_ext = ".blend"   
-     
+
     asset_filter_settings: PointerProperty(type=AssetFilterSettings)
     
     def invoke(self, context, event):
-        self.asset_filter_settings.init(filter_selection=True)
+        self.asset_filter_settings.init(filter_selection=True, filter_assets=True)
         context.window_manager.fileselect_add(self)
         return {"RUNNING_MODAL"}
         
@@ -66,7 +66,8 @@ class ASSET_OT_export(Operator, ExportHelper):
         layout = self.layout
 
         self.asset_filter_settings.draw(layout)
- 
+
+
 def append_object_from_source(filepath, directory, filename):          
     bpy.ops.wm.append(
         filepath=filepath,

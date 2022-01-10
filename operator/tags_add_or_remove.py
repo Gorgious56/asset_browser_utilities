@@ -4,7 +4,7 @@ from bpy.types import Operator
 from bpy.props import StringProperty, BoolProperty, PointerProperty
 
 from asset_browser_utilities.prop.path import LibraryExportSettings
-from asset_browser_utilities.prop.filter_settings import AssetFilterSettings
+from asset_browser_utilities.prop.filter.settings import AssetFilterSettings
 from asset_browser_utilities.prop.tag_collection import TagCollection
 from asset_browser_utilities.helper.path import get_blend_files
 

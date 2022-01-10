@@ -5,7 +5,7 @@ from bpy_extras.io_utils import ImportHelper
 from bpy.props import StringProperty, BoolProperty, PointerProperty
 from bpy.types import Operator, PropertyGroup
 
-from asset_browser_utilities.prop.filter_settings import AssetFilterSettings
+from asset_browser_utilities.prop.filter.settings import AssetFilterSettings
 from asset_browser_utilities.prop.path import LibraryExportSettings
 from asset_browser_utilities.ui.message import message_box
 from asset_browser_utilities.core.preferences.helper import write_to_cache, get_from_cache

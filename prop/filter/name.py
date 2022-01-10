@@ -1,7 +1,6 @@
 from bpy.types import PropertyGroup
 from bpy.props import EnumProperty, StringProperty, BoolProperty
 
-
 class FilterName(PropertyGroup):
     active: BoolProperty(default=False)
 
@@ -16,11 +15,6 @@ class FilterName(PropertyGroup):
     )
 
     value: StringProperty(name="Name Filter Value", description="Filter assets by name\nLeave empty for no filter")
-    
-    def copy(self, other):
-        self.active = other.active
-        self.method = other.method
-        self.value = other.value
 
     def draw(self, layout):        
         box = layout.box()
@@ -29,17 +23,3 @@ class FilterName(PropertyGroup):
             box.prop(self, "value", text="Text")
             row = box.row(align=True)
             row.props_enum(self, "method")
-    
-    def filter(self, items):
-        if self.active:
-            for i in range(len(items) - 1, -1, -1):
-                name = items[i].name
-                if self.method == "Prefix":
-                    if not name.startswith(self.value):
-                        items.pop(i)
-                elif self.method == "Contains":
-                    if self.value not in name:
-                        items.pop(i)
-                elif self.method == "Suffix":
-                    if not name.endswith(self.value):
-                        items.pop(i)
