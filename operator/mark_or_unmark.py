@@ -17,7 +17,6 @@ from asset_browser_utilities.helper.path import (
 )
 
 
-
 INTERVAL = 0.2
 
 

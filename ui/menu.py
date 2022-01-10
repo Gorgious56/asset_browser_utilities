@@ -27,11 +27,11 @@ class BGABP_MT_library(AssetBrowserMenu, bpy.types.Menu):
 
         add_tags_op = layout.operator("asset.tags_add_or_remove", text="Add Tags")
         add_tags_op.library_export_settings.this_file_only = False
-        add_tags_op.add = True        
+        add_tags_op.tag_collection.add = True        
         
         remove_tags_op = layout.operator("asset.tags_add_or_remove", text="Remove Tags")
         remove_tags_op.library_export_settings.this_file_only = False
-        remove_tags_op.add = False
+        remove_tags_op.tag_collection.add = False
 
 
 class BGABP_MT_this_file(AssetBrowserMenu, bpy.types.Menu):
@@ -53,11 +53,11 @@ class BGABP_MT_this_file(AssetBrowserMenu, bpy.types.Menu):
 
             add_tags_op = layout.operator("asset.tags_add_or_remove", text="Add Tags")
             add_tags_op.library_export_settings.this_file_only = True
-            add_tags_op.add = True
+            add_tags_op.tag_collection.add = True
 
             remove_tags_op = layout.operator("asset.tags_add_or_remove", text="Remove Tags")
             remove_tags_op.library_export_settings.this_file_only = True
-            remove_tags_op.add = False
+            remove_tags_op.tag_collection.add = False
         else:
             layout.label(text="Save this file to disk to enable operations", icon="QUESTION")
 

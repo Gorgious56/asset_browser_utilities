@@ -29,6 +29,9 @@ class TagCollection(PropertyGroup):
         set=set_shown_tags,
     )
 
+    remove_all: BoolProperty(name="Remove All", default=False)
+    add: BoolProperty()
+
     def init(self, tags: int = 10):
         # We semi-hardcode number of tags here
         while len(self.items) < tags:
@@ -36,13 +39,17 @@ class TagCollection(PropertyGroup):
 
     def draw(self, layout):
         box = layout.box()
-        row = box.row()
+        row = box.row()            
         split = row.split(factor=0.2)
         split.label(text="Tags")
         row = split.row(align=True)
         row.prop_enum(self, "tag_internal", value="+", icon="ADD", text="")
-        row.prop_enum(self, "tag_internal", value="-", icon="REMOVE", text="")
-        col = box.column(align=True)
-        for i, tag in enumerate(self.items):
-            if i < self.shown_tags:
-                col.prop(tag, "name", text=f"Tag {i + 1}")
+        row.prop_enum(self, "tag_internal", value="-", icon="REMOVE", text="") 
+        row.enabled = not self.remove_all    
+        if not self.add:
+            split.prop(self, "remove_all", toggle=True, icon="TRASH")
+        if not self.remove_all:
+            col = box.column(align=True)
+            for i, tag in enumerate(self.items):
+                if i < self.shown_tags:
+                    col.prop(tag, "name", text=f"Tag {i + 1}")

@@ -24,8 +24,6 @@ class ASSET_OT_export(Operator, ImportHelper):
         name="Overwrite Tags",
         description="If the tag already exists on the asset, do not create a new one",
     )
-    add: BoolProperty()
-
     library_export_settings: PointerProperty(type=LibraryExportSettings)
     asset_filter_settings: PointerProperty(type=AssetFilterSettings)
     tag_collection: PointerProperty(type=TagCollection)
@@ -52,17 +50,21 @@ class ASSET_OT_export(Operator, ImportHelper):
             for obj in objs:
                 asset = obj.asset_data
                 asset_tags = asset.tags
-                if self.add:
+                if self.tag_collection.add:
                     existing_tags = [tag.name for tag in asset_tags]
                     for tag in self.tag_collection.items:
                         if tag.name == "" or (self.overwrite and tag.name in existing_tags):
                             continue
                         asset_tags.new(tag.name)
                 else:
-                    tags_to_remove = [tag.name for tag in self.tag_collection.items if tag.name != ""]
-                    for i in range(len(asset_tags) - 1, -1, -1):
-                        if asset_tags[i].name in tags_to_remove:
+                    if self.tag_collection.remove_all:
+                        for i in range(len(asset_tags) - 1, -1, -1):
                             asset_tags.remove(asset_tags[i])
+                    else:
+                        tags_to_remove = [tag.name for tag in self.tag_collection.items if tag.name != ""]
+                        for i in range(len(asset_tags) - 1, -1, -1):
+                            if asset_tags[i].name in tags_to_remove:
+                                asset_tags.remove(asset_tags[i])
             
             bpy.ops.wm.save_as_mainfile(filepath=str(blend))
 
