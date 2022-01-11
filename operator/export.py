@@ -26,10 +26,16 @@ class ExportProperties(PropertyGroup):
         description="Check to automatically delete the creation of backup files when 'Save Versions' is enabled in the preferences\nThis will prevent duplicating files when they are overwritten\nWarning : Backup files ending in .blend1 will be deleted permantently",
         default=True,
     )
+    overwrite: BoolProperty(
+        name="Overwrite Assets",
+        description="Check to overwrite objects if an object with the same name already exists in target file",
+        default=True,
+    )
 
     def draw(self, layout):
         layout.prop(self, "individual_files")
         layout.prop(self, "prevent_backup", icon="TRASH")
+        layout.prop(self, "overwrite", icon="ASSET_MANAGER")
 
 
 class ASSET_OT_export(Operator, ExportHelper):
@@ -64,30 +70,16 @@ class ASSET_OT_export(Operator, ExportHelper):
         asset_types = [type(a).__name__ for a in assets]
         del assets  # Don't keep this in memory since it will be invalidated by loading a new file
 
-        if self.operator_settings.individual_files:
-            folder = Path(filepath).parent
-            operator_logic = OperatorLogic(
-                asset_names, asset_types, source_file, folder, self.operator_settings.prevent_backup
-            )
-            operator_logic.execute_next()
-            return {"FINISHED"}
-        else:
-            if os.path.isfile(filepath):
-                bpy.ops.wm.open_mainfile(filepath=filepath)
-            else:
-                create_new_file_and_set_as_current(filepath)
-
-            for name, _type in zip(asset_names, asset_types):
-                bpy.app.timers.register(
-                    functools.partial(
-                        append_object_from_source,
-                        os.path.join(source_file, _type, name),
-                        os.path.join(source_file, _type),
-                        name,
-                    ),
-                    first_interval=0.1,
-                )  # Have to delay a bit else context is incorrect
-        save_file(prevent_backup=self.operator_settings.prevent_backup)
+        operator_logic = OperatorLogic(
+            asset_names,
+            asset_types,
+            source_file,
+            filepath,
+            self.operator_settings.prevent_backup,
+            self.operator_settings.overwrite,
+            self.operator_settings.individual_files,
+        )
+        operator_logic.execute()
 
         return {"FINISHED"}
 
@@ -98,16 +90,46 @@ class ASSET_OT_export(Operator, ExportHelper):
 
 
 class OperatorLogic:
-    def __init__(self, asset_names, asset_types, source_file, target_folder, prevent_backup):
+    def __init__(
+        self, asset_names, asset_types, source_file, target_filepath, prevent_backup, overwrite, individual_files
+    ):
         self.asset_names = asset_names
         self.asset_types = asset_types
         self.current_asset_name = ""
         self.current_asset_type = ""
 
         self.source_file = source_file
-        self.target_folder = target_folder
+        self.filepath = target_filepath
+        self.target_folder = Path(self.filepath).parent
 
         self.prevent_backup = prevent_backup
+        self.overwrite = overwrite
+        self.individual_files = individual_files
+
+    def execute(self):
+        if self.individual_files:
+            self.execute_next()
+        else:
+            self.execute_all()
+
+    def execute_all(self):
+        self.open_or_create_file(self.filepath)
+        bpy.app.timers.register(self.append_all_assets_and_save_file, first_interval=0.1)
+
+    def append_all_assets_and_save_file(self):
+        for name, _type in zip(self.asset_names, self.asset_types):
+            self.current_asset_name = name
+            self.current_asset_type = _type
+            if not self.overwrite and item_exists(name, _type):
+                continue
+            self.append_asset()
+        save_file(remove_backup=self.prevent_backup)
+
+    def open_or_create_file(self, filepath):
+        if os.path.isfile(filepath):
+            bpy.ops.wm.open_mainfile(filepath=filepath)
+        else:
+            create_new_file_and_set_as_current(filepath)
 
     def execute_next(self):
         if self.current_asset_name == "":
@@ -117,14 +139,16 @@ class OperatorLogic:
             self.current_asset_name = self.asset_names.pop(0)
             self.current_asset_type = self.asset_types.pop(0)
         new_filepath = os.path.join(self.target_folder, self.current_asset_name + ".blend")
-        if os.path.isfile(new_filepath):
-            bpy.ops.wm.open_mainfile(filepath=new_filepath)
-        else:
-            create_new_file_and_set_as_current(new_filepath)
+        self.open_or_create_file(new_filepath)
 
         bpy.app.timers.register(self.append_asset_and_save_file, first_interval=0.1)
 
     def append_asset_and_save_file(self):
+        if self.overwrite:
+            if item_exists(self.current_asset_name, self.current_asset_type):
+                self.execute_next()
+                return
+
         self.append_asset()
         save_file(remove_backup=self.prevent_backup)
         self.current_asset_name = ""
@@ -132,12 +156,13 @@ class OperatorLogic:
         self.execute_next()
 
     def append_asset(self):
-        append_object_from_source(
-            os.path.join(self.source_file, self.current_asset_type, self.current_asset_name),
-            os.path.join(self.source_file, self.current_asset_type),
-            self.current_asset_name,
+        bpy.ops.wm.append(
+            filepath=os.path.join(self.source_file, self.current_asset_type, self.current_asset_name),
+            directory=os.path.join(self.source_file, self.current_asset_type),
+            filename=self.current_asset_name,
         )
 
 
-def append_object_from_source(filepath, directory, filename):
-    bpy.ops.wm.append(filepath=filepath, directory=directory, filename=filename)
+def item_exists(name, _type):
+    library = getattr(bpy.data, _type.lower() + "s")
+    return library.get(name) is not None
