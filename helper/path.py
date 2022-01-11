@@ -30,6 +30,15 @@ def create_new_file_and_set_as_current(filepath):
     save_file_as(filepath)
 
 
+def save_file(remove_backup=False):
+    bpy.ops.wm.save_mainfile()
+    if remove_backup:
+        backup = bpy.data.filepath + "1"
+        if os.path.exists(backup):
+            print("Removing backup " + backup)
+            os.remove(backup)
+
+
 def save_file_as(filepath: str, remove_backup=False):
     bpy.ops.wm.save_as_mainfile(filepath=filepath)
     if remove_backup:
