@@ -6,7 +6,7 @@ bl_info = {
     "author": "Gorgious",
     "description": "A collection of Asset Browers QOL utilities",
     "blender": (3, 0, 0),
-    "version": (0, 0, 9),
+    "version": (0, 0, 10),
     "location": "",
     "warning": "",
     "category": "Import-Export",
