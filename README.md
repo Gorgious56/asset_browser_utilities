@@ -7,7 +7,9 @@ Available tools :
 
 2. __Export Assets__
 
-3. __Batch Add or Remove tags__ (new inV0.0.7)
+3. __Batch Add or Remove tags__
+
+4. __Batch setup image previews from disk__
 
 
 ___ __Batch Mark (or Unmark) Objects as Assets__ ___
@@ -58,8 +60,15 @@ All filters are additive.
 You can choose an existing file to append the assets to, or a new filepath will create a brand new file with the assets.
 
 
-___ __Batch Add or Remove tags__ ___ (new in V0.0.7)
+___ __Batch Add or Remove tags__ ___
 
 Batch add or remove tags from assets in current file or external library. You can filter assets like the other tools. Up to 10 tags can be added or removed at a time :
 
 ![image](https://user-images.githubusercontent.com/25156105/148535455-bedbfb62-9767-473c-95cc-c27a2b88ed63.png)
+
+
+___ __Batch Mark (or Unmark) Objects as Assets__ ___
+
+select a folder on disk containing previews and the addon will automatically match the image files named like assets in the file with their preview.
+
+![BES_49](https://user-images.githubusercontent.com/25156105/149016391-3b026feb-cd40-42a9-a0f3-3894faa99dc9.gif)
