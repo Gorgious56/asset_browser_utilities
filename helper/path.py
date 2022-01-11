@@ -42,3 +42,21 @@ def save_file_as(filepath: str, remove_backup=False):
 def open_file_if_different_from_current(filepath: str):
     if not is_this_current_file(filepath):
         bpy.ops.wm.open_mainfile(filepath=filepath)
+
+
+def get_catalog_file(filepath):
+    folder = Path(filepath).parent
+    return os.path.join(folder, "blender_assets.cats.txt")
+
+
+def has_catalogs(filepath):
+    return os.path.exists(get_catalog_file(filepath))
+
+
+def read_lines_sequentially(filepath):
+    with open(filepath) as file:
+        while True:
+            try:
+                yield next(file)
+            except StopIteration:
+                break
