@@ -58,6 +58,9 @@ class BGABP_MT_this_file(AssetBrowserMenu, bpy.types.Menu):
             remove_tags_op = layout.operator("asset.tags_add_or_remove", text="Remove Tags")
             remove_tags_op.library_export_settings.this_file_only = True
             remove_tags_op.tag_collection.add = False
+            
+            export_op = layout.operator("asset.export", text="Export", icon="EXPORT")
+            load_previews_from_disk = layout.operator("asset.load_previews_from_disk", text="Load Previews From Disk", icon="SEQ_PREVIEW")
         else:
             layout.label(text="Save this file to disk to enable operations", icon="QUESTION")
 

@@ -15,6 +15,12 @@ def get_blend_files(settings):
         else:
             return [fp for fp in folder.glob("*.blend") if fp.is_file()]
 
+def get_supported_images(folder, recursive):
+    for ext in bpy.path.extensions_image:
+        if recursive:
+            yield [fp for fp in folder.glob("**/*" + ext) if fp.is_file()]
+        else:
+            yield [fp for fp in folder.glob("*" + ext) if fp.is_file()]
 
 def is_this_current_file(filepath):
     return bpy.data.filepath == filepath
