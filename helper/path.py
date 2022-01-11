@@ -25,7 +25,7 @@ def save_if_possible_and_necessary():
         bpy.ops.wm.save_mainfile()
 
 
-def create_new_file_and_set_as_current(filepath):    
+def create_new_file_and_set_as_current(filepath):
     bpy.ops.wm.read_homefile(app_template="")
     save_file_as(filepath)
 

@@ -42,7 +42,7 @@ class ASSET_OT_tags_add_or_remove(Operator, ImportHelper):
         if bpy.data.is_saved and bpy.data.is_dirty:
             bpy.ops.wm.save_mainfile()
         blends = get_blend_files(self)
-        for blend in blends:            
+        for blend in blends:
             if bpy.data.filepath != str(blend):
                 bpy.ops.wm.open_mainfile(filepath=str(blend))
 
@@ -65,7 +65,7 @@ class ASSET_OT_tags_add_or_remove(Operator, ImportHelper):
                         for i in range(len(asset_tags) - 1, -1, -1):
                             if asset_tags[i].name in tags_to_remove:
                                 asset_tags.remove(asset_tags[i])
-            
+
             bpy.ops.wm.save_as_mainfile(filepath=str(blend))
 
         return {"FINISHED"}

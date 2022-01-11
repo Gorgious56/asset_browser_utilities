@@ -1,6 +1,7 @@
 from bpy.types import PropertyGroup
 from bpy.props import EnumProperty, StringProperty, BoolProperty
 
+
 class FilterName(PropertyGroup):
     active: BoolProperty(default=False)
 
@@ -16,10 +17,10 @@ class FilterName(PropertyGroup):
 
     value: StringProperty(name="Name Filter Value", description="Filter assets by name\nLeave empty for no filter")
 
-    def draw(self, layout):        
+    def draw(self, layout):
         box = layout.box()
         box.prop(self, "active", text="Filter By Name", icon="FILTER")
-        if self.active:        
+        if self.active:
             box.prop(self, "value", text="Text")
             row = box.row(align=True)
             row.props_enum(self, "method")

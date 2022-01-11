@@ -15,7 +15,7 @@ class FilterTypes(PropertyGroup):
     MAPPING = {
         "actions": {
             "icon": "ACTION",
-        },        
+        },
         "materials": {
             "icon": "MATERIAL",
         },
@@ -42,9 +42,9 @@ class FilterTypes(PropertyGroup):
             target = self.items.add()
             copy_simple_property_group(source, target)
 
-    def draw(self, layout):        
+    def draw(self, layout):
         box = layout.box()
         box.label(text="Filter By Type", icon="FILTER")
-        col = box.column(align=True)        
+        col = box.column(align=True)
         for filter_type in self.items:
             col.prop(filter_type, "value", text=filter_type.name.title(), toggle=True, icon=filter_type.icon)

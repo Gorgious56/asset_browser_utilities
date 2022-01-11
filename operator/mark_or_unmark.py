@@ -44,13 +44,13 @@ class BatchMarkOrUnmarkProperties(PropertyGroup):
         name="Generate Previews",
         description="When marking assets, automatically generate a preview\nUncheck to mark assets really fast",
     )
-    
+
     force_previews: BoolProperty(
         default=False,
         name="Re-generate Previews",
-        description="Enable to force re-generating previews on all assets without needing to unmark/remark it"
+        description="Enable to force re-generating previews on all assets without needing to unmark/remark it",
     )
-    
+
     def draw(self, layout):
         layout.prop(self, "prevent_backup", icon="TRASH")
         if self.mark:
@@ -86,10 +86,10 @@ class ASSET_OT_batch_mark_or_unmark(Operator, ImportHelper):
     def execute(self, context):
         # We write settings to cache in addon properties because this instance's properties are lost on new file load
         write_to_cache(self.asset_filter_settings, context)
-        
+
         save_if_possible_and_necessary()
         OperatorLogic(
-            blends=get_blend_files(self), 
+            blends=get_blend_files(self),
             operator_settings=self.operator_settings,
             filter_settings=get_from_cache(AssetFilterSettings, context),
         ).execute_next_blend()
@@ -142,14 +142,14 @@ class OperatorLogic:
     def save_file(self):
         save_file_as(str(self.blend), remove_backup=self.prevent_backup)
 
-    def open_next_blend(self):        
+    def open_next_blend(self):
         self.blend = self.blends.pop(0)
         open_file_if_different_from_current(str(self.blend))
 
     def mark_assets(self):
         if not self.overwrite:
             for i in range(len(self.assets) - 1, -1, -1):
-                if self.assets[i].asset_data is not None:   
+                if self.assets[i].asset_data is not None:
                     asset = self.assets.pop(i)
                     if self.force_previews:
                         asset.asset_generate_preview()
@@ -166,18 +166,18 @@ class OperatorLogic:
             self.mark_assets_without_previews()
 
     def mark_assets_with_previews(self):
-        for asset in self.assets:                
-            asset.asset_mark()                
+        for asset in self.assets:
+            asset.asset_mark()
             asset.asset_generate_preview()
             print(f"Mark {asset.name}")
         bpy.app.timers.register(self.sleep_until_previews_are_done)
-        
+
     def sleep_until_previews_are_done(self):
         while self.assets:  # Check if all previews have been generated
             if self.is_preview_generated(self.assets[0]):
                 self.assets.pop(0)
             else:
-                return INTERVAL                
+                return INTERVAL
         while self.assets_to_only_preview:  # Check if all previews have been generated
             if self.is_preview_generated(self.assets_to_only_preview[0]):
                 self.assets_to_only_preview.pop(0)

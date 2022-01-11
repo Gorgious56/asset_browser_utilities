@@ -39,13 +39,13 @@ class TagCollection(PropertyGroup):
 
     def draw(self, layout):
         box = layout.box()
-        row = box.row()            
+        row = box.row()
         split = row.split(factor=0.2)
         split.label(text="Tags")
         row = split.row(align=True)
         row.prop_enum(self, "tag_internal", value="+", icon="ADD", text="")
-        row.prop_enum(self, "tag_internal", value="-", icon="REMOVE", text="") 
-        row.enabled = not self.remove_all    
+        row.prop_enum(self, "tag_internal", value="-", icon="REMOVE", text="")
+        row.enabled = not self.remove_all
         if not self.add:
             split.prop(self, "remove_all", toggle=True, icon="TRASH")
         if not self.remove_all:
