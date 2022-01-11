@@ -25,6 +25,7 @@ If unchecked, items that are not yet assets will be exported and marked as asset
     def init(self, filter_selection=False, filter_assets=False):
         self.filter_selection.allow = filter_selection
         self.filter_assets_allow = filter_assets
+        self.filter_assets = filter_assets
         self.filter_types.init()
 
     def get_objects_that_satisfy_filters(self):

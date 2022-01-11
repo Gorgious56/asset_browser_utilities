@@ -1,4 +1,3 @@
-import functools
 import numpy as np
 import bpy
 from bpy_extras.io_utils import ImportHelper
