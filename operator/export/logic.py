@@ -11,7 +11,7 @@ from asset_browser_utilities.ui.message import message_box
 
 class OperatorLogic:
     def __init__(
-        self, asset_names, asset_types, source_file, target_filepath, prevent_backup, overwrite, individual_files
+        self, asset_names, asset_types, source_file, target_filepath, remove_backup, overwrite, individual_files
     ):
         self.asset_names = asset_names
         self.asset_types = asset_types
@@ -22,7 +22,7 @@ class OperatorLogic:
         self.filepath = target_filepath
         self.target_folder = Path(self.filepath).parent
 
-        self.prevent_backup = prevent_backup
+        self.remove_backup = remove_backup
         self.overwrite = overwrite
         self.individual_files = individual_files
 
@@ -63,12 +63,12 @@ class OperatorLogic:
             if not self.overwrite and item_exists(name, _type):
                 continue
             self.append_asset()
-        save_file(remove_backup=self.prevent_backup)
+        save_file(remove_backup=self.remove_backup)
 
     def append_asset_and_save_file_and_execute_next(self):
         if self.overwrite or not item_exists(self.current_asset_name, self.current_asset_type):
             self.append_asset()
-            save_file(remove_backup=self.prevent_backup)
+            save_file(remove_backup=self.remove_backup)
         self.current_asset_name = ""
         self.current_asset_type = ""
         self.execute_next()

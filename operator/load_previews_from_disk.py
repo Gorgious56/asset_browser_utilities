@@ -24,11 +24,11 @@ class ASSET_OT_load_previews_from_disk(Operator, ImportHelper):
             type=OperatorFileListElement,
             options={'HIDDEN', 'SKIP_SAVE'},
         )
-    library_export_settings: PointerProperty(type=LibraryExportSettings)
+    library_settings: PointerProperty(type=LibraryExportSettings)
 
     def invoke(self, context, event):
         self.filepath = ""
-        self.library_export_settings.this_file_only = False
+        self.library_settings.this_file_only = False
         context.window_manager.fileselect_add(self)
         return {"RUNNING_MODAL"}
 
@@ -43,7 +43,7 @@ class ASSET_OT_load_previews_from_disk(Operator, ImportHelper):
     def load_from_folder(self):        
         folder = Path(self.filepath)
         files = []
-        for extension in get_supported_images(folder, self.library_export_settings.recursive):
+        for extension in get_supported_images(folder, self.library_settings.recursive):
             files.extend(extension)
         files_basenames_without_ext = [os.path.splitext(os.path.basename(file))[0] for file in files]
         for asset in self.assets:
@@ -71,4 +71,4 @@ class ASSET_OT_load_previews_from_disk(Operator, ImportHelper):
 
     def draw(self, context):
         layout = self.layout
-        self.library_export_settings.draw(layout)
+        self.library_settings.draw(layout)

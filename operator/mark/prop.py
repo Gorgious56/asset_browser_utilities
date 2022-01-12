@@ -3,11 +3,6 @@ from bpy.props import BoolProperty
 
 
 class OperatorProperties(PropertyGroup):
-    prevent_backup: BoolProperty(
-        name="Remove Backup",
-        description="Check to automatically delete the creation of backup files when 'Save Versions' is enabled in the preferences\nThis will prevent duplicating files when they are overwritten\nWarning : Backup files ending in .blend1 will be deleted permantently",
-        default=True,
-    )
     overwrite: BoolProperty(
         name="Overwrite assets",
         description="Check to re-mark assets and re-generate preview if the item is already an asset",
@@ -30,7 +25,6 @@ class OperatorProperties(PropertyGroup):
     )
 
     def draw(self, layout):
-        layout.prop(self, "prevent_backup", icon="TRASH")
         if self.mark:
             layout.prop(self, "overwrite", icon="ASSET_MANAGER")
             row = layout.row(align=True)

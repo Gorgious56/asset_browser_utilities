@@ -3,8 +3,9 @@ from bpy.types import PropertyGroup
 from bpy.props import BoolProperty, IntProperty, CollectionProperty, EnumProperty
 
 
-class TagName(PropertyGroup):
-    pass
+class TagName(PropertyGroup):   
+    def is_empty(self):
+        return self.name == ""
 
 
 def set_shown_tags(self, value):

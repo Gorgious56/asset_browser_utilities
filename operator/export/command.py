@@ -11,7 +11,7 @@ if __name__ == "__main__":
     asset_types = parser.get_arg_values("asset_types", "source_file")
     source_file = parser.get_arg_value("source_file")
     filepath = parser.get_arg_value("filepath")
-    prevent_backup = parser.get_arg_value("prevent_backup", bool)
+    remove_backup = parser.get_arg_value("remove_backup", bool)
     overwrite = parser.get_arg_value("overwrite", bool)
     individual_files = parser.get_arg_value("individual_files", bool)
 
@@ -20,7 +20,7 @@ if __name__ == "__main__":
         asset_types,
         source_file,
         filepath,
-        prevent_backup,
+        remove_backup,
         overwrite,
         individual_files,
     )

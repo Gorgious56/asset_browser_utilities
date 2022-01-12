@@ -40,8 +40,8 @@ class FilterSelection(PropertyGroup):
     allow: BoolProperty(default=False)
 
     def draw(self, layout):
-        box = layout.box()
         if self.allow:
+            box = layout.box()
             box.prop(self, "active", icon="RESTRICT_SELECT_OFF")
             # row = box.row(align=True)
             # if self.active:

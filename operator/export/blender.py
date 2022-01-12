@@ -6,7 +6,7 @@ from bpy_extras.io_utils import ExportHelper
 from bpy.types import Operator, PropertyGroup
 from bpy.props import StringProperty, BoolProperty, EnumProperty, PointerProperty
 
-from asset_browser_utilities.prop.filter.settings import AssetFilterSettings
+from asset_browser_utilities.operator.helper import FilterLibraryOperator
 from asset_browser_utilities.helper.path import (
     is_this_current_file,
     save_if_possible_and_necessary,
@@ -19,11 +19,6 @@ class ExportProperties(PropertyGroup):
     individual_files: BoolProperty(
         name="Place Assets in Individual Files",
         description="If this is ON, each asset will be exported to an individual file in the target directory",
-    )
-    prevent_backup: BoolProperty(
-        name="Remove Backup",
-        description="Check to automatically delete the creation of backup files when 'Save Versions' is enabled in the preferences\nThis will prevent duplicating files when they are overwritten\nWarning : Backup files ending in .blend1 will be deleted permantently",
-        default=True,
     )
     overwrite: BoolProperty(
         name="Overwrite Assets",
@@ -39,11 +34,10 @@ class ExportProperties(PropertyGroup):
     def draw(self, layout):
         layout.prop(self, "open_in_new_blender_instance", icon="WINDOW")
         layout.prop(self, "individual_files", icon="NEWFOLDER")
-        layout.prop(self, "prevent_backup", icon="TRASH")
         layout.prop(self, "overwrite", icon="ASSET_MANAGER")
 
 
-class ASSET_OT_export(Operator, ExportHelper):
+class ASSET_OT_export(Operator, ExportHelper, FilterLibraryOperator):
     bl_idname = "asset.export"
     bl_label = "Export Assets"
 
@@ -56,7 +50,6 @@ class ASSET_OT_export(Operator, ExportHelper):
     filename_ext = ".blend"
 
     operator_settings: PointerProperty(type=ExportProperties)
-    asset_filter_settings: PointerProperty(type=AssetFilterSettings)
 
     def invoke(self, context, event):
         self.asset_filter_settings.init(filter_selection=True, filter_assets=True)
@@ -87,7 +80,7 @@ class ASSET_OT_export(Operator, ExportHelper):
             caller.add_arg_value("asset_types", _type)
         caller.add_arg_value("source_file", bpy.data.filepath)
         caller.add_arg_value("filepath", self.filepath)
-        caller.add_arg_value("prevent_backup", self.operator_settings.prevent_backup)
+        caller.add_arg_value("remove_backup", self.library_settings.remove_backup)
         caller.add_arg_value("overwrite", self.operator_settings.overwrite)
         caller.add_arg_value("individual_files", self.operator_settings.individual_files)
         caller.call()
@@ -99,7 +92,7 @@ class ASSET_OT_export(Operator, ExportHelper):
             self.asset_types,
             bpy.data.filepath,
             self.filepath,
-            self.operator_settings.prevent_backup,
+            self.library_settings.remove_backup,
             self.operator_settings.overwrite,
             self.operator_settings.individual_files,
         )

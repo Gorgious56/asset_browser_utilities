@@ -10,8 +10,8 @@ from asset_browser_utilities.helper.path import (
 class OperatorLogic:
     INTERVAL = 0.2
 
-    def __init__(self, blends, operator_settings, filter_settings):
-        self.prevent_backup = operator_settings.prevent_backup
+    def __init__(self, blends, operator_settings, filter_settings, library_settings):
+        self.remove_backup = library_settings.remove_backup
         self.overwrite = operator_settings.overwrite
         self.generate_previews = operator_settings.generate_previews
         self.force_previews = operator_settings.force_previews
@@ -53,7 +53,7 @@ class OperatorLogicUnmark(OperatorLogic):
             asset.asset_clear()
 
     def save_file(self):
-        save_file_as(str(self.blend), remove_backup=self.prevent_backup)
+        save_file_as(str(self.blend), remove_backup=self.remove_backup)
 
     def open_next_blend(self):
         self.blend = self.blends.pop(0)
@@ -81,7 +81,7 @@ class OperatorLogicMark(OperatorLogic):
             self.mark_assets_without_previews()
 
     def save_file(self):
-        save_file_as(str(self.blend), remove_backup=self.prevent_backup)
+        save_file_as(str(self.blend), remove_backup=self.remove_backup)
 
     def open_next_blend(self):
         self.blend = self.blends.pop(0)
