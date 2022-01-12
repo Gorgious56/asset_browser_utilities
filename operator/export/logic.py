@@ -46,7 +46,7 @@ class OperatorLogic:
         new_filepath = os.path.join(self.target_folder, self.current_asset_name + ".blend")
         self.open_or_create_file(new_filepath)
 
-        bpy.app.timers.register(self.append_asset_and_save_file, first_interval=0.1)
+        bpy.app.timers.register(self.append_asset_and_save_file_and_execute_next, first_interval=0.1)
 
     def open_or_create_file(self, filepath=None):
         if filepath is None:
@@ -65,7 +65,7 @@ class OperatorLogic:
             self.append_asset()
         save_file(remove_backup=self.prevent_backup)
 
-    def append_asset_and_save_file(self):
+    def append_asset_and_save_file_and_execute_next(self):
         if self.overwrite or not item_exists(self.current_asset_name, self.current_asset_type):
             self.append_asset()
             save_file(remove_backup=self.prevent_backup)

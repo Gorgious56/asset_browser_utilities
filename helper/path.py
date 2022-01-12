@@ -15,12 +15,14 @@ def get_blend_files(settings):
         else:
             return [fp for fp in folder.glob("*.blend") if fp.is_file()]
 
+
 def get_supported_images(folder, recursive):
-    for ext in bpy.path.extensions_image:
+    for ext in bpy.path.extensions_image:  # All supported image extensions in Blender
         if recursive:
             yield [fp for fp in folder.glob("**/*" + ext) if fp.is_file()]
         else:
             yield [fp for fp in folder.glob("*" + ext) if fp.is_file()]
+
 
 def is_this_current_file(filepath):
     return bpy.data.filepath == filepath
@@ -36,22 +38,23 @@ def create_new_file_and_set_as_current(filepath):
     save_file_as(filepath)
 
 
+def remove_backup_file(filepath):
+    backup = filepath + "1"
+    if os.path.exists(backup):
+        print("Removing backup " + backup)
+        os.remove(backup)
+
+
 def save_file(remove_backup=False):
-    bpy.ops.wm.save_mainfile()
+    save_if_possible_and_necessary()
     if remove_backup:
-        backup = bpy.data.filepath + "1"
-        if os.path.exists(backup):
-            print("Removing backup " + backup)
-            os.remove(backup)
+        remove_backup_file(bpy.data.filepath)
 
 
 def save_file_as(filepath: str, remove_backup=False):
     bpy.ops.wm.save_as_mainfile(filepath=filepath)
     if remove_backup:
-        backup = filepath + "1"
-        if os.path.exists(backup):
-            print("Removing backup " + backup)
-            os.remove(backup)
+        remove_backup_file(filepath)
 
 
 def open_file_if_different_from_current(filepath: str):

@@ -1,5 +1,4 @@
-import json
-import subprocess
+
 import os
 from pathlib import Path
 import bpy
@@ -13,6 +12,7 @@ from asset_browser_utilities.helper.path import (
     save_if_possible_and_necessary,
 )
 from .logic import OperatorLogic
+from asset_browser_utilities.helper.command import CommandCaller
 
 
 class ExportProperties(PropertyGroup):
@@ -30,14 +30,14 @@ class ExportProperties(PropertyGroup):
         description="Check to overwrite objects if an object with the same name already exists in target file",
         default=True,
     )
-    open_in_new_file: BoolProperty(
+    open_in_new_blender_instance: BoolProperty(
         default=True,
         name="Open New Blender Instance",
         description="If checked, the file where the assets will be exported will be opened in a new blender instance",
     )
 
     def draw(self, layout):
-        layout.prop(self, "open_in_new_file", icon="WINDOW")
+        layout.prop(self, "open_in_new_blender_instance", icon="WINDOW")
         layout.prop(self, "individual_files", icon="NEWFOLDER")
         layout.prop(self, "prevent_backup", icon="TRASH")
         layout.prop(self, "overwrite", icon="ASSET_MANAGER")
@@ -64,48 +64,46 @@ class ASSET_OT_export(Operator, ExportHelper):
         return {"RUNNING_MODAL"}
 
     def execute(self, context):
-        filepath = self.filepath
-        if is_this_current_file(filepath):
+        if is_this_current_file(self.filepath):
             return {"FINISHED"}
-        source_file = bpy.data.filepath
+        self.populate_asset_and_asset_names()
+        if self.operator_settings.open_in_new_blender_instance:
+            self.execute_in_new_blender_instance()
+        else:
+            self.execute_in_this_instance()
+        return {"FINISHED"}
 
+    def populate_asset_and_asset_names(self):        
         assets = self.asset_filter_settings.get_objects_that_satisfy_filters()
-        asset_names = [a.name for a in assets]
-        asset_types = [type(a).__name__ for a in assets]
+        self.asset_names = [a.name for a in assets]
+        self.asset_types = [type(a).__name__ for a in assets]
         del assets  # Don't keep this in memory since it will be invalidated by loading a new file
 
-        if self.operator_settings.open_in_new_file:
-            script_file = Path(os.path.realpath(__file__))
-            directory = script_file.parent
-            command_path = os.path.join(directory, "command.py")
-
-            call = "blender --python " + json.dumps(command_path) + " --"
-            call += " --asset_names"
-            for name in asset_names:
-                call += f" {json.dumps(name)}"
-            call += " --asset_types"
-            for _type in asset_types:
-                call += f" {json.dumps(_type)}"
-            call += " --source_file " + json.dumps(source_file)
-            call += " --filepath " + json.dumps(self.filepath)
-            call += " --prevent_backup " + json.dumps(self.operator_settings.prevent_backup)
-            call += " --overwrite " + json.dumps(self.operator_settings.overwrite)
-            call += " --individual_files " + json.dumps(self.operator_settings.individual_files)
-            subprocess.call(call)
-        else:
-            save_if_possible_and_necessary()
-            operator_logic = OperatorLogic(
-                asset_names,
-                asset_types,
-                source_file,
-                filepath,
-                self.operator_settings.prevent_backup,
-                self.operator_settings.overwrite,
-                self.operator_settings.individual_files,
-            )
-            operator_logic.execute()
-
-        return {"FINISHED"}
+    def execute_in_new_blender_instance(self):
+        caller = CommandCaller(Path(os.path.realpath(__file__)))
+        for name in self.asset_names:
+            caller.add_arg_value("asset_names", name)
+        for _type in self.asset_types:
+            caller.add_arg_value("asset_types", _type)
+        caller.add_arg_value("source_file", bpy.data.filepath)
+        caller.add_arg_value("filepath", self.filepath)
+        caller.add_arg_value("prevent_backup", self.operator_settings.prevent_backup)
+        caller.add_arg_value("overwrite", self.operator_settings.overwrite)
+        caller.add_arg_value("individual_files", self.operator_settings.individual_files)
+        caller.call()
+    
+    def execute_in_this_instance(self):        
+        save_if_possible_and_necessary()
+        operator_logic = OperatorLogic(
+            self.asset_names,
+            self.asset_types,
+            bpy.data.filepath,
+            self.filepath,
+            self.operator_settings.prevent_backup,
+            self.operator_settings.overwrite,
+            self.operator_settings.individual_files,
+        )
+        operator_logic.execute()
 
     def draw(self, context):
         layout = self.layout

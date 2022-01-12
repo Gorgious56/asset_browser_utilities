@@ -1,6 +1,14 @@
 import bpy
 
 
+CONTAINERS = (
+        "actions",
+        "materials",
+        "objects",
+        "worlds",
+    )
+
+
 def item_exists(name, _type):
     library = getattr(bpy.data, _type.lower() + "s")
     return library.get(name) is not None
@@ -8,12 +16,7 @@ def item_exists(name, _type):
 
 def get_all_assets_in_file():
     assets = []
-    for container in (
-        "actions",
-        "materials",
-        "objects",
-        "worlds",
-    ):
+    for container in CONTAINERS:
         assets.extend([a for a in getattr(bpy.data, container) if a.asset_data])
     return assets
 

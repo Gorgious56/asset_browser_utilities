@@ -33,32 +33,38 @@ class ASSET_OT_load_previews_from_disk(Operator, ImportHelper):
         return {"RUNNING_MODAL"}
 
     def execute(self, context):
-        assets = get_all_assets_in_file()
+        self.assets = get_all_assets_in_file()
         if self.is_only_folder_selected():
-            folder = Path(self.filepath)            
-            files = []
-            for extension in get_supported_images(folder, self.library_export_settings.recursive):
-                files.extend(extension)
-            files_basenames_without_ext = [os.path.splitext(os.path.basename(file))[0] for file in files]
-            for asset in assets:
-                asset_name = asset.name
-                try:
-                    index = files_basenames_without_ext.index(asset_name)
-                    generate_asset_preview(str(files[index]), asset)
-                except ValueError:
-                    pass
+            self.load_from_folder()
         else:
-            folder = Path(self.filepath).parent
-            files = [f.name for f in self.files]
-            files_basenames_without_ext = [os.path.splitext(file)[0] for file in files]
-            for asset in assets:
-                asset_name = asset.name
-                try:                    
-                    index = files_basenames_without_ext.index(asset_name)                    
-                    generate_asset_preview(os.path.join(folder, files[index]), asset)
-                except ValueError:
-                    pass
+            self.load_from_selected_files()
         return {"FINISHED"}
+    
+    def load_from_folder(self):        
+        folder = Path(self.filepath)
+        files = []
+        for extension in get_supported_images(folder, self.library_export_settings.recursive):
+            files.extend(extension)
+        files_basenames_without_ext = [os.path.splitext(os.path.basename(file))[0] for file in files]
+        for asset in self.assets:
+            asset_name = asset.name
+            try:
+                index = files_basenames_without_ext.index(asset_name)
+                generate_asset_preview(str(files[index]), asset)
+            except ValueError:
+                pass
+
+    def load_from_selected_files(self):
+        folder = Path(self.filepath).parent
+        files = [f.name for f in self.files]
+        files_basenames_without_ext = [os.path.splitext(file)[0] for file in files]
+        for asset in self.assets:
+            asset_name = asset.name
+            try:
+                index = files_basenames_without_ext.index(asset_name)                    
+                generate_asset_preview(os.path.join(folder, files[index]), asset)
+            except ValueError:
+                pass
 
     def is_only_folder_selected(self):
         return self.files[0].name == ""
