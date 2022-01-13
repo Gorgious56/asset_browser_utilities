@@ -18,7 +18,7 @@ class OperatorLogic:
         self.current_asset_name = ""
         self.current_asset_type = ""
 
-        self.source_file = source_file
+        self.source_file = Path(str(source_file))
         self.filepath = target_filepath
         self.target_folder = Path(self.filepath).parent
 
@@ -43,7 +43,7 @@ class OperatorLogic:
                 return
             self.current_asset_name = self.asset_names.pop(0)
             self.current_asset_type = self.asset_types.pop(0)
-        new_filepath = os.path.join(self.target_folder, self.current_asset_name + ".blend")
+        new_filepath = self.target_folder / (self.current_asset_name + ".blend")
         self.open_or_create_file(new_filepath)
 
         bpy.app.timers.register(self.append_asset_and_save_file_and_execute_next, first_interval=0.1)
@@ -52,9 +52,9 @@ class OperatorLogic:
         if filepath is None:
             filepath = self.filepath
         if os.path.isfile(filepath):
-            bpy.ops.wm.open_mainfile(filepath=filepath)
+            bpy.ops.wm.open_mainfile(filepath=str(filepath))
         else:
-            create_new_file_and_set_as_current(filepath)
+            create_new_file_and_set_as_current(str(filepath))
 
     def append_all_assets_and_save_file(self):
         for name, _type in zip(self.asset_names, self.asset_types):
@@ -75,7 +75,7 @@ class OperatorLogic:
 
     def append_asset(self):
         bpy.ops.wm.append(
-            filepath=os.path.join(self.source_file, self.current_asset_type, self.current_asset_name),
-            directory=os.path.join(self.source_file, self.current_asset_type),
+            filepath=str(self.source_file / self.current_asset_type / self.current_asset_name),
+            directory=str(self.source_file / self.current_asset_type),
             filename=self.current_asset_name,
         )

@@ -62,7 +62,7 @@ class ASSET_OT_load_previews_from_disk(Operator, ImportHelper):
             asset_name = asset.name
             try:
                 index = files_basenames_without_ext.index(asset_name)                    
-                generate_asset_preview(os.path.join(folder, files[index]), asset)
+                generate_asset_preview(str(folder / files[index]), asset)
             except ValueError:
                 pass
 

@@ -22,6 +22,6 @@ def get_all_assets_in_file():
 
 def generate_asset_preview(filepath, asset=None):
     if asset is None:
-        bpy.ops.ed.lib_id_load_custom_preview(filepath=filepath)
+        bpy.ops.ed.lib_id_load_custom_preview(filepath=str(filepath))
     else:
-        bpy.ops.ed.lib_id_load_custom_preview({"id": asset}, filepath=filepath)
+        bpy.ops.ed.lib_id_load_custom_preview({"id": asset}, filepath=str(filepath))

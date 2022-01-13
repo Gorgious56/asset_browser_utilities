@@ -70,7 +70,6 @@ class ASSET_OT_export(Operator, ExportHelper, FilterLibraryOperator):
         assets = self.asset_filter_settings.get_objects_that_satisfy_filters()
         self.asset_names = [a.name for a in assets]
         self.asset_types = [type(a).__name__ for a in assets]
-        del assets  # Don't keep this in memory since it will be invalidated by loading a new file
 
     def execute_in_new_blender_instance(self):
         caller = CommandCaller(Path(os.path.realpath(__file__)))

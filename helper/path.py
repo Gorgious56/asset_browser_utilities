@@ -35,7 +35,7 @@ def save_if_possible_and_necessary():
 
 def create_new_file_and_set_as_current(filepath):
     bpy.ops.wm.read_homefile(app_template="")
-    save_file_as(filepath)
+    save_file_as(str(filepath))
 
 
 def remove_backup_file(filepath):
@@ -46,25 +46,25 @@ def remove_backup_file(filepath):
 
 
 def save_file(remove_backup=False):
-    save_if_possible_and_necessary()
+    bpy.ops.wm.save_mainfile()
     if remove_backup:
         remove_backup_file(bpy.data.filepath)
 
 
 def save_file_as(filepath: str, remove_backup=False):
-    bpy.ops.wm.save_as_mainfile(filepath=filepath)
+    bpy.ops.wm.save_as_mainfile(filepath=str(filepath))
     if remove_backup:
         remove_backup_file(filepath)
 
 
 def open_file_if_different_from_current(filepath: str):
     if not is_this_current_file(filepath):
-        bpy.ops.wm.open_mainfile(filepath=filepath)
+        bpy.ops.wm.open_mainfile(filepath=str(filepath))
 
 
 def get_catalog_file(filepath):
     folder = Path(filepath).parent
-    return os.path.join(folder, "blender_assets.cats.txt")
+    return folder / "blender_assets.cats.txt"
 
 
 def has_catalogs(filepath):
