@@ -8,7 +8,4 @@ from .prop import Cache
 class AssetBrowserUtilitiesAddonPreferences(AddonPreferences):
     bl_idname = "asset_browser_utilities"
 
-    cache_operator: PointerProperty(type=Cache)
-
-    def draw(self, context):
-        pass
+    cache_operator: PointerProperty(type=Cache, options={"HIDDEN"})
