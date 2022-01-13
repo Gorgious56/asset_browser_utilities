@@ -1,6 +1,7 @@
 from bpy.types import PropertyGroup
 from bpy.props import EnumProperty, StringProperty, BoolProperty
 
+
 class Sources:
     VIEW_3D = "VIEW_3D"
     ASSET_BROWSER = "ASSETS"

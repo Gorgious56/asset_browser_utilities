@@ -21,9 +21,9 @@ class ASSET_OT_load_previews_from_disk(Operator, ImportHelper):
     )
     # https://docs.blender.org/api/current/bpy.types.OperatorFileListElement.html
     files: CollectionProperty(
-            type=OperatorFileListElement,
-            options={'HIDDEN', 'SKIP_SAVE'},
-        )
+        type=OperatorFileListElement,
+        options={"HIDDEN", "SKIP_SAVE"},
+    )
     library_settings: PointerProperty(type=LibraryExportSettings)
 
     def invoke(self, context, event):
@@ -39,8 +39,8 @@ class ASSET_OT_load_previews_from_disk(Operator, ImportHelper):
         else:
             self.load_from_selected_files()
         return {"FINISHED"}
-    
-    def load_from_folder(self):        
+
+    def load_from_folder(self):
         folder = Path(self.filepath)
         files = []
         for extension in get_supported_images(folder, self.library_settings.recursive):
@@ -61,7 +61,7 @@ class ASSET_OT_load_previews_from_disk(Operator, ImportHelper):
         for asset in self.assets:
             asset_name = asset.name
             try:
-                index = files_basenames_without_ext.index(asset_name)                    
+                index = files_basenames_without_ext.index(asset_name)
                 generate_asset_preview(str(folder / files[index]), asset)
             except ValueError:
                 pass

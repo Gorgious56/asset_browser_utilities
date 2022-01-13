@@ -2,11 +2,11 @@ import bpy
 
 
 CONTAINERS = (
-        "actions",
-        "materials",
-        "objects",
-        "worlds",
-    )
+    "actions",
+    "materials",
+    "objects",
+    "worlds",
+)
 
 
 def item_exists(name, _type):
@@ -19,6 +19,7 @@ def get_all_assets_in_file():
     for container in CONTAINERS:
         assets.extend([a for a in getattr(bpy.data, container) if a.asset_data])
     return assets
+
 
 def generate_asset_preview(filepath, asset=None):
     if asset is None:

@@ -3,7 +3,7 @@ from bpy.types import PropertyGroup
 from bpy.props import BoolProperty, IntProperty, CollectionProperty, EnumProperty
 
 
-class TagName(PropertyGroup):   
+class TagName(PropertyGroup):
     def is_empty(self):
         return self.name == ""
 

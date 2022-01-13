@@ -2,11 +2,14 @@ from bpy.props import PointerProperty
 from asset_browser_utilities.prop.filter.settings import AssetFilterSettings
 from asset_browser_utilities.prop.path import LibraryExportSettings
 
+
 class FilterOperator:
     asset_filter_settings: PointerProperty(type=AssetFilterSettings)
 
+
 class LibraryOperator:
     library_settings: PointerProperty(type=LibraryExportSettings)
+
 
 class FilterLibraryOperator(FilterOperator, LibraryOperator):
     def _invoke(self, context, remove_backup=True, filter_assets=False):

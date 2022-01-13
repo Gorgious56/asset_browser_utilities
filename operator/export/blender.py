@@ -1,4 +1,3 @@
-
 import os
 from pathlib import Path
 import bpy
@@ -66,7 +65,7 @@ class ASSET_OT_export(Operator, ExportHelper, FilterLibraryOperator):
             self.execute_in_this_instance()
         return {"FINISHED"}
 
-    def populate_asset_and_asset_names(self):        
+    def populate_asset_and_asset_names(self):
         assets = self.asset_filter_settings.get_objects_that_satisfy_filters()
         self.asset_names = [a.name for a in assets]
         self.asset_types = [type(a).__name__ for a in assets]
@@ -83,8 +82,8 @@ class ASSET_OT_export(Operator, ExportHelper, FilterLibraryOperator):
         caller.add_arg_value("overwrite", self.operator_settings.overwrite)
         caller.add_arg_value("individual_files", self.operator_settings.individual_files)
         caller.call()
-    
-    def execute_in_this_instance(self):        
+
+    def execute_in_this_instance(self):
         save_if_possible_and_necessary()
         operator_logic = OperatorLogic(
             self.asset_names,

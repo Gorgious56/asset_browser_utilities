@@ -1,10 +1,7 @@
 import numpy as np
 import bpy
 from asset_browser_utilities.ui.message import message_box
-from asset_browser_utilities.helper.path import (
-    open_file_if_different_from_current,
-    save_file_as
-)
+from asset_browser_utilities.helper.path import open_file_if_different_from_current, save_file_as
 
 
 class OperatorLogic:
@@ -40,11 +37,11 @@ class OperatorLogic:
 class OperatorLogicUnmark(OperatorLogic):
     def execute_one_file_and_the_next_when_finished(self):
         self.populate_assets()
-        if self.assets:            
+        if self.assets:
             self.unmark_assets()
             self.save_file()
         self.execute_next_blend()
-    
+
     def populate_assets(self):
         self.assets = [a for a in self.assets if a.asset_data is not None]
 

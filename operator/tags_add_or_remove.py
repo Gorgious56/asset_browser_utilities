@@ -6,13 +6,13 @@ from asset_browser_utilities.prop.tag_collection import TagCollection
 from asset_browser_utilities.helper.path import (
     get_blend_files,
     save_file_as,
-    save_if_possible_and_necessary, 
+    save_if_possible_and_necessary,
     open_file_if_different_from_current,
 )
 from asset_browser_utilities.operator.helper import FilterLibraryOperator
 
 
-class BatchAddOrRemoveTagsOperator:    
+class BatchAddOrRemoveTagsOperator:
     filter_glob: StringProperty(
         default="*.blend",
         options={"HIDDEN"},
@@ -29,14 +29,14 @@ class BatchAddOrRemoveTagsOperator:
             self.execute_on_blend(blend)
         return {"FINISHED"}
 
-    def execute_on_blend(self, filepath):        
+    def execute_on_blend(self, filepath):
         open_file_if_different_from_current(filepath)
         objs = self.asset_filter_settings.get_objects_that_satisfy_filters()
         for obj in objs:
             self.execute_on_obj(obj)
         save_file_as(str(filepath), remove_backup=self.library_settings.remove_backup)
 
-    def execute_on_obj(self, obj):        
+    def execute_on_obj(self, obj):
         asset = obj.asset_data
         asset_tags = asset.tags
         self.execute_tags(asset_tags)
@@ -47,6 +47,7 @@ class BatchAddOrRemoveTagsOperator:
         self.tag_collection.draw(layout)
         self.asset_filter_settings.draw(layout)
 
+
 class ASSET_OT_batch_add_tags(Operator, ImportHelper, BatchAddOrRemoveTagsOperator, FilterLibraryOperator):
     bl_idname = "asset.batch_add_tags"
     bl_label = "Add tags"
@@ -55,13 +56,14 @@ class ASSET_OT_batch_add_tags(Operator, ImportHelper, BatchAddOrRemoveTagsOperat
         self.tag_collection.add = True
         self.tag_collection.init(tags=self.MAX_TAGS)
         return self._invoke(context, filter_assets=True)
-    
+
     def execute_tags(self, asset_tags):
         existing_tags = [tag.name for tag in asset_tags]
         for tag in self.tag_collection.items:
             if tag.is_empty() or tag.name in existing_tags:
                 continue
             asset_tags.new(tag.name)
+
 
 class ASSET_OT_batch_remove_tags(Operator, ImportHelper, BatchAddOrRemoveTagsOperator, FilterLibraryOperator):
     bl_idname = "asset.batch_remove_tags"
@@ -86,4 +88,3 @@ class ASSET_OT_batch_remove_tags(Operator, ImportHelper, BatchAddOrRemoveTagsOpe
         for i in range(len(asset_tags) - 1, -1, -1):
             if asset_tags[i].name in tags_to_remove:
                 asset_tags.remove(asset_tags[i])
-
