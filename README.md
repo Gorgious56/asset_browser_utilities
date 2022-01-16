@@ -11,6 +11,8 @@ Available tools :
 
 4. __Batch setup image previews from disk__
 
+5. __Batch Generate Asset Previews__
+
 
 ___ __Batch Mark (or Unmark) Objects as Assets__ ___
 
@@ -67,8 +69,17 @@ Batch add or remove tags from assets in current file or external library. You ca
 ![image](https://user-images.githubusercontent.com/25156105/148535455-bedbfb62-9767-473c-95cc-c27a2b88ed63.png)
 
 
-___ __Batch Mark (or Unmark) Objects as Assets__ ___
+___ __Batch Load Asset Previews From Disk__ ___
 
-select a folder on disk containing previews and the addon will automatically match the image files named like assets in the file with their preview.
+Select a folder on disk containing previews and the addon will automatically match the image files named like assets in the file with their preview.
 
 ![BES_49](https://user-images.githubusercontent.com/25156105/149016391-3b026feb-cd40-42a9-a0f3-3894faa99dc9.gif)
+
+
+___ __Batch Generate Asset Previews__ ___
+
+Generate Asset Previews without modifying any other property on existing assets. Same filtering options as other operators apply.
+
+![image](https://user-images.githubusercontent.com/25156105/149673006-21e60465-d85c-4594-bba2-f047dae9f609.png)
+
+
