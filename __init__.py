@@ -6,10 +6,11 @@ bl_info = {
     "author": "Gorgious",
     "description": "A collection of Asset Browers QOL utilities",
     "blender": (3, 0, 0),
-    "version": (0, 0, 10),
+    "version": (0, 0, 11),
     "location": "",
     "warning": "",
     "category": "Import-Export",
+    "doc_url": "https://github.com/Gorgious56/asset_browser_utilities/blob/master/README.md",
 }
 
 
