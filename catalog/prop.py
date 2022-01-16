@@ -2,8 +2,7 @@ import bpy
 from bpy.types import PropertyGroup
 from bpy.props import EnumProperty, StringProperty, BoolProperty
 
-from asset_browser_utilities.file.path import has_catalogs
-from asset_browser_utilities.catalog.helper import get_catalogs
+from asset_browser_utilities.catalog.helper import get_catalogs, has_catalogs
 
 
 class FilterCatalog(PropertyGroup):

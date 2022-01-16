@@ -10,7 +10,7 @@ from asset_browser_utilities.file.path import (
     is_this_current_file,
     save_if_possible_and_necessary,
 )
-from .helper import OperatorLogic
+from .helper import BatchExecute
 from asset_browser_utilities.console.builder import CommandBuilder
 
 
@@ -85,7 +85,7 @@ class ASSET_OT_export(Operator, ExportHelper, FilterLibraryOperator):
 
     def execute_in_this_instance(self):
         save_if_possible_and_necessary()
-        operator_logic = OperatorLogic(
+        operator_logic = BatchExecute(
             self.asset_names,
             self.asset_types,
             bpy.data.filepath,

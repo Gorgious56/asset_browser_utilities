@@ -18,15 +18,9 @@ class OperatorProperties(PropertyGroup):
         name="Generate Previews",
         description="When marking assets, automatically generate a preview\nUncheck to mark assets really fast",
     )
-    force_previews: BoolProperty(
-        default=False,
-        name="Re-generate Previews",
-        description="Enable to force re-generating previews on all assets without needing to unmark/remark it",
-    )
 
     def draw(self, layout):
         if self.mark:
             layout.prop(self, "overwrite", icon="ASSET_MANAGER")
             row = layout.row(align=True)
             row.prop(self, "generate_previews", icon="RESTRICT_RENDER_OFF")
-            row.prop(self, "force_previews", icon="FILE_REFRESH", text="")

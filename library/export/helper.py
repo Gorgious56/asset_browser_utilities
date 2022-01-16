@@ -6,10 +6,10 @@ from asset_browser_utilities.file.path import (
     create_new_file_and_set_as_current,
     save_file,
 )
-from asset_browser_utilities.ui.message import message_box
+from asset_browser_utilities.core.ui.message import message_box
 
 
-class OperatorLogic:
+class BatchExecute:
     def __init__(
         self, asset_names, asset_types, source_file, target_filepath, remove_backup, overwrite, individual_files
     ):

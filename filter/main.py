@@ -48,6 +48,9 @@ If unchecked, items that are not yet assets will be exported and marked as asset
         self.filter_catalog.draw(layout)
 
     def copy(self, other):
-        copy_simple_property_group(other.filter_name, self.filter_name)
-        self.filter_types.copy(other.filter_types)
         copy_simple_property_group(other, self)
+
+        self.filter_types.copy(other.filter_types)
+        copy_simple_property_group(other.filter_name, self.filter_name)
+        copy_simple_property_group(other.filter_selection, self.filter_selection)
+        copy_simple_property_group(other.filter_catalog, self.filter_catalog)

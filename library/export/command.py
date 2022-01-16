@@ -1,4 +1,4 @@
-from asset_browser_utilities.operator.export.logic import OperatorLogic
+from asset_browser_utilities.library.export.helper import BatchExecute
 from asset_browser_utilities.console.parser import ArgumentsParser
 
 if __name__ == "__main__":
@@ -15,7 +15,7 @@ if __name__ == "__main__":
     overwrite = parser.get_arg_value("overwrite", bool)
     individual_files = parser.get_arg_value("individual_files", bool)
 
-    operator_logic = OperatorLogic(
+    operator_logic = BatchExecute(
         asset_names,
         asset_types,
         source_file,
