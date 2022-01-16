@@ -1,12 +1,12 @@
 from bpy.types import PropertyGroup
 from bpy.props import BoolProperty, PointerProperty
 
-from asset_browser_utilities.prop.filter.type import FilterTypes
-from asset_browser_utilities.prop.filter.name import FilterName
-from asset_browser_utilities.prop.filter.selection import FilterSelection
-from asset_browser_utilities.prop.filter.catalog import FilterCatalog
-from asset_browser_utilities.prop.filter.container import AssetContainer
-from asset_browser_utilities.helper.prop import copy_simple_property_group
+from asset_browser_utilities.filter.type import FilterTypes
+from asset_browser_utilities.filter.name import FilterName
+from asset_browser_utilities.filter.selection import FilterSelection
+from asset_browser_utilities.filter.container import AssetContainer
+from asset_browser_utilities.catalog.prop import FilterCatalog
+from asset_browser_utilities.core.helper import copy_simple_property_group
 
 
 class AssetFilterSettings(PropertyGroup):

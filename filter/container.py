@@ -1,7 +1,7 @@
 from collections import defaultdict
 import bpy
 
-from asset_browser_utilities.prop.filter.selection import Sources as SelectionSources
+from asset_browser_utilities.filter.selection import Sources as SelectionSources
 
 
 class AssetContainer:

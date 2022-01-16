@@ -1,8 +1,8 @@
 from bpy.types import PropertyGroup
 from bpy.props import PointerProperty
 
-from asset_browser_utilities.prop.filter.settings import AssetFilterSettings
-from asset_browser_utilities.prop.path import LibraryExportSettings
+from asset_browser_utilities.filter.main import AssetFilterSettings
+from asset_browser_utilities.library.path import LibraryExportSettings
 
 
 class Cache(PropertyGroup):

@@ -5,9 +5,9 @@ from bpy_extras.io_utils import ImportHelper
 from bpy.types import Operator, OperatorFileListElement
 from bpy.props import StringProperty, CollectionProperty, PointerProperty
 
-from asset_browser_utilities.helper.library import get_all_assets_in_file, generate_asset_preview
-from asset_browser_utilities.prop.path import LibraryExportSettings
-from asset_browser_utilities.helper.path import get_supported_images
+from asset_browser_utilities.library.helper import get_all_assets_in_file, generate_asset_preview
+from asset_browser_utilities.library.path import LibraryExportSettings
+from asset_browser_utilities.file.path import get_supported_images
 
 
 class ASSET_OT_load_previews_from_disk(Operator, ImportHelper):

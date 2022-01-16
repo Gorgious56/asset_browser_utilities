@@ -1,5 +1,5 @@
 from asset_browser_utilities.operator.export.logic import OperatorLogic
-from asset_browser_utilities.helper.command import ArgumentsParser
+from asset_browser_utilities.console.parser import ArgumentsParser
 
 if __name__ == "__main__":
     import sys

@@ -1,7 +1,7 @@
 from bpy.types import PropertyGroup
 from bpy.props import BoolProperty, StringProperty, CollectionProperty
 
-from asset_browser_utilities.helper.prop import copy_simple_property_group
+from asset_browser_utilities.core.helper import copy_simple_property_group
 
 
 class FilterType(PropertyGroup):

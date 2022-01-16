@@ -1,7 +1,7 @@
 import numpy as np
 import bpy
 from asset_browser_utilities.ui.message import message_box
-from asset_browser_utilities.helper.path import open_file_if_different_from_current, save_file_as
+from asset_browser_utilities.file.path import open_file_if_different_from_current, save_file_as
 
 
 class OperatorLogic:
@@ -67,7 +67,9 @@ class OperatorLogicMark(OperatorLogic):
                         asset.asset_generate_preview()
                         self.assets_to_only_preview.append(asset)
 
-        if not self.assets and not self.assets_to_only_preview:  # We don't mark any asset, don't bother saving the file
+        if (
+            not self.assets and not self.assets_to_only_preview
+        ):  # We don't mark any asset, don't bother saving the file
             print("No asset to mark")
             self.execute_next_blend()
             return
@@ -89,9 +91,9 @@ class OperatorLogicMark(OperatorLogic):
             asset.asset_mark()
             asset.asset_generate_preview()
             print(f"Mark {asset.name}")
-        bpy.app.timers.register(self.sleep_until_previews_are_done)
+        bpy.app.timers.register(self.sleep_until_previews_are_done_and_execute_next_file)
 
-    def sleep_until_previews_are_done(self):
+    def sleep_until_previews_are_done_and_execute_next_file(self):
         while self.assets:  # Check if all previews have been generated
             if self.is_preview_generated(self.assets[0]):
                 self.assets.pop(0)

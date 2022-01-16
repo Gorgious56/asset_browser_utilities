@@ -67,10 +67,6 @@ def get_catalog_file(filepath):
     return folder / "blender_assets.cats.txt"
 
 
-def has_catalogs(filepath):
-    return os.path.exists(get_catalog_file(filepath))
-
-
 def read_lines_sequentially(filepath):
     with open(filepath) as file:
         while True:

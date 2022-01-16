@@ -2,14 +2,14 @@ from bpy_extras.io_utils import ImportHelper
 from bpy.types import Operator
 from bpy.props import StringProperty, PointerProperty
 
-from asset_browser_utilities.prop.tag_collection import TagCollection
-from asset_browser_utilities.helper.path import (
+from asset_browser_utilities.tag.tag_collection import TagCollection
+from asset_browser_utilities.file.path import (
     get_blend_files,
     save_file_as,
     save_if_possible_and_necessary,
     open_file_if_different_from_current,
 )
-from asset_browser_utilities.operator.helper import FilterLibraryOperator
+from asset_browser_utilities.core.operator.helper import FilterLibraryOperator
 
 
 class BatchAddOrRemoveTagsOperator:

@@ -2,15 +2,15 @@ from bpy_extras.io_utils import ImportHelper
 from bpy.props import StringProperty, PointerProperty
 from bpy.types import Operator
 
-from asset_browser_utilities.prop.filter.settings import AssetFilterSettings
+from asset_browser_utilities.filter.main import AssetFilterSettings
 from asset_browser_utilities.core.preferences.helper import write_to_cache, get_from_cache
-from asset_browser_utilities.helper.path import (
+from asset_browser_utilities.file.path import (
     get_blend_files,
     save_if_possible_and_necessary,
 )
-from asset_browser_utilities.operator.helper import FilterLibraryOperator
+from asset_browser_utilities.core.operator.helper import FilterLibraryOperator
 from .prop import OperatorProperties
-from .logic import OperatorLogicMark, OperatorLogicUnmark
+from .helper import OperatorLogicMark, OperatorLogicUnmark
 
 
 class BatchMarkOrUnmarkOperator(FilterLibraryOperator):
@@ -49,6 +49,7 @@ class ASSET_OT_batch_mark(Operator, ImportHelper, BatchMarkOrUnmarkOperator):
     logic_class = OperatorLogicMark
 
     def invoke(self, context, event):
+        self.operator_settings.mark = True
         return self._invoke(context)
 
 

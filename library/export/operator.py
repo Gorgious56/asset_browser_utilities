@@ -5,13 +5,13 @@ from bpy_extras.io_utils import ExportHelper
 from bpy.types import Operator, PropertyGroup
 from bpy.props import StringProperty, BoolProperty, EnumProperty, PointerProperty
 
-from asset_browser_utilities.operator.helper import FilterLibraryOperator
-from asset_browser_utilities.helper.path import (
+from asset_browser_utilities.core.operator.helper import FilterLibraryOperator
+from asset_browser_utilities.file.path import (
     is_this_current_file,
     save_if_possible_and_necessary,
 )
-from .logic import OperatorLogic
-from asset_browser_utilities.helper.command import CommandCaller
+from .helper import OperatorLogic
+from asset_browser_utilities.console.builder import CommandBuilder
 
 
 class ExportProperties(PropertyGroup):
@@ -71,7 +71,7 @@ class ASSET_OT_export(Operator, ExportHelper, FilterLibraryOperator):
         self.asset_types = [type(a).__name__ for a in assets]
 
     def execute_in_new_blender_instance(self):
-        caller = CommandCaller(Path(os.path.realpath(__file__)))
+        caller = CommandBuilder(Path(os.path.realpath(__file__)))
         for name in self.asset_names:
             caller.add_arg_value("asset_names", name)
         for _type in self.asset_types:
