@@ -62,11 +62,6 @@ def open_file_if_different_from_current(filepath: str):
         bpy.ops.wm.open_mainfile(filepath=str(filepath))
 
 
-def get_catalog_file(filepath):
-    folder = Path(filepath).parent
-    return folder / "blender_assets.cats.txt"
-
-
 def read_lines_sequentially(filepath):
     with open(filepath) as file:
         while True:
