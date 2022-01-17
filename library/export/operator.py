@@ -2,38 +2,17 @@ import os
 from pathlib import Path
 import bpy
 from bpy_extras.io_utils import ExportHelper
-from bpy.types import Operator, PropertyGroup
-from bpy.props import StringProperty, BoolProperty, EnumProperty, PointerProperty
+from bpy.types import Operator
+from bpy.props import StringProperty, PointerProperty
 
 from asset_browser_utilities.core.operator.helper import FilterLibraryOperator
+from asset_browser_utilities.console.builder import CommandBuilder
 from asset_browser_utilities.file.path import (
     is_this_current_file,
     save_if_possible_and_necessary,
 )
 from .helper import BatchExecute
-from asset_browser_utilities.console.builder import CommandBuilder
-
-
-class ExportProperties(PropertyGroup):
-    individual_files: BoolProperty(
-        name="Place Assets in Individual Files",
-        description="If this is ON, each asset will be exported to an individual file in the target directory",
-    )
-    overwrite: BoolProperty(
-        name="Overwrite Assets",
-        description="Check to overwrite objects if an object with the same name already exists in target file",
-        default=True,
-    )
-    open_in_new_blender_instance: BoolProperty(
-        default=True,
-        name="Open New Blender Instance",
-        description="If checked, the file where the assets will be exported will be opened in a new blender instance",
-    )
-
-    def draw(self, layout):
-        layout.prop(self, "open_in_new_blender_instance", icon="WINDOW")
-        layout.prop(self, "individual_files", icon="NEWFOLDER")
-        layout.prop(self, "overwrite", icon="ASSET_MANAGER")
+from .prop import ExportProperties
 
 
 class ASSET_OT_export(Operator, ExportHelper, FilterLibraryOperator):
