@@ -13,6 +13,10 @@ Available tools :
 
 5. __Batch Generate Asset Previews__
 
+7. __Batch Move To or Remove From Catalog__
+
+8. __Batch Set Author or Description__
+
 
 ___ __Batch Mark (or Unmark) Objects as Assets__ ___
 
@@ -81,5 +85,19 @@ ___ __Batch Generate Asset Previews__ ___
 Generate Asset Previews without modifying any other property on existing assets. Same filtering options as other operators apply.
 
 ![image](https://user-images.githubusercontent.com/25156105/149673006-21e60465-d85c-4594-bba2-f047dae9f609.png)
+
+
+___ __Batch Move To or Remove From Catalog__ ___
+
+Move Filtered assets to catalog (and create catalog file if it doesn't exist) or remove all filtered assets from catalog
+
+![image](https://user-images.githubusercontent.com/25156105/149837335-8f120930-2e6c-42f1-afee-67411ef8cc9c.png)
+
+___ __Batch Set Author or Description__ ___
+
+Set Author or Description on filter assets. Leave field empty to remove instead.
+
+![image](https://user-images.githubusercontent.com/25156105/149837406-74dbc775-56a8-44d3-9569-768781baab6b.png)
+
 
 
