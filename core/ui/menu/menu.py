@@ -33,6 +33,7 @@ def draw_shared_menus(layout, infix):
     layout.menu(f"ABU_MT_{infix}_previews", icon="SEQ_PREVIEW")
     layout.menu(f"ABU_MT_{infix}_catalogs", icon="OUTLINER_COLLECTION")
     layout.menu(f"ABU_MT_{infix}_author", icon="USER")
+    layout.menu(f"ABU_MT_{infix}_description", icon="FILE_TEXT")
 
 
 class ABU_MT_menu(Menu):
