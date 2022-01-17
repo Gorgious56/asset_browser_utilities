@@ -28,8 +28,8 @@ class ABU_MT_this_file(Menu, FileMenu):
 
 
 def draw_shared_menus(layout, infix):
-    layout.menu(f"ABU_MT_{infix}_mark", icon="ASSET_MANAGER")
-    layout.menu(f"ABU_MT_{infix}_tags", icon="MOD_TINT")
+    layout.menu(f"ABU_MT_{infix}_assets", icon="ASSET_MANAGER")
+    layout.menu(f"ABU_MT_{infix}_tags", icon="BOOKMARKS")
     layout.menu(f"ABU_MT_{infix}_previews", icon="SEQ_PREVIEW")
 
 
