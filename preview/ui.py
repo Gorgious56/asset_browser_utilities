@@ -1,5 +1,5 @@
 from bpy.types import Menu
-from .prop import FileMenu, LibraryMenu
+from asset_browser_utilities.core.ui.menu.prop import FileMenu, LibraryMenu
 
 
 class ABU_MT_library_previews(Menu, LibraryMenu):
