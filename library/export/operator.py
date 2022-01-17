@@ -47,7 +47,7 @@ class ASSET_OT_export(Operator, ExportHelper, FilterLibraryOperator):
     def populate_asset_and_asset_names(self):
         assets = self.asset_filter_settings.get_objects_that_satisfy_filters()
         self.asset_names = [a.name for a in assets]
-        self.asset_types = [type(a).__name__ for a in assets]
+        self.asset_types = [(type(a).__name__.lower() + "s") for a in assets]
 
     def execute_in_new_blender_instance(self):
         caller = CommandBuilder(Path(os.path.realpath(__file__)))

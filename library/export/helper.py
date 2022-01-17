@@ -74,8 +74,13 @@ class BatchExecute:
         self.execute_next()
 
     def append_asset(self):
-        bpy.ops.wm.append(
-            filepath=str(self.source_file / self.current_asset_type / self.current_asset_name),
-            directory=str(self.source_file / self.current_asset_type),
-            filename=self.current_asset_name,
-        )
+        # https://blender.stackexchange.com/a/33998/86891
+        with bpy.data.libraries.load(str(self.source_file)) as (data_from, data_to):
+            library_to = getattr(data_to, self.current_asset_type)
+            library_to.append(self.current_asset_name)
+        library = getattr(bpy.data, self.current_asset_type)
+        obj = library.get(self.current_asset_name)
+        if self.current_asset_type == "objects":
+            bpy.context.scene.collection.objects.link(obj)
+        else:
+            obj.use_fake_user = True
