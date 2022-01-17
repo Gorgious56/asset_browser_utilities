@@ -20,7 +20,7 @@ class BatchGeneratePreviews(BatchExecute):
 class OperatorProperties(PropertyGroup):
     overwrite: BoolProperty(
         name="Overwrite Previews",
-        description="Check to re-gegenrate previews of assets that already have one",
+        description="Check to re-generate previews of assets that already have one",
         default=False,
     )
 
