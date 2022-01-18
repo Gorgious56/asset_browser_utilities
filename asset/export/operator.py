@@ -15,7 +15,7 @@ from .helper import BatchExecute
 from .prop import ExportProperties
 
 
-class ASSET_OT_export(Operator, ExportHelper, FilterLibraryOperator):
+class ASSET_OT_batch_export(Operator, ExportHelper, FilterLibraryOperator):
     "Export Assets"
     bl_idname = "asset.batch_export"
     bl_label = "Export Assets"

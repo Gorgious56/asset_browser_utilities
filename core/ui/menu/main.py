@@ -14,7 +14,6 @@ class ABU_MT_submenu(Menu):
             self.draw_shared_menus(context)
         else:
             if bpy.data.is_saved:
-                layout.operator("asset.batch_export", text="Export", icon="EXPORT")
                 self.draw_shared_menus(context)
             else:
                 layout.label(text="Save this file to disk to enable operations", icon="QUESTION")

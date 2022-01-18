@@ -12,3 +12,5 @@ class ABU_MT_assets(Menu):
         mark_op.library_settings.this_file_only = this_file_only
         unmark_op = layout.operator("asset.batch_unmark", text="Unmark", icon="TRASH")
         unmark_op.library_settings.this_file_only = this_file_only
+        if this_file_only:
+            layout.operator("asset.batch_export", text="Export", icon="EXPORT")

@@ -24,6 +24,7 @@ class BatchExecute:
         if not self.blends:
             print("Work completed")
             message_box(message="Work completed !")
+            self.callback(bpy.context)
             return
         print(f"{len(self.blends)} file{'s' if len(self.blends) > 1 else ''} left")
 
