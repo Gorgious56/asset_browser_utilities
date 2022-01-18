@@ -1,3 +1,6 @@
+from pathlib import Path
+
+import bpy
 from bpy.types import PropertyGroup
 from bpy.props import BoolProperty, StringProperty, CollectionProperty
 
@@ -32,3 +35,15 @@ class LibraryExportSettings(PropertyGroup):
     def copy(self, other):
         self.this_file_only = other.this_file_only
         self.recursive = other.recursive
+
+    def get_blend_files(self, blend_filepath=None):
+        if self.this_file_only:
+            return [bpy.data.filepath]
+        else:
+            folder = Path(blend_filepath)
+            if not folder.is_dir():
+                folder = folder.parent
+            if self.recursive:
+                return [fp for fp in folder.glob("**/*.blend") if fp.is_file()]
+            else:
+                return [fp for fp in folder.glob("*.blend") if fp.is_file()]

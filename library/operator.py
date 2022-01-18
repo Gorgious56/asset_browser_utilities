@@ -3,10 +3,7 @@ from bpy.props import StringProperty
 
 from asset_browser_utilities.filter.main import AssetFilterSettings
 from asset_browser_utilities.core.preferences.helper import write_to_cache, get_from_cache
-from asset_browser_utilities.file.path import (
-    get_blend_files,
-    save_if_possible_and_necessary,
-)
+from asset_browser_utilities.file.path import save_if_possible_and_necessary
 
 
 class BatchOperator(FilterLibraryOperator):
@@ -22,7 +19,7 @@ class BatchOperator(FilterLibraryOperator):
         write_to_cache(self.asset_filter_settings, context)
         save_if_possible_and_necessary()
         self.logic_class(
-            blends=get_blend_files(self),
+            blends=self.library_settings.get_blend_files(self.filepath),
             operator_settings=self.operator_settings,
             filter_settings=get_from_cache(AssetFilterSettings, context),
             library_settings=self.library_settings,

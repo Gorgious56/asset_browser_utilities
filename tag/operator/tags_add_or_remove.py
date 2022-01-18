@@ -4,7 +4,6 @@ from bpy.props import StringProperty, PointerProperty
 
 from asset_browser_utilities.tag.tag_collection import TagCollection
 from asset_browser_utilities.file.path import (
-    get_blend_files,
     save_file_as,
     save_if_possible_and_necessary,
     open_file_if_different_from_current,
@@ -24,7 +23,7 @@ class BatchAddOrRemoveTagsOperator:
 
     def execute(self, context):
         save_if_possible_and_necessary()
-        blends = get_blend_files(self)
+        blends = self.library_settings.get_blend_files(self.filepath)
         for blend in blends:
             self.execute_on_blend(blend)
         return {"FINISHED"}
