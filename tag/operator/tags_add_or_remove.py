@@ -3,11 +3,9 @@ from bpy.types import Operator
 from bpy.props import StringProperty, PointerProperty
 
 from asset_browser_utilities.tag.tag_collection import TagCollection
-from asset_browser_utilities.file.path import (
-    save_file_as,
-    save_if_possible_and_necessary,
-    open_file_if_different_from_current,
-)
+from asset_browser_utilities.file.path import open_file_if_different_from_current
+
+from asset_browser_utilities.file.save import save_file_as, save_if_possible_and_necessary
 from asset_browser_utilities.core.operator.helper import FilterLibraryOperator
 
 

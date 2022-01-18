@@ -2,7 +2,7 @@ import os.path
 from pathlib import Path
 import bpy
 from asset_browser_utilities.library.helper import item_exists
-from asset_browser_utilities.file.path import (
+from asset_browser_utilities.file.save import (
     create_new_file_and_set_as_current,
     save_file,
 )

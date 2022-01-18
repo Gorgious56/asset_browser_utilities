@@ -2,11 +2,7 @@ from asset_browser_utilities.asset.export.helper import BatchExecute
 from asset_browser_utilities.console.parser import ArgumentsParser
 
 if __name__ == "__main__":
-    import sys
-
-    argv = sys.argv
-    argv = argv[argv.index("--") + 1 :]  # get all args after "--"
-    parser = ArgumentsParser(argv)
+    parser = ArgumentsParser()
     asset_names = parser.get_arg_values("asset_names", "asset_types")
     asset_types = parser.get_arg_values("asset_types", "source_file")
     source_file = parser.get_arg_value("source_file")

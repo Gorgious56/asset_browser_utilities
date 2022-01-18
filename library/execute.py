@@ -1,7 +1,8 @@
 import bpy.app.timers
 from asset_browser_utilities.core.ui.message import message_box
 from asset_browser_utilities.core.helper import copy_simple_property_group
-from asset_browser_utilities.file.path import open_file_if_different_from_current, save_file_as
+from asset_browser_utilities.file.path import open_file_if_different_from_current
+from asset_browser_utilities.file.save import save_file_as
 from asset_browser_utilities.preview.helper import is_preview_generated
 
 

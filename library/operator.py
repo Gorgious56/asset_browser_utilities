@@ -3,7 +3,7 @@ from bpy.props import StringProperty
 
 from asset_browser_utilities.filter.main import AssetFilterSettings
 from asset_browser_utilities.core.preferences.helper import write_to_cache, get_from_cache
-from asset_browser_utilities.file.path import save_if_possible_and_necessary
+from asset_browser_utilities.file.save import save_if_possible_and_necessary
 
 
 class BatchOperator(FilterLibraryOperator):

@@ -1,5 +1,3 @@
-import os
-from pathlib import Path
 import bpy
 
 
@@ -13,35 +11,6 @@ def get_supported_images(folder, recursive):
 
 def is_this_current_file(filepath):
     return bpy.data.filepath == filepath
-
-
-def save_if_possible_and_necessary():
-    if bpy.data.is_saved and bpy.data.is_dirty:
-        bpy.ops.wm.save_mainfile()
-
-
-def create_new_file_and_set_as_current(filepath):
-    bpy.ops.wm.read_homefile(app_template="")
-    save_file_as(str(filepath))
-
-
-def remove_backup_file(filepath):
-    backup = filepath + "1"
-    if os.path.exists(backup):
-        print("Removing backup " + backup)
-        os.remove(backup)
-
-
-def save_file(remove_backup=False):
-    bpy.ops.wm.save_mainfile()
-    if remove_backup:
-        remove_backup_file(bpy.data.filepath)
-
-
-def save_file_as(filepath: str, remove_backup=False):
-    bpy.ops.wm.save_as_mainfile(filepath=str(filepath))
-    if remove_backup:
-        remove_backup_file(filepath)
 
 
 def open_file_if_different_from_current(filepath: str):

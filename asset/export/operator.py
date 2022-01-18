@@ -7,10 +7,8 @@ from bpy.props import StringProperty, PointerProperty
 
 from asset_browser_utilities.core.operator.helper import FilterLibraryOperator
 from asset_browser_utilities.console.builder import CommandBuilder
-from asset_browser_utilities.file.path import (
-    is_this_current_file,
-    save_if_possible_and_necessary,
-)
+from asset_browser_utilities.file.path import is_this_current_file
+from asset_browser_utilities.file.save import save_if_possible_and_necessary
 from .helper import BatchExecute
 from .prop import ExportProperties
 
