@@ -6,7 +6,7 @@ from asset_browser_utilities.library.execute import BatchExecute
 from asset_browser_utilities.library.operator import BatchOperator
 
 
-class BatchAddDescription(BatchExecute):
+class BatchSetDescription(BatchExecute):
     def execute_one_file_and_the_next_when_finished(self):
         for asset in self.assets:
             asset.asset_data.description = self.description
@@ -21,14 +21,14 @@ class OperatorProperties(PropertyGroup):
         layout.prop(self, "description", icon="FILE_TEXT")
 
 
-class ASSET_OT_batch_add_description(Operator, ImportHelper, BatchOperator):
+class ASSET_OT_batch_set_description(Operator, ImportHelper, BatchOperator):
     """Batch Set Description. Leave Field Empty to remove description"""
 
-    bl_idname = "asset.batch_add_description"
-    bl_label = "Batch Add Description"
+    bl_idname = "asset.batch_set_description"
+    bl_label = "Batch Set Description"
 
     operator_settings: PointerProperty(type=OperatorProperties)
-    logic_class = BatchAddDescription
+    logic_class = BatchSetDescription
 
     def invoke(self, context, event):
         return self._invoke(context, filter_assets=True)
