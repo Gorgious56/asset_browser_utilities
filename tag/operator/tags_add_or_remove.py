@@ -49,6 +49,7 @@ class BatchAddOrRemoveTagsOperator:
 
 
 class ASSET_OT_batch_add_tags(Operator, ImportHelper, BatchAddOrRemoveTagsOperator, FilterLibraryOperator):
+    "Add tags"
     bl_idname = "asset.batch_add_tags"
     bl_label = "Add tags"
 
@@ -66,6 +67,7 @@ class ASSET_OT_batch_add_tags(Operator, ImportHelper, BatchAddOrRemoveTagsOperat
 
 
 class ASSET_OT_batch_remove_tags(Operator, ImportHelper, BatchAddOrRemoveTagsOperator, FilterLibraryOperator):
+    "Remove tags"
     bl_idname = "asset.batch_remove_tags"
     bl_label = "Remove tags"
 

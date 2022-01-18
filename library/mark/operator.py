@@ -8,6 +8,7 @@ from .prop import OperatorProperties as MarkOrUnmarkOperatorProperties
 
 
 class ASSET_OT_batch_mark(Operator, ImportHelper, BatchOperator):
+    "Batch Mark Assets"
     bl_idname = "asset.batch_mark"
     bl_label = "Batch Mark Assets"
 
@@ -20,6 +21,7 @@ class ASSET_OT_batch_mark(Operator, ImportHelper, BatchOperator):
 
 
 class ASSET_OT_batch_unmark(Operator, ImportHelper, BatchOperator):
+    "Batch Unmark Assets"
     bl_idname = "asset.batch_unmark"
     bl_label = "Batch Unmark Assets"
 

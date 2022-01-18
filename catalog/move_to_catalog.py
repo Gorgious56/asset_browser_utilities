@@ -33,6 +33,7 @@ class OperatorProperties(PropertyGroup):
 
 
 class ASSET_OT_batch_move_to_catalog(Operator, ImportHelper, BatchOperator):
+    "Batch Move Assets To Catalog"
     bl_idname = "asset.batch_move_to_catalog"
     bl_label = "Batch Move To Catalog"
 

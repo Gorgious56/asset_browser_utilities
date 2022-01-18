@@ -29,6 +29,7 @@ class OperatorProperties(PropertyGroup):
 
 
 class ASSET_OT_batch_generate_previews(Operator, ImportHelper, BatchOperator):
+    "Batch Generate Previews"
     bl_idname = "asset.batch_generate_previews"
     bl_label = "Batch Generate Previews"
 

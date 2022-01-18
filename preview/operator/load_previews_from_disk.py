@@ -11,6 +11,7 @@ from asset_browser_utilities.file.path import get_supported_images
 
 
 class ASSET_OT_load_previews_from_disk(Operator, ImportHelper):
+    "Load Previews From Disk"
     bl_idname = "asset.load_previews_from_disk"
     bl_label = "Load Previews From Disk"
 

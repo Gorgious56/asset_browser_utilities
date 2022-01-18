@@ -16,6 +16,7 @@ from .prop import ExportProperties
 
 
 class ASSET_OT_export(Operator, ExportHelper, FilterLibraryOperator):
+    "Export Assets"
     bl_idname = "asset.export"
     bl_label = "Export Assets"
 
