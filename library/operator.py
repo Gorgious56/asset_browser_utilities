@@ -26,9 +26,10 @@ class BatchOperator(FilterLibraryOperator):
             operator_settings=self.operator_settings,
             filter_settings=get_from_cache(AssetFilterSettings, context),
             library_settings=self.library_settings,
+            callback=lambda c: [
+                a.tag_redraw() for a in c.screen.areas if a.ui_type == "ASSETS" and hasattr(c, "screen")
+            ],
         ).execute_next_blend()
-        if context is not None:
-            [a.tag_redraw() for a in context.screen.areas if a.ui_type == "ASSETS"]
         return {"FINISHED"}
 
     def draw(self, context):

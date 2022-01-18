@@ -1,8 +1,11 @@
 import json
+import sys
 
 
 class ArgumentsParser:
-    def __init__(self, argv):
+    def __init__(self):
+        argv = sys.argv
+        argv = argv[argv.index("--") + 1 :]  # get all args after "--"
         self.argv = argv
 
     def get_arg_index(self, arg_name):

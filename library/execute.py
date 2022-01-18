@@ -8,7 +8,7 @@ from asset_browser_utilities.preview.helper import is_preview_generated
 class BatchExecute:
     INTERVAL = 0.2
 
-    def __init__(self, blends, operator_settings, filter_settings, library_settings):
+    def __init__(self, blends, operator_settings, filter_settings, library_settings, callback):
         if operator_settings is not None:
             copy_simple_property_group(operator_settings, self)
 
@@ -17,6 +17,7 @@ class BatchExecute:
 
         self.blends = blends
         self.blend = None
+        self.callback = callback  # This is called when everything is finished.
         self.assets = []
 
     def execute_next_blend(self):

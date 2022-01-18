@@ -11,17 +11,17 @@ class ABU_MT_submenu(Menu):
     def draw(self, context):
         layout = self.layout
         if is_library(context):
-            self.draw_shared_menus()
+            self.draw_shared_menus(context)
         else:
             if bpy.data.is_saved:
-                export_op = layout.operator("asset.export", text="Export", icon="EXPORT")
-                self.draw_shared_menus()
+                self.draw_shared_menus(context)
             else:
                 layout.label(text="Save this file to disk to enable operations", icon="QUESTION")
 
-
-    def draw_shared_menus(self):
+    def draw_shared_menus(self, context):
         layout = self.layout
+        op = layout.operator("asset.batch_export", text="Export", icon="EXPORT")
+        op.library_settings.this_file_only = not is_library(context)
         layout.menu("ABU_MT_assets", icon="ASSET_MANAGER")
         layout.menu("ABU_MT_tags", icon="BOOKMARKS")
         layout.menu("ABU_MT_previews", icon="SEQ_PREVIEW")
