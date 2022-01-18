@@ -1,5 +1,5 @@
 from bpy.types import PropertyGroup
-from bpy.props import BoolProperty
+from bpy.props import BoolProperty, StringProperty, CollectionProperty
 
 
 class LibraryExportSettings(PropertyGroup):

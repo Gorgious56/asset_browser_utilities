@@ -1,4 +1,4 @@
-from asset_browser_utilities.library.export.helper import BatchExecute
+from asset_browser_utilities.asset.export.helper import BatchExecute
 from asset_browser_utilities.console.parser import ArgumentsParser
 
 if __name__ == "__main__":

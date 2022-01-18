@@ -6,7 +6,7 @@ from bpy.types import Operator, OperatorFileListElement
 from bpy.props import StringProperty, CollectionProperty, PointerProperty
 
 from asset_browser_utilities.library.helper import get_all_assets_in_file, generate_asset_preview
-from asset_browser_utilities.library.path import LibraryExportSettings
+from asset_browser_utilities.library.prop import LibraryExportSettings
 from asset_browser_utilities.file.path import get_supported_images
 
 
