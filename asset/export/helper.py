@@ -1,11 +1,9 @@
 import os.path
 from pathlib import Path
 import bpy
-from asset_browser_utilities.library.helper import item_exists
-from asset_browser_utilities.file.save import (
-    create_new_file_and_set_as_current,
-    save_file,
-)
+from asset_browser_utilities.library.helper import append_asset, item_exists
+from asset_browser_utilities.file.save import create_new_file_and_set_as_current, save_file
+
 from asset_browser_utilities.core.ui.message import message_box
 
 
@@ -74,13 +72,4 @@ class BatchExecute:
         self.execute_next()
 
     def append_asset(self):
-        # https://blender.stackexchange.com/a/33998/86891
-        with bpy.data.libraries.load(str(self.source_file)) as (data_from, data_to):
-            library_to = getattr(data_to, self.current_asset_type)
-            library_to.append(self.current_asset_name)
-        library = getattr(bpy.data, self.current_asset_type)
-        obj = library.get(self.current_asset_name)
-        if self.current_asset_type == "objects":
-            bpy.context.scene.collection.objects.link(obj)
-        else:
-            obj.use_fake_user = True
+        append_asset(str(self.source_file), self.current_asset_type, self.current_asset_name)
