@@ -4,20 +4,17 @@ from bpy.props import PointerProperty, StringProperty
 
 from asset_browser_utilities.library.execute import BatchExecute
 from asset_browser_utilities.library.operator import BatchOperator
-from asset_browser_utilities.catalog.helper import (
-    get_catalog_line_from_uuid,
-    get_catalog_info_from_line,
-    ensure_catalog_exists,
-)
 from asset_browser_utilities.catalog.prop import FilterCatalog
+from asset_browser_utilities.catalog.helper import CatalogsHelper
 
 
 class BatchMoveFromCatalogToCatalog(BatchExecute):
     def execute_one_file_and_the_next_when_finished(self):
-        uuid_from, tree_from, name_from = get_catalog_info_from_line(self.catalog_from_line)
-        uuid_to, tree_to, name_to = get_catalog_info_from_line(self.catalog_to_line)
+        helper = CatalogsHelper()
+        uuid_from, tree_from, name_from = helper.get_catalog_info_from_line(self.catalog_from_line)
+        uuid_to, tree_to, name_to = helper.get_catalog_info_from_line(self.catalog_to_line)
         if uuid_from != uuid_to:
-            ensure_catalog_exists(uuid_to, tree_to, name_to)
+            helper.ensure_catalog_exists(uuid_to, tree_to, name_to)
             for asset in self.assets:
                 asset_data = asset.asset_data
                 if asset_data.catalog_id == uuid_from:
@@ -55,8 +52,11 @@ class ASSET_OT_batch_move_from_cat_a_to_cat_b(Operator, ImportHelper, BatchOpera
         return self._invoke(context, filter_assets=True)
 
     def execute(self, context):
-        self.operator_settings.catalog_from_line = get_catalog_line_from_uuid(
+        helper = CatalogsHelper()
+        self.operator_settings.catalog_from_line = helper.get_catalog_line_from_uuid(
             self.operator_settings.catalog_from.catalog
         )
-        self.operator_settings.catalog_to_line = get_catalog_line_from_uuid(self.operator_settings.catalog_to.catalog)
+        self.operator_settings.catalog_to_line = helper.get_catalog_line_from_uuid(
+            self.operator_settings.catalog_to.catalog
+        )
         return super().execute(context)
