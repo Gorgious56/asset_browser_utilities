@@ -11,6 +11,7 @@ from asset_browser_utilities.core.operator.helper import FilterLibraryOperator
 from asset_browser_utilities.file.save import save_if_possible_and_necessary
 from asset_browser_utilities.core.preferences.helper import get_from_cache, write_to_cache
 from asset_browser_utilities.asset.import_.prop import CacheAssetPaths
+from asset_browser_utilities.library.prop import LibraryType
 
 from .helper import BatchHelper
 
@@ -35,7 +36,7 @@ class ASSET_OT_batch_import(Operator, ExportHelper, FilterLibraryOperator):
 
     def invoke(self, context, event):
         self.filepath = ""
-        self.library_settings.this_file_only = False
+        self.library_settings.this_file_only = LibraryType.FileCurrent.value
         return self._invoke(context, remove_backup=False, filter_assets=True)
 
     def execute(self, context):
@@ -50,7 +51,7 @@ class ASSET_OT_batch_import(Operator, ExportHelper, FilterLibraryOperator):
     def load_from_folder(self, context):
         blends = self.library_settings.get_blend_files(self.filepath)
         self.execute_in_this_instance(blends)
-    
+
     def load_from_selected_files(self):
         folder = Path(self.filepath).parent
         blends = [folder / f.name for f in self.files]

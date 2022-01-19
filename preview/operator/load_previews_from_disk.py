@@ -6,7 +6,7 @@ from bpy.types import Operator, OperatorFileListElement
 from bpy.props import StringProperty, CollectionProperty, PointerProperty
 
 from asset_browser_utilities.library.helper import get_all_assets_in_file, generate_asset_preview
-from asset_browser_utilities.library.prop import LibraryExportSettings
+from asset_browser_utilities.library.prop import LibraryExportSettings, LibraryType
 from asset_browser_utilities.file.path import get_supported_images
 
 
@@ -29,7 +29,7 @@ class ASSET_OT_load_previews_from_disk(Operator, ImportHelper):
 
     def invoke(self, context, event):
         self.filepath = ""
-        self.library_settings.this_file_only = False
+        self.library_settings.this_file_only = LibraryType.FileOrFolder.value
         context.window_manager.fileselect_add(self)
         return {"RUNNING_MODAL"}
 
