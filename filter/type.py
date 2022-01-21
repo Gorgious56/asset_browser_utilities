@@ -1,122 +1,63 @@
 from bpy.types import PropertyGroup
-from bpy.props import BoolProperty, StringProperty, CollectionProperty
+from bpy.props import BoolProperty, EnumProperty
 
 from asset_browser_utilities.core.helper import copy_simple_property_group
 
-
-class FilterType(PropertyGroup):
-    name: StringProperty()
-    value: BoolProperty()
-    icon: StringProperty()
+_flag_enum = list(range(20))
 
 
 class FilterTypes(PropertyGroup):
-    items: CollectionProperty(type=FilterType)
-    items_object: CollectionProperty(type=FilterType)
-    items_object_filter: BoolProperty(default=False)
-    MAPPING = {
-        "actions": {
-            "icon": "ACTION",
+    types: EnumProperty(
+        options={"ENUM_FLAG"},
+        items=(
+            ("actions", "Actions", "Action", "ACTION", 1),
+            ("materials", "Materials", "Materials", "MATERIAL", 2),
+            ("objects", "Objects", "Objects", "OBJECT_DATA", 4),
+            ("worlds", "Worlds", "Worlds", "WORLD", 8),
+        ),
+        default={"objects"},
+    )
+    types_object_filter: BoolProperty(default=False, name="Filter Objects")
+    types_object: EnumProperty(
+        options={"ENUM_FLAG"},
+        items=(
+            ("ARMATURE", "Armature", "Armature", "ARMATURE_DATA", 2 ** _flag_enum.pop(0)),
+            ("CAMERA", "Camera", "Camera", "CAMERA_DATA", 2 ** _flag_enum.pop(0)),
+            ("CURVE", "Curve", "Curve", "CURVE_DATA", 2 ** _flag_enum.pop(0)),
+            ("EMPTY", "Empty", "Empty", "EMPTY_DATA", 2 ** _flag_enum.pop(0)),
+            ("GREASEPENCIL", "Grease Pencil", "Grease Pencil", "OUTLINER_DATA_GREASEPENCIL", 2 ** _flag_enum.pop(0)),
+            ("HAIR", "Hair", "Hair", "HAIR_DATA", 2 ** _flag_enum.pop(0)),
+            ("LIGHT", "Light", "Light", "LIGHT", 2 ** _flag_enum.pop(0)),
+            ("LIGHT_PROBE", "Light Probe", "Light Probe", "OUTLINER_DATA_LIGHTPROBE", 2 ** _flag_enum.pop(0)),
+            ("LATTICE", "Lattice", "Lattice", "LATTICE_DATA", 2 ** _flag_enum.pop(0)),
+            ("MESH", "Mesh", "Mesh", "MESH_DATA", 2 ** _flag_enum.pop(0)),
+            ("META", "Metaball", "Metaball", "META_DATA", 2 ** _flag_enum.pop(0)),
+            ("POINTCLOUD", "Point Cloud", "Point Cloud", "POINTCLOUD_DATA", 2 ** _flag_enum.pop(0)),
+            ("SPEAKER", "Speaker", "Speaker", "OUTLINER_DATA_SPEAKER", 2 ** _flag_enum.pop(0)),
+            ("SURFACE", "Surface", "Surface", "SURFACE_DATA", 2 ** _flag_enum.pop(0)),
+            ("VOLUME", "Volume", "Volume", "VOLUME_DATA", 2 ** _flag_enum.pop(0)),
+            ("FONT", "Text", "Text", "FONT_DATA", 2 ** _flag_enum.pop(0)),
+        ),
+        default={
+            "CURVE",
+            "MESH",
         },
-        "materials": {
-            "icon": "MATERIAL",
-        },
-        "objects": {
-            "value": True,
-            "icon": "OBJECT_DATA",
-        },
-        "worlds": {
-            "icon": "WORLD",
-        },
-    }
-    MAPPING_OBJECT = {
-        "ARMATURE": {
-            "icon": "ARMATURE_DATA",
-        },
-        "CAMERA": {
-            "icon": "CAMERA_DATA",
-        },
-        "CURVE": {
-            "icon": "CURVE_DATA",
-            "value": True,
-        },
-        "EMPTY": {
-            "icon": "EMPTY_DATA",
-        },
-        "GREASEPENCIL": {
-            "icon": "OUTLINER_DATA_GREASEPENCIL",
-        },
-        "HAIR": {
-            "icon": "HAIR_DATA",
-        },
-        "LIGHT": {
-            "icon": "LIGHT",
-        },
-        "LIGHT_PROBE": {
-            "icon": "OUTLINER_DATA_LIGHTPROBE",
-        },
-        "LATTICE": {
-            "icon": "LATTICE_DATA",
-        },
-        "MESH": {
-            "icon": "MESH_DATA",
-            "value": True,
-        },
-        "META": {
-            "icon": "META_DATA",
-        },
-        "POINTCLOUD": {
-            "icon": "POINTCLOUD_DATA",
-        },
-        "SPEAKER": {
-            "icon": "OUTLINER_DATA_SPEAKER",
-        },
-        "SURFACE": {
-            "icon": "SURFACE_DATA",
-        },
-        "VOLUME": {
-            "icon": "VOLUME_DATA",
-        },
-        "FONT": {
-            "icon": "FONT_DATA",
-        },
-    }
-
-    def init(self):
-        for container, mapping in zip((self.items, self.items_object), (self.MAPPING, self.MAPPING_OBJECT)):
-            if not container:
-                for name, data in mapping.items():
-                    new = container.add()
-                    new.name = name
-                    for data_name, data_value in data.items():
-                        setattr(new, data_name, data_value)
-
-    def copy(self, other):
-        copy_simple_property_group(other, self)
-        for container_name in ("items", "items_object"):
-            container_self = getattr(self, container_name)
-            container_self.clear()
-            for source in getattr(other, container_name):
-                target = container_self.add()
-                copy_simple_property_group(source, target)
+    )
 
     def draw(self, layout):
         box = layout.box()
         box.label(text="Filter By Type", icon="FILTER")
         col = box.column(align=True)
-        for filter_type in self.items:
+        for filter_type in self.bl_rna.properties["types"].enum_items_static:
             row = col.row(align=True)
-            row.prop(filter_type, "value", text=filter_type.name.title(), toggle=True, icon=filter_type.icon)
-            if filter_type.name == "objects":
-                row.prop(self, "items_object_filter", text="", icon="FILTER")
-                if self.items_object_filter:
-                    box_object = col.box()
-                    col_object = box_object.column(align=True)
-                    for filter_type_obj in self.items_object:
-                        col_object.prop(
-                            filter_type_obj,
-                            "value",
-                            text=filter_type_obj.name.title(),
-                            toggle=True,
-                            icon=filter_type_obj.icon,
-                        )
+            row.prop_enum(self, "types", filter_type.identifier)
+            if filter_type.identifier == "objects":
+                self.draw_object_types_selector(col, row)
+
+    def draw_object_types_selector(self, layout_items, layout_filter):
+        layout_filter.prop(self, "types_object_filter", text="", icon="FILTER")
+        if self.types_object_filter and "objects" in self.types:
+            box_object = layout_items.box()
+            col_object = box_object.column(align=True)
+            for filter_type_obj in self.bl_rna.properties["types_object"].enum_items_static:
+                col_object.prop_enum(self, "types_object", filter_type_obj.identifier)

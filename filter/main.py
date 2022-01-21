@@ -27,15 +27,10 @@ If unchecked, items that are not yet assets will be exported and marked as asset
         self.filter_selection.allow = filter_selection
         self.filter_assets_allow = filter_assets
         self.filter_assets = filter_assets
-        self.filter_types.init()
 
     def get_objects_that_satisfy_filters(self):
-        data_containers = [item.name for item in self.filter_types.items if item.value]
-        object_types = (
-            ([item.name for item in self.filter_types.items_object if item.value])
-            if self.filter_types.items_object_filter
-            else None
-        )
+        data_containers = list(self.filter_types.types)
+        object_types = list(self.filter_types.types_object) if self.filter_types.types_object_filter else None
         asset_container = AssetContainer(data_containers, object_types)
         if self.filter_assets:
             asset_container.filter_assets()
@@ -56,8 +51,7 @@ If unchecked, items that are not yet assets will be exported and marked as asset
 
     def copy(self, other):
         copy_simple_property_group(other, self)
-
-        self.filter_types.copy(other.filter_types)
+        copy_simple_property_group(other.filter_types, self.filter_types)
         copy_simple_property_group(other.filter_name, self.filter_name)
         copy_simple_property_group(other.filter_selection, self.filter_selection)
         helper = CatalogsHelper()
