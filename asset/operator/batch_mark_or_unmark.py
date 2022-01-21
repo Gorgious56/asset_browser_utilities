@@ -35,15 +35,10 @@ class BatchMark(BatchExecute):
             self.execute_next_blend()
 
 
-class OperatorProperties(PropertyGroup):
+class OperatorPropertiesMark(PropertyGroup):
     overwrite: BoolProperty(
         name="Overwrite assets",
         description="Check to re-mark assets and re-generate preview if the item is already an asset",
-        default=False,
-    )
-    mark: BoolProperty(
-        name="Mark",
-        description="Check to Mark existing assets rather than unmarking items",
         default=False,
     )
     generate_previews: BoolProperty(
@@ -53,10 +48,9 @@ class OperatorProperties(PropertyGroup):
     )
 
     def draw(self, layout):
-        if self.mark:
-            layout.prop(self, "overwrite", icon="ASSET_MANAGER")
-            row = layout.row(align=True)
-            row.prop(self, "generate_previews", icon="RESTRICT_RENDER_OFF")
+        layout.prop(self, "overwrite", icon="ASSET_MANAGER")
+        row = layout.row(align=True)
+        row.prop(self, "generate_previews", icon="RESTRICT_RENDER_OFF")
 
 
 class ASSET_OT_batch_mark(Operator, ImportHelper, BatchOperator):
@@ -64,7 +58,7 @@ class ASSET_OT_batch_mark(Operator, ImportHelper, BatchOperator):
     bl_idname = "asset.batch_mark"
     bl_label = "Batch Mark Assets"
 
-    operator_settings: PointerProperty(type=OperatorProperties)
+    operator_settings: PointerProperty(type=OperatorPropertiesMark)
     logic_class = BatchMark
 
     def invoke(self, context, event):
@@ -77,7 +71,6 @@ class ASSET_OT_batch_unmark(Operator, ImportHelper, BatchOperator):
     bl_idname = "asset.batch_unmark"
     bl_label = "Batch Unmark Assets"
 
-    operator_settings: PointerProperty(type=OperatorProperties)
     logic_class = BatchUnmark
 
     def invoke(self, context, event):

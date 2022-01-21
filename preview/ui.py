@@ -7,8 +7,8 @@ class ABU_MT_previews(Menu):
 
     def draw(self, context):
         layout = self.layout
-        this_file_only = LibraryType.get(context)
+        library_type = LibraryType.get(context)
         op = layout.operator("asset.batch_generate_previews", text="Generate", icon="FILE_REFRESH")
-        op.library_settings.this_file_only = this_file_only
-        if this_file_only == LibraryType.FileCurrent.value:
+        op.library_settings.library_type = library_type
+        if library_type == LibraryType.FileCurrent.value:
             layout.operator("asset.load_previews_from_disk", text="Load From Disk", icon="IMPORT")

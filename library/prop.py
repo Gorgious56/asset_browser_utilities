@@ -22,7 +22,7 @@ class LibraryType(Enum):
 
 
 class LibraryExportSettings(PropertyGroup):
-    this_file_only: IntProperty(
+    library_type: IntProperty(
         default=False,
         name="Act only on this file",
     )
@@ -47,11 +47,11 @@ class LibraryExportSettings(PropertyGroup):
         self.remove_backup = remove_backup
 
     def draw(self, layout):
-        if self.this_file_only == LibraryType.FileCurrent.value:
+        if self.library_type == LibraryType.FileCurrent.value:
             return
-        elif self.this_file_only == LibraryType.FileOrFolder.value:
+        elif self.library_type == LibraryType.FileOrFolder.value:
             layout.prop(self, "recursive", icon="FOLDER_REDIRECT")
-        elif self.this_file_only == LibraryType.User.value:
+        elif self.library_type == LibraryType.User.value:
             box = layout.box()
             box.prop(self, "library_path", icon="FOLDER_REDIRECT")
             box.label(text=f"Path : {self.library_path}")
@@ -59,14 +59,14 @@ class LibraryExportSettings(PropertyGroup):
             layout.prop(self, "remove_backup", icon="TRASH")
 
     def copy(self, other):
-        self.this_file_only = other.this_file_only
+        self.library_type = other.library_type
         self.recursive = other.recursive
 
     def get_blend_files(self, blend_filepath=None):
-        if self.this_file_only == LibraryType.FileCurrent.value:
+        if self.library_type == LibraryType.FileCurrent.value:
             return [bpy.data.filepath]
         else:
-            if self.this_file_only == LibraryType.FileOrFolder.value:
+            if self.library_type == LibraryType.FileOrFolder.value:
                 folder = Path(blend_filepath)
                 if not folder.is_dir():
                     folder = folder.parent

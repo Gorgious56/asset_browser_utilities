@@ -7,8 +7,8 @@ class ABU_MT_tags(Menu):
 
     def draw(self, context):
         layout = self.layout
-        this_file_only = LibraryType.get(context)
+        library_type = LibraryType.get(context)
         add_tags_op = layout.operator("asset.batch_add_tags", text="Add", icon="ADD")
-        add_tags_op.library_settings.this_file_only = this_file_only
+        add_tags_op.library_settings.library_type = library_type
         remove_tags_op = layout.operator("asset.batch_remove_tags", text="Remove", icon="REMOVE")
-        remove_tags_op.library_settings.this_file_only = this_file_only
+        remove_tags_op.library_settings.library_type = library_type

@@ -36,7 +36,7 @@ class ASSET_OT_batch_import(Operator, ExportHelper, FilterLibraryOperator):
 
     def invoke(self, context, event):
         self.filepath = ""
-        self.library_settings.this_file_only = LibraryType.FileCurrent.value
+        self.library_settings.library_type = LibraryType.FileCurrent.value
         return self._invoke(context, remove_backup=False, filter_assets=True)
 
     def execute(self, context):

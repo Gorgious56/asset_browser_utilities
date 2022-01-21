@@ -29,7 +29,7 @@ class ASSET_OT_load_previews_from_disk(Operator, ImportHelper):
 
     def invoke(self, context, event):
         self.filepath = ""
-        self.library_settings.this_file_only = LibraryType.FileOrFolder.value
+        self.library_settings.library_type = LibraryType.FileOrFolder.value
         context.window_manager.fileselect_add(self)
         return {"RUNNING_MODAL"}
 
