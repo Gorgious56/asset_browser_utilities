@@ -68,7 +68,10 @@ class CatalogsHelper:
     def get_catalogs(filter_catalog, context):
         helper = CatalogsHelper()
         catalogs = []
-        for line in helper.iterate_over_catalogs():
-            uuid, tree, name = helper.get_catalog_info_from_line(line)
-            catalogs.append((uuid, tree, name))
+        if helper.has_catalogs():
+            for line in helper.iterate_over_catalogs():
+                uuid, tree, name = helper.get_catalog_info_from_line(line)
+                catalogs.append((uuid, tree, name))
+        else:
+            catalogs = [("",) * 3]
         return catalogs

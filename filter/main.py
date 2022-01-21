@@ -6,6 +6,7 @@ from asset_browser_utilities.filter.name import FilterName
 from asset_browser_utilities.filter.selection import FilterSelection
 from asset_browser_utilities.filter.container import AssetContainer
 from asset_browser_utilities.catalog.prop import FilterCatalog
+from asset_browser_utilities.catalog.helper import CatalogsHelper
 from asset_browser_utilities.core.helper import copy_simple_property_group
 
 
@@ -29,7 +30,13 @@ If unchecked, items that are not yet assets will be exported and marked as asset
         self.filter_types.init()
 
     def get_objects_that_satisfy_filters(self):
-        asset_container = AssetContainer([item.name for item in self.filter_types.items if item.value])
+        data_containers = [item.name for item in self.filter_types.items if item.value]
+        object_types = (
+            ([item.name for item in self.filter_types.items_object if item.value])
+            if self.filter_types.items_object_filter
+            else None
+        )
+        asset_container = AssetContainer(data_containers, object_types)
         if self.filter_assets:
             asset_container.filter_assets()
             if self.filter_catalog.active:
@@ -53,4 +60,6 @@ If unchecked, items that are not yet assets will be exported and marked as asset
         self.filter_types.copy(other.filter_types)
         copy_simple_property_group(other.filter_name, self.filter_name)
         copy_simple_property_group(other.filter_selection, self.filter_selection)
-        copy_simple_property_group(other.filter_catalog, self.filter_catalog)
+        helper = CatalogsHelper()
+        if helper.has_catalogs():
+            copy_simple_property_group(other.filter_catalog, self.filter_catalog)
