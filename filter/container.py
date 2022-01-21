@@ -5,19 +5,24 @@ from asset_browser_utilities.filter.selection import Sources as SelectionSources
 
 
 class AssetContainer:
-    def __init__(self, filter_types=None):
+    def __init__(self, filter_types=None, filter_object_types=None):
         self.assets = defaultdict(list)
         self.assets_filter = defaultdict(bool)
         if filter_types is not None:
-            self.populate_assets(filter_types)
+            self.populate_assets(filter_types, filter_object_types)
 
-    def populate_assets(self, filter_types):
+    def populate_assets(self, filter_types, filter_object_types):
         for data_name in filter_types:
             self.assets_filter[data_name] = True
             type_container = self.assets[data_name]
             items = getattr(bpy.data, data_name)
-            for item in items:
-                type_container.append(item)
+            if data_name == "objects" and filter_object_types is not None:
+                for item in items:
+                    if item.type in filter_object_types:
+                        type_container.append(item)
+            else:
+                for item in items:
+                    type_container.append(item)
 
     def filter_assets(self):
         for items in self.assets.values():
