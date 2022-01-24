@@ -62,7 +62,6 @@ class ASSET_OT_batch_mark(Operator, ImportHelper, BatchOperator):
     logic_class = BatchMark
 
     def invoke(self, context, event):
-        self.operator_settings.mark = True
         return self._invoke(context)
 
 
@@ -74,5 +73,4 @@ class ASSET_OT_batch_unmark(Operator, ImportHelper, BatchOperator):
     logic_class = BatchUnmark
 
     def invoke(self, context, event):
-        self.operator_settings.mark = False
         return self._invoke(context, filter_assets=True)

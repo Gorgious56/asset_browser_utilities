@@ -4,13 +4,13 @@ from asset_browser_utilities.core.ui.menu.helper import is_library, is_library_u
 
 import bpy
 from bpy.types import PropertyGroup
-from bpy.props import BoolProperty, IntProperty, EnumProperty
+from bpy.props import BoolProperty, StringProperty, EnumProperty
 
 
 class LibraryType(Enum):
-    FileCurrent = 0
-    FileOrFolder = 1
-    User = 2
+    FileCurrent = "file_current"
+    FileOrFolder = "file_or_folder"
+    User = "user"
 
     @staticmethod
     def get(context):
@@ -22,10 +22,7 @@ class LibraryType(Enum):
 
 
 class LibraryExportSettings(PropertyGroup):
-    library_type: IntProperty(
-        default=False,
-        name="Act only on this file",
-    )
+    library_type: StringProperty(name="Library Type")
     recursive: BoolProperty(
         default=True,
         name="Recursive",
