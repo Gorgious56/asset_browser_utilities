@@ -2,6 +2,8 @@ import numpy as np
 
 
 def is_preview_generated(asset):
+    if asset.type == "MESH" and len(asset.data.polygons) == 0:
+        return True
     preview = asset.preview
     if not preview:
         asset.asset_generate_preview()
