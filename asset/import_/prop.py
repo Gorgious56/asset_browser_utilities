@@ -1,5 +1,3 @@
-from msilib.schema import Directory
-from typing import Collection
 from bpy.types import PropertyGroup
 from bpy.props import BoolProperty, StringProperty, CollectionProperty
 
