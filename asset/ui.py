@@ -12,8 +12,9 @@ class ABU_MT_assets(Menu):
         ops = []
         ops.append(layout.operator("asset.batch_mark", text="Mark", icon="SHADERFX"))
         ops.append(layout.operator("asset.batch_unmark", text="Unmark", icon="TRASH"))
+        if library_type == LibraryType.FileCurrent.value:
+            layout.operator("asset.batch_export", text="Export", icon="EXPORT")
+        else:
+            ops.append(layout.operator("asset.batch_import", text="Import", icon="IMPORT"))
         for op in ops:
             op.library_settings.library_type = library_type
-        if library_type == LibraryType.FileCurrent.value:
-            layout.operator("asset.batch_import", text="Import", icon="IMPORT")
-            layout.operator("asset.batch_export", text="Export", icon="EXPORT")

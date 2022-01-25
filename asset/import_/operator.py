@@ -1,22 +1,49 @@
-from pathlib import Path
+from asset_browser_utilities.library.helper import append_asset, get_blend_library_name
 
 import bpy
-from bpy.types import Operator, OperatorFileListElement
+from bpy.types import Operator, OperatorFileListElement, PropertyGroup
 from bpy_extras.io_utils import ExportHelper
 from bpy.types import Operator
-from bpy.props import StringProperty, CollectionProperty
+from bpy.props import StringProperty, CollectionProperty, PointerProperty
 
-from asset_browser_utilities.core.operator.helper import FilterLibraryOperator
-
-from asset_browser_utilities.file.save import save_if_possible_and_necessary
-from asset_browser_utilities.core.preferences.helper import get_from_cache, write_to_cache
-from asset_browser_utilities.asset.import_.prop import CacheAssetPaths
-from asset_browser_utilities.library.prop import LibraryType
-
-from .helper import BatchHelper
+from asset_browser_utilities.library.execute import BatchExecute
+from asset_browser_utilities.library.operator import BatchFolderOperator
 
 
-class ASSET_OT_batch_import(Operator, ExportHelper, FilterLibraryOperator):
+class BatchImport(BatchExecute):
+    def __init__(self, *args, **kwargs):
+        self.filepaths = []
+        self.directories = []
+        self.filenames = []
+        super().__init__(*args, **kwargs)
+
+    def execute_one_file_and_the_next_when_finished(self):
+        if bpy.data.filepath != self.target_filepath:
+            self.add_asset_paths()
+            if not self.blends:
+                bpy.ops.wm.open_mainfile(filepath=str(self.target_filepath))
+        if self.blends:
+            self.execute_next_blend()
+        else:
+            bpy.app.timers.register(self.append_assets, first_interval=0.1)
+
+    def add_asset_paths(self):
+        for asset in self.assets:
+            self.filepaths.append(str(self.blend))
+            self.directories.append(str(get_blend_library_name(asset)))
+            self.filenames.append(str(asset.name))
+
+    def append_assets(self):
+        for filepath, directory, filename in zip(self.filepaths, self.directories, self.filenames):
+            append_asset(filepath, directory, filename)
+        self.execute_next_blend()
+
+
+class OperatorProperties(PropertyGroup):
+    target_filepath: StringProperty()
+
+
+class ASSET_OT_batch_import(Operator, ExportHelper, BatchFolderOperator):
     "Import Assets From External File or Library"
     bl_idname = "asset.batch_import"
     bl_label = "Import Assets"
@@ -34,41 +61,10 @@ class ASSET_OT_batch_import(Operator, ExportHelper, FilterLibraryOperator):
         options={"HIDDEN", "SKIP_SAVE"},
     )
 
+    operator_settings: PointerProperty(type=OperatorProperties)
+    logic_class = BatchImport
+
     def invoke(self, context, event):
         self.filepath = ""
-        self.library_settings.library_type = LibraryType.FileCurrent.value
+        self.operator_settings.target_filepath = bpy.data.filepath
         return self._invoke(context, remove_backup=False, filter_assets=True)
-
-    def execute(self, context):
-        save_if_possible_and_necessary()
-        write_to_cache(self.asset_filter_settings, context)
-        if self.is_only_folder_selected():
-            self.load_from_folder(context)
-        else:
-            self.load_from_selected_files()
-        return {"FINISHED"}
-
-    def load_from_folder(self, context):
-        blends = self.library_settings.get_blend_files(self.filepath)
-        self.execute_in_this_instance(blends)
-
-    def load_from_selected_files(self):
-        folder = Path(self.filepath).parent
-        blends = [folder / f.name for f in self.files]
-        self.execute_in_this_instance(blends)
-
-    def execute_in_this_instance(self, blends):
-        BatchHelper(target_filepath=bpy.data.filepath, blend_filepaths=blends, from_command_line=False).execute()
-
-    def load_from_file(self, file):
-        pass
-
-    def is_only_folder_selected(self):
-        return self.files[0].name == ""
-
-    def draw(self, context):
-        layout = self.layout
-        self.library_settings.draw(layout)
-        self.asset_filter_settings.draw(layout)
-        prop = get_from_cache(CacheAssetPaths)
-        prop.draw(layout)
