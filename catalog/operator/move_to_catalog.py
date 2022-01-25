@@ -3,7 +3,7 @@ from bpy.types import Operator, PropertyGroup
 from bpy.props import PointerProperty, StringProperty
 
 from asset_browser_utilities.library.execute import BatchExecute
-from asset_browser_utilities.library.operator import BatchOperator
+from asset_browser_utilities.library.operator import BatchFolderOperator
 from asset_browser_utilities.catalog.prop import FilterCatalog
 from asset_browser_utilities.catalog.helper import CatalogsHelper
 
@@ -29,7 +29,7 @@ class OperatorProperties(PropertyGroup):
         box.prop(self.catalog, "catalog", icon="ASSET_MANAGER")
 
 
-class ASSET_OT_batch_move_to_catalog(Operator, ImportHelper, BatchOperator):
+class ASSET_OT_batch_move_to_catalog(Operator, ImportHelper, BatchFolderOperator):
     "Batch Move Assets To Catalog"
     bl_idname = "asset.batch_move_to_catalog"
     bl_label = "Batch Move To Catalog"

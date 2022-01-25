@@ -3,7 +3,7 @@ from bpy.types import Operator, PropertyGroup
 from bpy.props import PointerProperty, StringProperty
 
 from asset_browser_utilities.library.execute import BatchExecute
-from asset_browser_utilities.library.operator import BatchOperator
+from asset_browser_utilities.library.operator import BatchFolderOperator
 
 
 class BatchSetDescription(BatchExecute):
@@ -21,7 +21,7 @@ class OperatorProperties(PropertyGroup):
         layout.prop(self, "description", icon="FILE_TEXT")
 
 
-class ASSET_OT_batch_set_description(Operator, ImportHelper, BatchOperator):
+class ASSET_OT_batch_set_description(Operator, ImportHelper, BatchFolderOperator):
     """Batch Set Description. Leave Field Empty to remove description"""
 
     bl_idname = "asset.batch_set_description"

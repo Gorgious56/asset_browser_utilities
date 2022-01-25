@@ -48,7 +48,6 @@ class BatchExecute:
                 self.assets.pop(0)
             else:
                 return self.INTERVAL
-        print("All previews have been generated !")
         self.save_file()
         self.execute_next_blend()
         return None

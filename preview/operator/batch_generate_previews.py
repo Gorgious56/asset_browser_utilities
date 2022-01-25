@@ -4,7 +4,7 @@ from bpy.types import Operator, PropertyGroup
 from bpy.props import PointerProperty, BoolProperty
 
 from asset_browser_utilities.library.execute import BatchExecute
-from asset_browser_utilities.library.operator import BatchOperator
+from asset_browser_utilities.library.operator import BatchFolderOperator
 from asset_browser_utilities.preview.helper import is_preview_generated
 
 
@@ -28,7 +28,7 @@ class OperatorProperties(PropertyGroup):
         layout.prop(self, "overwrite", icon="ASSET_MANAGER")
 
 
-class ASSET_OT_batch_generate_previews(Operator, ImportHelper, BatchOperator):
+class ASSET_OT_batch_generate_previews(Operator, ImportHelper, BatchFolderOperator):
     "Batch Generate Previews"
     bl_idname = "asset.batch_generate_previews"
     bl_label = "Batch Generate Previews"

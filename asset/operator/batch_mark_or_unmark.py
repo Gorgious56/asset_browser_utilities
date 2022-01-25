@@ -3,7 +3,7 @@ from bpy_extras.io_utils import ImportHelper
 from bpy.types import Operator, PropertyGroup
 from bpy.props import PointerProperty, BoolProperty
 
-from asset_browser_utilities.library.operator import BatchOperator
+from asset_browser_utilities.library.operator import BatchFolderOperator
 from asset_browser_utilities.library.execute import BatchExecute
 
 
@@ -53,7 +53,7 @@ class OperatorPropertiesMark(PropertyGroup):
         row.prop(self, "generate_previews", icon="RESTRICT_RENDER_OFF")
 
 
-class ASSET_OT_batch_mark(Operator, ImportHelper, BatchOperator):
+class ASSET_OT_batch_mark(Operator, ImportHelper, BatchFolderOperator):
     "Batch Mark Assets"
     bl_idname = "asset.batch_mark"
     bl_label = "Batch Mark Assets"
@@ -65,7 +65,7 @@ class ASSET_OT_batch_mark(Operator, ImportHelper, BatchOperator):
         return self._invoke(context)
 
 
-class ASSET_OT_batch_unmark(Operator, ImportHelper, BatchOperator):
+class ASSET_OT_batch_unmark(Operator, ImportHelper, BatchFolderOperator):
     "Batch Unmark Assets"
     bl_idname = "asset.batch_unmark"
     bl_label = "Batch Unmark Assets"
