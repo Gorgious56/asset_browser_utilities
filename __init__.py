@@ -1,10 +1,11 @@
-# This is released under CC0 licence. Do with it what you wish. No result guaranteed whatsoever.
+# This whole addon is released under CC0 licence. Do with it what you wish.
+# Backup your files. No result guaranteed whatsoever.
 
 
 bl_info = {
     "name": "Asset Browser Utilities ",
     "author": "Gorgious",
-    "description": "A collection of Asset Browers QOL utilities",
+    "description": "A collection of Asset Browser QOL utilities",
     "blender": (3, 0, 0),
     "version": (0, 0, 12),
     "location": "",
