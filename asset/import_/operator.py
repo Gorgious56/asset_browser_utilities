@@ -6,8 +6,7 @@ from bpy_extras.io_utils import ExportHelper
 from bpy.types import Operator
 from bpy.props import StringProperty, CollectionProperty, PointerProperty
 
-from asset_browser_utilities.library.execute import BatchExecute
-from asset_browser_utilities.library.operator import BatchFolderOperator
+from asset_browser_utilities.core.operator.helper import BatchExecute, BatchFolderOperator
 
 
 class BatchImport(BatchExecute):
