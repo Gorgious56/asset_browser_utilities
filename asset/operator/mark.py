@@ -6,16 +6,7 @@ from bpy.props import PointerProperty, BoolProperty
 from asset_browser_utilities.core.operator.helper import BatchExecute, BatchFolderOperator
 
 
-class BatchUnmark(BatchExecute):
-    def execute_one_file_and_the_next_when_finished(self):
-        if self.assets:
-            for asset in self.assets:
-                asset.asset_clear()
-            self.save_file()
-        self.execute_next_blend()
-
-
-class BatchMark(BatchExecute):
+class BatchExecuteOverride(BatchExecute):
     def execute_one_file_and_the_next_when_finished(self):
         if not self.assets:
             self.execute_next_blend()
@@ -34,7 +25,7 @@ class BatchMark(BatchExecute):
             self.execute_next_blend()
 
 
-class OperatorPropertiesMark(PropertyGroup):
+class OperatorProperties(PropertyGroup):
     overwrite: BoolProperty(
         name="Overwrite assets",
         description="Check to re-mark assets and re-generate preview if the item is already an asset",
@@ -57,19 +48,8 @@ class ASSET_OT_batch_mark(Operator, ImportHelper, BatchFolderOperator):
     bl_idname = "asset.batch_mark"
     bl_label = "Batch Mark Assets"
 
-    operator_settings: PointerProperty(type=OperatorPropertiesMark)
-    logic_class = BatchMark
+    operator_settings: PointerProperty(type=OperatorProperties)
+    logic_class = BatchExecuteOverride
 
     def invoke(self, context, event):
         return self._invoke(context)
-
-
-class ASSET_OT_batch_unmark(Operator, ImportHelper, BatchFolderOperator):
-    "Batch Unmark Assets"
-    bl_idname = "asset.batch_unmark"
-    bl_label = "Batch Unmark Assets"
-
-    logic_class = BatchUnmark
-
-    def invoke(self, context, event):
-        return self._invoke(context, filter_assets=True)
