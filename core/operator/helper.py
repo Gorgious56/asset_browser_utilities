@@ -1,7 +1,8 @@
-from time import time
+from pathlib import Path
 
 import bpy.app.timers
-from bpy.props import PointerProperty, StringProperty, PointerProperty
+from bpy.types import OperatorFileListElement
+from bpy.props import PointerProperty, StringProperty, PointerProperty, CollectionProperty
 
 from asset_browser_utilities.core.helper import copy_simple_property_group
 from asset_browser_utilities.core.preferences.helper import write_to_cache, get_from_cache
@@ -40,7 +41,10 @@ class BatchExecute:
         self.remove_backup = operator.library_settings.remove_backup
         self.filter_settings = get_from_cache(operator.asset_filter_settings.__class__, context)
 
-        self.blends = operator.library_settings.get_blend_files(operator.filepath)
+        self.blends = operator.library_settings.get_blend_files(
+            folder=Path(operator.filepath).parent,
+            filepaths=[f.name for f in operator.files],
+        )
         self.blend = None
 
         # This is called when everything is finished.
@@ -80,8 +84,18 @@ class BatchExecute:
         self.execute_next_blend()
         return None
 
+    def execute_one_file_and_the_next_when_finished(self):
+        if self.assets:
+            for asset in self.assets:
+                self.do_on_asset(asset)
+            self.save_file()
+        self.execute_next_blend()
 
-class BatchOperator:
+    def do_on_asset(self, asset):
+        pass
+
+
+class BatchFolderOperator:
     filter_glob: StringProperty(
         default="",
         options={"HIDDEN"},
@@ -89,6 +103,15 @@ class BatchOperator:
     )
     asset_filter_settings: PointerProperty(type=AssetFilterSettings)
     library_settings: PointerProperty(type=LibraryExportSettings)
+    # https://docs.blender.org/api/current/bpy.types.OperatorFileListElement.html
+    files: CollectionProperty(
+        type=OperatorFileListElement,
+        options={"HIDDEN", "SKIP_SAVE"},
+    )
+    # use_filter_folder: bpy.props.BoolProperty()
+    # filename_ext = "."
+    # filter_folder = bpy.props.BoolProperty(default=True, options={'HIDDEN'})
+    # filepath: bpy.props.StringProperty()
 
     def _invoke(self, context, remove_backup=True, filter_assets=False):
         if self.library_settings.library_type == LibraryType.FileExternal.value:
@@ -96,6 +119,7 @@ class BatchOperator:
         self.library_settings.init(remove_backup=remove_backup)
         if self.library_settings.library_type in (LibraryType.FileExternal.value, LibraryType.FolderExternal.value):
             self.asset_filter_settings.init(filter_selection=False, filter_assets=filter_assets)
+            # self.filter_glob = None
             context.window_manager.fileselect_add(self)
             return {"RUNNING_MODAL"}
         else:
@@ -108,33 +132,12 @@ class BatchOperator:
         save_if_possible_and_necessary()
         logic = self.logic_class(self, context)
         logic.execute_next_blend()
-        # self.logic_class(
-        #     blends=self.library_settings.get_blend_files(self.filepath),
-        #     operator_settings=getattr(self, "operator_settings", None),
-        #     filter_settings=get_from_cache(self.asset_filter_settings.__class__, context),
-        #     library_settings=self.library_settings,
-        #     callback=lambda c: [
-        #         a.tag_redraw() for a in c.screen.areas if a.ui_type == "ASSETS" and hasattr(c, "screen")
-        #     ],
-        # ).execute_next_blend()
         return {"FINISHED"}
 
     def draw(self, context):
         layout = self.layout
 
         self.library_settings.draw(layout)
-        if self.operator_settings and hasattr(self.operator_settings, "draw"):
+        if hasattr(self, "operator_settings") and self.operator_settings and hasattr(self.operator_settings, "draw"):
             self.operator_settings.draw(layout)
         self.asset_filter_settings.draw(layout)
-
-
-class BatchFileOperator(FilterLibraryOperator, BatchOperator):
-    filter_glob: StringProperty(
-        default="*.blend",
-        options={"HIDDEN"},
-        maxlen=255,  # Max internal buffer length, longer would be clamped.
-    )
-
-
-class BatchFolderOperator(BatchOperator):
-    pass

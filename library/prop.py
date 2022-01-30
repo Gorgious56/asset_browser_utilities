@@ -62,24 +62,20 @@ class LibraryExportSettings(PropertyGroup):
     def copy(self, other):
         copy_simple_property_group(other, self)
 
-    def get_blend_files(self, blend_filepath=None):
+    def get_blend_files(self, folder=None, filepaths=None):
         if self.library_type == LibraryType.FileCurrent.value:
             return [bpy.data.filepath]
-        else:
-            if self.library_type == LibraryType.FolderExternal.value:
-                folder = Path(blend_filepath)
-                if not folder.is_dir():
-                    folder = folder.parent
-            elif self.library_type == LibraryType.FileExternal.value:
-                try:
-                    iter(blend_filepath)
-                except TypeError:
-                    return [blend_filepath]
-                else:
-                    return blend_filepath
-            else:
-                folder = Path(self.library_path)
-            if self.recursive:
-                return [fp for fp in folder.glob("**/*.blend") if fp.is_file()]
-            else:
-                return [fp for fp in folder.glob("*.blend") if fp.is_file()]
+        elif self.library_type == LibraryType.FolderExternal.value:
+            print(filepaths)
+            # folder = folder
+            # if not folder.is_dir():
+            #     folder = folder.parent
+            # if self.recursive:
+            #     return [fp for fp in folder.glob("**/*.blend") if fp.is_file()]
+            # else:
+            #     return [fp for fp in folder.glob("*.blend") if fp.is_file()]
+        elif self.library_type == LibraryType.FileExternal.value:
+            return [folder / filepath for filepath in filepaths]
+        else:  # User Library
+            folder = Path(self.library_path)
+            return [fp for fp in folder.glob("**/*.blend") if fp.is_file()]
