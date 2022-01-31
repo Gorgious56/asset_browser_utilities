@@ -33,6 +33,13 @@ def get_blend_library_name(asset):
     return type(asset).__name__.lower() + "s"
 
 
+def get_blend_files_in_folder(folder, recursive):
+    if recursive:
+        return [fp for fp in folder.glob("**/*.blend") if fp.is_file()]
+    else:
+        return [fp for fp in folder.glob("*.blend") if fp.is_file()]
+
+
 def append_asset(filepath, directory, filename):
     if is_this_current_file(filepath):
         return

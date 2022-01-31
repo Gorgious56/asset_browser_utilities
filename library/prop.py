@@ -1,6 +1,7 @@
 from enum import Enum
 from pathlib import Path
 from asset_browser_utilities.core.helper import copy_simple_property_group
+from asset_browser_utilities.library.helper import get_blend_files_in_folder
 
 import bpy
 from bpy.types import PropertyGroup
@@ -66,16 +67,9 @@ class LibraryExportSettings(PropertyGroup):
         if self.library_type == LibraryType.FileCurrent.value:
             return [bpy.data.filepath]
         elif self.library_type == LibraryType.FolderExternal.value:
-            print(filepaths)
-            # folder = folder
-            # if not folder.is_dir():
-            #     folder = folder.parent
-            # if self.recursive:
-            #     return [fp for fp in folder.glob("**/*.blend") if fp.is_file()]
-            # else:
-            #     return [fp for fp in folder.glob("*.blend") if fp.is_file()]
+            return get_blend_files_in_folder(folder, recursive=self.recursive)
         elif self.library_type == LibraryType.FileExternal.value:
             return [folder / filepath for filepath in filepaths]
         else:  # User Library
             folder = Path(self.library_path)
-            return [fp for fp in folder.glob("**/*.blend") if fp.is_file()]
+            return get_blend_files_in_folder(folder, recursive=True)
