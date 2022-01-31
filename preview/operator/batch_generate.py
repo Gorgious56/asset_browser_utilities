@@ -1,5 +1,4 @@
 import bpy.app.timers
-from bpy_extras.io_utils import ImportHelper
 from bpy.types import Operator, PropertyGroup
 from bpy.props import PointerProperty, BoolProperty
 
@@ -7,7 +6,7 @@ from asset_browser_utilities.core.operator.helper import BatchExecute, BatchFold
 from asset_browser_utilities.preview.helper import is_preview_generated
 
 
-class BatchGeneratePreviews(BatchExecute):
+class BatchExecuteOverride(BatchExecute):
     def execute_one_file_and_the_next_when_finished(self):
         for asset in self.assets:
             if self.overwrite or not is_preview_generated(asset):
@@ -27,13 +26,13 @@ class OperatorProperties(PropertyGroup):
         layout.prop(self, "overwrite", icon="ASSET_MANAGER")
 
 
-class ASSET_OT_batch_generate_previews(Operator, ImportHelper, BatchFolderOperator):
+class ASSET_OT_batch_generate_previews(Operator, BatchFolderOperator):
     "Batch Generate Previews"
     bl_idname = "asset.batch_generate_previews"
     bl_label = "Batch Generate Previews"
 
     operator_settings: PointerProperty(type=OperatorProperties)
-    logic_class = BatchGeneratePreviews
+    logic_class = BatchExecuteOverride
 
     def invoke(self, context, event):
         return self._invoke(context, filter_assets=True)
