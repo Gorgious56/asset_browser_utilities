@@ -7,7 +7,7 @@ bl_info = {
     "author": "Gorgious",
     "description": "A collection of Asset Browser QOL utilities",
     "blender": (3, 0, 0),
-    "version": (0, 0, 12),
+    "version": (0, 0, 13),
     "location": "",
     "warning": "",
     "category": "Import-Export",
