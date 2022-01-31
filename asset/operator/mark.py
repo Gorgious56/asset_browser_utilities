@@ -1,5 +1,4 @@
 import bpy
-from bpy_extras.io_utils import ImportHelper
 from bpy.types import Operator, PropertyGroup
 from bpy.props import PointerProperty, BoolProperty
 
@@ -43,7 +42,7 @@ class OperatorProperties(PropertyGroup):
         row.prop(self, "generate_previews", icon="RESTRICT_RENDER_OFF")
 
 
-class ASSET_OT_batch_mark(Operator, ImportHelper, BatchFolderOperator):
+class ASSET_OT_batch_mark(Operator, BatchFolderOperator):
     "Batch Mark Assets"
     bl_idname = "asset.batch_mark"
     bl_label = "Batch Mark Assets"

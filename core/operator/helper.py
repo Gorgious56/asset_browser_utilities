@@ -3,6 +3,7 @@ from pathlib import Path
 import bpy.app.timers
 from bpy.types import OperatorFileListElement
 from bpy.props import PointerProperty, StringProperty, PointerProperty, CollectionProperty
+from bpy_extras.io_utils import ImportHelper
 
 from asset_browser_utilities.core.helper import copy_simple_property_group
 from asset_browser_utilities.core.preferences.helper import write_to_cache, get_from_cache
@@ -95,7 +96,7 @@ class BatchExecute:
         pass
 
 
-class BatchFolderOperator:
+class BatchFolderOperator(ImportHelper):
     filter_glob: StringProperty(
         default="",
         options={"HIDDEN"},

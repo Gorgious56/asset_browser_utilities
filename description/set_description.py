@@ -21,7 +21,7 @@ class OperatorProperties(PropertyGroup):
         layout.prop(self, "description", icon="FILE_TEXT")
 
 
-class ASSET_OT_batch_set_description(Operator, ImportHelper, BatchFolderOperator):
+class ASSET_OT_batch_set_description(Operator, BatchFolderOperator):
     """Batch Set Description. Leave Field Empty to remove description"""
 
     bl_idname = "asset.batch_set_description"

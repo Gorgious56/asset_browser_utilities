@@ -1,4 +1,3 @@
-from bpy_extras.io_utils import ImportHelper
 from bpy.types import Operator, PropertyGroup
 from bpy.props import PointerProperty, StringProperty
 
@@ -20,7 +19,7 @@ class OperatorProperties(PropertyGroup):
         layout.prop(self, "author", icon="USER")
 
 
-class ASSET_OT_batch_set_author(Operator, ImportHelper, BatchFolderOperator):
+class ASSET_OT_batch_set_author(Operator, BatchFolderOperator):
     """Batch Set Author Name. Leave Field Empty to remove author"""
 
     bl_idname = "asset.batch_set_author"

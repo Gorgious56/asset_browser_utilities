@@ -39,7 +39,7 @@ class OperatorProperties(PropertyGroup):
         split.prop(self.catalog_to, "catalog", icon="ASSET_MANAGER", text="")
 
 
-class ASSET_OT_batch_move_from_cat_a_to_cat_b(Operator, ImportHelper, BatchFolderOperator):
+class ASSET_OT_batch_move_from_cat_a_to_cat_b(Operator, BatchFolderOperator):
     "Batch Move Assets From One Catalog to Another One"
     bl_idname = "asset.batch_move_from_cat_a_to_cat_b"
     bl_label = "Batch Move Assets From One Catalog to Another One"

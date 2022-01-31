@@ -45,7 +45,7 @@ class OperatorProperties(PropertyGroup):
         self.tag_collection.draw(layout)
 
 
-class ASSET_OT_batch_remove_tags(Operator, ImportHelper, BatchFolderOperator):
+class ASSET_OT_batch_remove_tags(Operator, BatchFolderOperator):
     "Remove tags"
     bl_idname = "asset.batch_remove_tags"
     bl_label = "Remove tags"

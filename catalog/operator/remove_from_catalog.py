@@ -28,7 +28,7 @@ class OperatorProperties(PropertyGroup):
         box.prop(self.catalog, "catalog", icon="ASSET_MANAGER")
 
 
-class ASSET_OT_batch_move_to_catalog(Operator, ImportHelper, BatchFolderOperator):
+class ASSET_OT_batch_move_to_catalog(Operator, BatchFolderOperator):
     "Batch Remove Assets From Catalog"
     bl_idname = "asset.batch_remove_from_catalog"
     bl_label = "Batch Remove From Catalog"
