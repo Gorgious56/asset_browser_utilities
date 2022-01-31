@@ -108,18 +108,12 @@ class BatchFolderOperator:
         type=OperatorFileListElement,
         options={"HIDDEN", "SKIP_SAVE"},
     )
-    # use_filter_folder: bpy.props.BoolProperty()
-    # filename_ext = "."
-    # filter_folder = bpy.props.BoolProperty(default=True, options={'HIDDEN'})
-    # filepath: bpy.props.StringProperty()
 
     def _invoke(self, context, remove_backup=True, filter_assets=False):
-        if self.library_settings.library_type == LibraryType.FileExternal.value:
-            self.filter_glob = "*.blend"
         self.library_settings.init(remove_backup=remove_backup)
-        if self.library_settings.library_type in (LibraryType.FileExternal.value, LibraryType.FolderExternal.value):
+        if self.library_settings.library_type in (LibraryType.FolderExternal.value, LibraryType.FileExternal.value):
+            self.filter_glob = "*.blend" if self.library_settings.library_type == LibraryType.FileExternal.value else ""
             self.asset_filter_settings.init(filter_selection=False, filter_assets=filter_assets)
-            # self.filter_glob = None
             context.window_manager.fileselect_add(self)
             return {"RUNNING_MODAL"}
         else:
