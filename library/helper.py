@@ -43,6 +43,8 @@ def get_blend_files_in_folder(folder, recursive):
 def append_asset(filepath, directory, filename):
     if is_this_current_file(filepath):
         return
+    if directory == "geometrynodetrees":
+        directory = "node_groups"
     # https://blender.stackexchange.com/a/33998/86891
     library = getattr(bpy.data, directory)
     with bpy.data.libraries.load(str(filepath)) as (data_from, data_to):
