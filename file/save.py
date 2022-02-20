@@ -36,6 +36,8 @@ def save_file(remove_backup=False):
 
 
 def save_file_as(filepath: str, remove_backup=False):
+    if not filepath:
+        return
     had_backup = has_backup(filepath)
     bpy.ops.wm.save_as_mainfile(filepath=str(filepath))
     if remove_backup and not had_backup:
