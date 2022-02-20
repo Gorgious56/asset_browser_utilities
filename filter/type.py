@@ -4,7 +4,7 @@ from bpy.props import BoolProperty, EnumProperty
 
 from asset_browser_utilities.core.helper import copy_simple_property_group
 
-_flag_types = list(range(20))
+_flag_types = list(range(40))
 _flag_types_object = list(range(20))
 
 
@@ -12,6 +12,7 @@ def get_types():
     if bpy.app.version > (3, 1, 0):
         return (
             ("actions", "Actions", "Actions", "ACTION", 2 ** _flag_types.pop(0)),
+            ("brushes", "Brushes", "Brushes", "BRUSH_DATA", 2 ** _flag_types.pop(0)),
             ("collections", "Collections", "Collections", "OUTLINER_COLLECTION", 2 ** _flag_types.pop(0)),
             ("materials", "Materials", "Materials", "MATERIAL", 2 ** _flag_types.pop(0)),
             ("node_groups", "Node Trees", "Node Trees", "NODETREE", 2 ** _flag_types.pop(0)),
