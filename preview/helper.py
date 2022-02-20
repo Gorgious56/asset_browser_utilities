@@ -1,8 +1,16 @@
 import numpy as np
 import bpy
 
+
 def can_preview_be_generated(asset):
-    if isinstance(asset, (bpy.types.Material, bpy.types.Action)):
+    if isinstance(
+        asset,
+        (
+            bpy.types.Material,
+            bpy.types.Action,
+            bpy.types.Image,
+        ),
+    ):
         return True
     elif isinstance(asset, bpy.types.Object):
         if asset.type in ("MESH", "FONT", "LIGHT", "GREASEPENCIL", "VOLUME", "SURFACE", "META"):
@@ -10,6 +18,7 @@ def can_preview_be_generated(asset):
                 return False
             return True
     return False
+
 
 def is_preview_generated(asset):
     preview = asset.preview

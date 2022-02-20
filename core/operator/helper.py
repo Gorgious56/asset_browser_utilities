@@ -77,7 +77,7 @@ class BatchExecute:
 
     def sleep_until_previews_are_done_and_execute_next_file(self):
         while self.assets:
-            if is_preview_generated(self.assets[0]) or not can_preview_be_generated(self.assets[0]):
+            if not can_preview_be_generated(self.assets[0]) or is_preview_generated(self.assets[0]):
                 self.assets.pop(0)
             else:
                 return self.INTERVAL
