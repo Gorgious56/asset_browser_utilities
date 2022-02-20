@@ -47,6 +47,8 @@ def append_asset(filepath, directory, filename):
         directory = "node_groups"
     elif directory == "brushs":
         directory = "brushes"
+    elif "texture" in directory:
+        directory = "textures"
     # https://blender.stackexchange.com/a/33998/86891
     library = getattr(bpy.data, directory)
     with bpy.data.libraries.load(str(filepath)) as (data_from, data_to):
