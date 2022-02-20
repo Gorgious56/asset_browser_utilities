@@ -23,6 +23,7 @@ def get_types():
             ("texts", "Texts", "Texts", "TEXT", 2 ** _flag_types.pop(0)),
             ("textures", "Textures", "Textures", "TEXTURE_DATA", 2 ** _flag_types.pop(0)),
             ("worlds", "Worlds", "Worlds", "WORLD", 2 ** _flag_types.pop(0)),
+            ("workspaces", "Workspaces", "Workspaces", "WORKSPACE", 2 ** _flag_types.pop(0)),
         )
     return (
         ("actions", "Actions", "Action", "ACTION", 2 ** _flag_types.pop(0)),
