@@ -9,6 +9,7 @@ def can_preview_be_generated(asset):
             bpy.types.Material,
             bpy.types.Action,
             bpy.types.Image,
+            bpy.types.Scene,
         ),
     ):
         return True
