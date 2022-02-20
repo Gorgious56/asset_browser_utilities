@@ -11,7 +11,8 @@ _flag_types_object = list(range(20))
 def get_types():
     if bpy.app.version > (3, 1, 0):
         return (
-            ("actions", "Actions", "Action", "ACTION", 2 ** _flag_types.pop(0)),
+            ("actions", "Actions", "Actions", "ACTION", 2 ** _flag_types.pop(0)),
+            ("collections", "Collections", "Collections", "OUTLINER_COLLECTION", 2 ** _flag_types.pop(0)),
             ("materials", "Materials", "Materials", "MATERIAL", 2 ** _flag_types.pop(0)),
             ("node_groups", "Node Trees", "Node Trees", "NODETREE", 2 ** _flag_types.pop(0)),
             ("objects", "Objects", "Objects", "OBJECT_DATA", 2 ** _flag_types.pop(0)),
