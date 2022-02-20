@@ -20,6 +20,7 @@ def get_types():
             ("objects", "Objects", "Objects", "OBJECT_DATA", 2 ** _flag_types.pop(0)),
             ("palettes", "Palettes", "Palettes", "COLOR", 2 ** _flag_types.pop(0)),
             ("scenes", "Scenes", "Scenes", "SCENE_DATA", 2 ** _flag_types.pop(0)),
+            ("texts", "Texts", "Texts", "TEXT", 2 ** _flag_types.pop(0)),
             ("worlds", "Worlds", "Worlds", "WORLD", 2 ** _flag_types.pop(0)),
         )
     return (
