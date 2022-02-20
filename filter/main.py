@@ -44,7 +44,7 @@ If unchecked, items that are not yet assets will be exported and marked as asset
         return asset_container.all_assets
 
     def draw(self, layout):
-        self.filter_selection.draw(layout)
+        # self.filter_selection.draw(layout)  # Deactivated until the feature works
         self.filter_types.draw(layout)
         self.filter_name.draw(layout)
         self.filter_catalog.draw(layout)
