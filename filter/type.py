@@ -14,6 +14,7 @@ def get_types():
             ("actions", "Actions", "Actions", "ACTION", 2 ** _flag_types.pop(0)),
             ("brushes", "Brushes", "Brushes", "BRUSH_DATA", 2 ** _flag_types.pop(0)),
             ("collections", "Collections", "Collections", "OUTLINER_COLLECTION", 2 ** _flag_types.pop(0)),
+            ("images", "Images", "Images", "IMAGE_DATA", 2 ** _flag_types.pop(0)),
             ("materials", "Materials", "Materials", "MATERIAL", 2 ** _flag_types.pop(0)),
             ("node_groups", "Node Trees", "Node Trees", "NODETREE", 2 ** _flag_types.pop(0)),
             ("objects", "Objects", "Objects", "OBJECT_DATA", 2 ** _flag_types.pop(0)),
