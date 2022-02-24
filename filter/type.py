@@ -15,6 +15,7 @@ def get_types():
             ("brushes", "Brushes", "Brushes", "BRUSH_DATA", 2 ** _flag_types.pop(0)),
             ("cache_files", "Cache Files", "Cache Files", "FILE_CACHE", 2 ** _flag_types.pop(0)),
             ("collections", "Collections", "Collections", "OUTLINER_COLLECTION", 2 ** _flag_types.pop(0)),
+            ("hair_curves", "Hairs", "Hairs", "CURVES_DATA", 2 ** _flag_types.pop(0)),
             ("images", "Images", "Images", "IMAGE_DATA", 2 ** _flag_types.pop(0)),
             ("materials", "Materials", "Materials", "MATERIAL", 2 ** _flag_types.pop(0)),
             ("node_groups", "Node Trees", "Node Trees", "NODETREE", 2 ** _flag_types.pop(0)),
