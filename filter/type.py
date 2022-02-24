@@ -25,6 +25,14 @@ def get_types():
             ("worlds", "Worlds", "Worlds", "WORLD", 2 ** _flag_types.pop(0)),
             ("workspaces", "Workspaces", "Workspaces", "WORKSPACE", 2 ** _flag_types.pop(0)),
         )
+    elif bpy.app.version > (3, 0, 0):
+        return (
+            ("actions", "Actions", "Action", "ACTION", 2 ** _flag_types.pop(0)),
+            ("materials", "Materials", "Materials", "MATERIAL", 2 ** _flag_types.pop(0)),
+            ("node_groups", "Node Trees", "Node Trees", "NODETREE", 2 ** _flag_types.pop(0)),
+            ("objects", "Objects", "Objects", "OBJECT_DATA", 2 ** _flag_types.pop(0)),
+            ("worlds", "Worlds", "Worlds", "WORLD", 2 ** _flag_types.pop(0)),
+        )
     return (
         ("actions", "Actions", "Action", "ACTION", 2 ** _flag_types.pop(0)),
         ("materials", "Materials", "Materials", "MATERIAL", 2 ** _flag_types.pop(0)),
