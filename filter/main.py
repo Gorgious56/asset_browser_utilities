@@ -15,6 +15,7 @@ class AssetFilterSettings(PropertyGroup):
     filter_name: PointerProperty(type=FilterName)
     filter_selection: PointerProperty(type=FilterSelection)
     filter_catalog: PointerProperty(type=FilterCatalog)
+    filter_catalog_allow: BoolProperty(default=False)
     filter_assets: BoolProperty(
         default=False,
         name="Only Existing Assets",
@@ -27,6 +28,7 @@ If unchecked, items that are not yet assets will be exported and marked as asset
         self.filter_selection.allow = filter_selection
         self.filter_assets_allow = filter_assets
         self.filter_assets = filter_assets
+        self.filter_catalog_allow = filter_assets
 
     def get_objects_that_satisfy_filters(self):
         data_containers = list(self.filter_types.types)
@@ -47,7 +49,8 @@ If unchecked, items that are not yet assets will be exported and marked as asset
         # self.filter_selection.draw(layout)  # Deactivated until the feature works
         self.filter_types.draw(layout)
         self.filter_name.draw(layout)
-        self.filter_catalog.draw(layout)
+        if self.filter_catalog_allow:
+            self.filter_catalog.draw(layout)
 
     def copy(self, other):
         copy_simple_property_group(other, self)
