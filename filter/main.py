@@ -58,5 +58,5 @@ If unchecked, items that are not yet assets will be exported and marked as asset
         copy_simple_property_group(other.filter_name, self.filter_name)
         copy_simple_property_group(other.filter_selection, self.filter_selection)
         helper = CatalogsHelper()
-        if helper.has_catalogs():
+        if helper.has_catalogs:
             copy_simple_property_group(other.filter_catalog, self.filter_catalog)

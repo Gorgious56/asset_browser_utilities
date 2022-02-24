@@ -11,7 +11,7 @@ class FilterCatalog(PropertyGroup):
 
     def draw(self, layout):
         helper = CatalogsHelper()
-        if not helper.has_catalogs():
+        if not helper.has_catalogs:
             return
         box = layout.box()
         box.prop(self, "active", icon="FILTER")
