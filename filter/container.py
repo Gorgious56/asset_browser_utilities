@@ -74,7 +74,5 @@ class AssetContainer:
 
     @property
     def all_assets(self):
-        all_assets = []
         for assets in self.assets.values():
-            all_assets.extend(assets)
-        return all_assets
+            yield from assets
