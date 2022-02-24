@@ -2,14 +2,6 @@ import bpy
 import os
 
 
-def save_file():
-    try:
-        bpy.ops.wm.save_mainfile()
-    except RuntimeError as e:
-        print(e)
-        print(f"Skipping file {bpy.data.filepath}. Please make sure linked libraries are valid in this file.")
-
-
 def save_if_possible_and_necessary():
     if bpy.data.is_saved and bpy.data.is_dirty:
         save_file()
@@ -37,10 +29,14 @@ def remove_backup_file_if_it_exists(filepath):
 
 
 def save_file(remove_backup=False):
-    had_backup = has_backup(bpy.data.filepath)
-    save_file()
-    if remove_backup and not had_backup:
-        remove_backup_file_if_it_exists(bpy.data.filepath)
+    try:
+        bpy.ops.wm.save_mainfile()
+    except RuntimeError as e:
+        print(e)
+        print(f"Skipping file {bpy.data.filepath}. Please make sure linked libraries are valid in this file.")
+    else:        
+        if remove_backup and has_backup(bpy.data.filepath):
+            remove_backup_file_if_it_exists(bpy.data.filepath)
 
 
 def save_file_as(filepath: str, remove_backup=False):
