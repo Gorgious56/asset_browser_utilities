@@ -42,8 +42,12 @@ class BatchExecute:
         self.remove_backup = operator.library_settings.remove_backup
         self.filter_settings = get_from_cache(operator.asset_filter_settings.__class__, context)
 
+        filepath = Path(operator.filepath)
+        if filepath.is_file():
+            filepath = filepath.parent
+
         self.blends = operator.library_settings.get_blend_files(
-            folder=Path(operator.filepath).parent,
+            folder=filepath,
             filepaths=[f.name for f in operator.files],
         )
         self.blend = None
