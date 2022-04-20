@@ -54,6 +54,10 @@ class AssetContainer:
     def filter_by_selection(self, source):
         if source == SelectionSources.ASSET_BROWSER:
             selected_ids = [asset_file.local_id for asset_file in bpy.context.selected_asset_files]
+        elif source == SelectionSources.OUTLINER:
+            pass
+        elif source == SelectionSources.VIEW_3D:
+            selected_ids = [o for o in bpy.context.visible_objects if o.select_get()]
         for items in self.assets.values():
             for i in range(len(items) - 1, -1, -1):
                 if items[i] not in selected_ids:

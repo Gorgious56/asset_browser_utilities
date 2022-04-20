@@ -25,13 +25,13 @@ class FilterSelection(PropertyGroup):
                 "ASSET_MANAGER",
                 2,
             ),
-            (
-                Sources.OUTLINER,
-                "Outliner",
-                "Filter Selection from the currently selected items in the outliner",
-                "OUTLINER",
-                3,
-            ),
+            # (
+            #     Sources.OUTLINER,
+            #     "Outliner",
+            #     "Filter Selection from the currently selected items in the outliner",
+            #     "OUTLINER",
+            #     3,
+            # ),  # How do I get a link to selected ids in a different outliner context ??
         ),
         default=Sources.ASSET_BROWSER,
     )
