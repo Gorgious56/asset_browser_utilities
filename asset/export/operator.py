@@ -99,7 +99,7 @@ class ASSET_OT_batch_export(Operator, ExportHelper, FilterLibraryOperator):
     operator_settings: PointerProperty(type=ExportProperties)
 
     def invoke(self, context, event):
-        self.asset_filter_settings.init(filter_selection=True, filter_assets=True)
+        self.asset_filter_settings.init(context, filter_selection=True, filter_assets=True)
         context.window_manager.fileselect_add(self)
         return {"RUNNING_MODAL"}
 

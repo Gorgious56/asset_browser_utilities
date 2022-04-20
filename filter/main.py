@@ -1,3 +1,4 @@
+from asset_browser_utilities.core.ui.menu.helper import is_current_file
 from bpy.types import PropertyGroup
 from bpy.props import BoolProperty, PointerProperty
 
@@ -24,8 +25,8 @@ If unchecked, items that are not yet assets will be exported and marked as asset
     )
     filter_assets_allow: BoolProperty(default=False)
 
-    def init(self, filter_selection=False, filter_assets=False):
-        self.filter_selection.allow = filter_selection
+    def init(self, context, filter_selection=False, filter_assets=False):
+        self.filter_selection.allow = filter_selection and is_current_file(context)
         self.filter_assets_allow = filter_assets
         self.filter_assets = filter_assets
         self.filter_catalog_allow = filter_assets
@@ -41,12 +42,11 @@ If unchecked, items that are not yet assets will be exported and marked as asset
         if self.filter_name.active:
             asset_container.filter_by_name(self.filter_name.method, self.filter_name.value)
         if self.filter_selection.active:
-            asset_container.filter_objects_by_selection(self.filter_selection.source)
-            asset_container.filter_materials_by_selection(self.filter_selection.source)
+            asset_container.filter_by_selection(self.filter_selection.source)
         return list(asset_container.all_assets)
 
     def draw(self, layout):
-        # self.filter_selection.draw(layout)  # Deactivated until the feature works
+        self.filter_selection.draw(layout)
         self.filter_types.draw(layout)
         self.filter_name.draw(layout)
         if self.filter_catalog_allow:

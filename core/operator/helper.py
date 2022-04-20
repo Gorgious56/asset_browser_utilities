@@ -22,11 +22,11 @@ class FilterLibraryOperator:
     def _invoke(self, context, remove_backup=True, filter_assets=False):
         self.library_settings.init(remove_backup=remove_backup)
         if self.library_settings.library_type in (LibraryType.FileExternal.value, LibraryType.FolderExternal.value):
-            self.asset_filter_settings.init(filter_selection=False, filter_assets=filter_assets)
+            self.asset_filter_settings.init(context, filter_selection=False, filter_assets=filter_assets)
             context.window_manager.fileselect_add(self)
             return {"RUNNING_MODAL"}
         else:
-            self.asset_filter_settings.init(filter_selection=True, filter_assets=filter_assets)
+            self.asset_filter_settings.init(context, filter_selection=True, filter_assets=filter_assets)
             return context.window_manager.invoke_props_dialog(self)
 
 
@@ -118,11 +118,11 @@ class BatchFolderOperator(ImportHelper):
         self.library_settings.init(remove_backup=remove_backup)
         if self.library_settings.library_type in (LibraryType.FolderExternal.value, LibraryType.FileExternal.value):
             self.filter_glob = "*.blend" if self.library_settings.library_type == LibraryType.FileExternal.value else ""
-            self.asset_filter_settings.init(filter_selection=False, filter_assets=filter_assets)
+            self.asset_filter_settings.init(context, filter_selection=False, filter_assets=filter_assets)
             context.window_manager.fileselect_add(self)
             return {"RUNNING_MODAL"}
         else:
-            self.asset_filter_settings.init(filter_selection=True, filter_assets=filter_assets)
+            self.asset_filter_settings.init(context, filter_selection=True, filter_assets=filter_assets)
             return context.window_manager.invoke_props_dialog(self)
 
     def execute(self, context):

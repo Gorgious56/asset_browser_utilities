@@ -1,5 +1,5 @@
 from bpy.types import PropertyGroup
-from bpy.props import EnumProperty, StringProperty, BoolProperty
+from bpy.props import EnumProperty, BoolProperty
 
 
 class Sources:
@@ -44,6 +44,6 @@ class FilterSelection(PropertyGroup):
         if self.allow:
             box = layout.box()
             box.prop(self, "active", icon="RESTRICT_SELECT_OFF")
-            # row = box.row(align=True)
-            # if self.active:
-            #     row.props_enum(self, "source")
+            row = box.row(align=True)
+            if self.active:
+                row.props_enum(self, "source")
