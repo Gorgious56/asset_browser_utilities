@@ -2,7 +2,7 @@ from asset_browser_utilities.core.ui.menu.helper import is_current_file
 from bpy.types import PropertyGroup
 from bpy.props import BoolProperty, PointerProperty
 
-from asset_browser_utilities.filter.type import FilterTypes
+from asset_browser_utilities.filter.type import FilterTypes, get_object_types, get_types
 from asset_browser_utilities.filter.name import FilterName
 from asset_browser_utilities.filter.selection import FilterSelection
 from asset_browser_utilities.filter.container import AssetContainer
@@ -32,8 +32,12 @@ If unchecked, items that are not yet assets will be exported and marked as asset
         self.filter_catalog_allow = filter_assets
 
     def get_objects_that_satisfy_filters(self):
-        data_containers = list(self.filter_types.types)
-        object_types = list(self.filter_types.types_object) if self.filter_types.types_object_filter else None
+        data_containers = list(self.filter_types.types) if self.filter_types.types_global_filter else [t[0] for t in get_types()]
+        object_types = (
+            list(self.filter_types.types_object)
+            if (self.filter_types.types_object_filter and self.filter_types.types_global_filter)
+            else [t[0] for t in get_object_types()]
+        )
         asset_container = AssetContainer(data_containers, object_types)
         if self.filter_assets:
             asset_container.filter_assets()
