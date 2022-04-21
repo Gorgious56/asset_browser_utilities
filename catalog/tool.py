@@ -1,5 +1,6 @@
 import os.path
 from pathlib import Path
+from asset_browser_utilities.library.path import get_library_root
 import bpy
 from asset_browser_utilities.file.path import read_lines_sequentially
 
@@ -18,6 +19,7 @@ class CatalogsHelper:
         return catalog_line.split(":")
 
     def get_catalog_filepath(self):
+        root = get_library_root()
         folder = Path(self.blend_filepath).parent
         filepath = folder / self.CATALOGS_FILENAME
         while not os.path.exists(filepath):

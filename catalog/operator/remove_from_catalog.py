@@ -4,7 +4,7 @@ from bpy.props import PointerProperty, StringProperty
 
 from asset_browser_utilities.core.operator.helper import BatchExecute, BatchFolderOperator
 from asset_browser_utilities.catalog.prop import FilterCatalog
-from asset_browser_utilities.catalog.helper import CatalogsHelper
+from asset_browser_utilities.catalog.tool import CatalogsHelper
 
 
 class BatchRemoveFromCatalog(BatchExecute):

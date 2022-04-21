@@ -6,7 +6,7 @@ from asset_browser_utilities.filter.name import FilterName
 from asset_browser_utilities.filter.selection import FilterSelection
 from asset_browser_utilities.filter.container import AssetContainer
 from asset_browser_utilities.catalog.prop import FilterCatalog
-from asset_browser_utilities.catalog.helper import CatalogsHelper
+from asset_browser_utilities.catalog.tool import CatalogsHelper
 from asset_browser_utilities.core.helper import copy_simple_property_group
 
 

@@ -1,4 +1,4 @@
-from asset_browser_utilities.library.helper import append_asset, get_blend_library_name
+from asset_browser_utilities.library.tool import append_asset, get_blend_library_name
 
 import bpy
 from bpy.types import Operator, OperatorFileListElement, PropertyGroup
