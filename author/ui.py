@@ -8,4 +8,4 @@ class ABU_MT_author(Menu):
     def draw(self, context):
         layout = self.layout
         mark_op = layout.operator("asset.batch_set_author", text="Set", icon="ADD")
-        mark_op.library_settings.library_type = LibraryType.get_library_type_from_context(context)
+        mark_op.library_settings.source = LibraryType.get_library_type_from_context(context)

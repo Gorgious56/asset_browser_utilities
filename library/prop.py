@@ -1,6 +1,7 @@
 from enum import Enum
 from pathlib import Path
 from asset_browser_utilities.core.helper import copy_simple_property_group
+from asset_browser_utilities.core.preferences.helper import get_cache
 from asset_browser_utilities.library.tool import get_blend_files_in_folder
 
 import bpy
@@ -26,20 +27,12 @@ class LibraryType(Enum):
             return LibraryType.FileCurrent.value
 
 
-class LibraryPG(PropertyGroup):
+class LibraryExportSettings(PropertyGroup):
     source: EnumProperty(items=[(l_t.value,) * 3 for l_t in LibraryType])
     library_user_path: EnumProperty(
         name="User Library",
         items=lambda s, c: ((a_l.path, a_l.name, "") for a_l in c.preferences.filepaths.asset_libraries),
     )
-
-    @staticmethod
-    def get(context):
-        return context.window_manager.ABU_Library
-
-
-class LibraryExportSettings(PropertyGroup):
-    library_type: StringProperty(name="Library Type")
     recursive: BoolProperty(
         default=True,
         name="Recursive",
@@ -57,13 +50,13 @@ class LibraryExportSettings(PropertyGroup):
         self.remove_backup = remove_backup
 
     def draw(self, layout, context):
-        if self.library_type == LibraryType.FileCurrent.value:
+        if self.source == LibraryType.FileCurrent.value:
             return
-        elif self.library_type == LibraryType.FolderExternal.value:
+        elif self.source == LibraryType.FolderExternal.value:
             layout.prop(self, "recursive", icon="FOLDER_REDIRECT")
-        elif self.library_type == LibraryType.UserLibrary.value:
+        elif self.source == LibraryType.UserLibrary.value:
             box = layout.box()
-            library_pg = LibraryPG.get(context)
+            library_pg = LibraryExportSettings.get(context)
             box.prop(library_pg, "library_user_path", icon="FOLDER_REDIRECT")
             box.label(text=f"Path : {library_pg.library_user_path}")
         if self.remove_backup_allow:
@@ -73,15 +66,16 @@ class LibraryExportSettings(PropertyGroup):
         copy_simple_property_group(other, self)
 
     def get_blend_files(self, folder=None, filepaths=None):
-        if self.library_type == LibraryType.FileCurrent.value:
+        if self.source == LibraryType.FileCurrent.value:
             return [bpy.data.filepath]
-        elif self.library_type == LibraryType.FolderExternal.value:
+        elif self.source == LibraryType.FolderExternal.value:
             return get_blend_files_in_folder(folder, recursive=self.recursive)
-        elif self.library_type == LibraryType.FileExternal.value:
+        elif self.source == LibraryType.FileExternal.value:
             return [folder / filepath for filepath in filepaths]
         else:  # User Library
             folder = Path(self.library_path)
             return get_blend_files_in_folder(folder, recursive=True)
 
-def register():
-    bpy.types.WindowManager.ABU_Library = bpy.props.PointerProperty(type=LibraryPG)
+    @staticmethod
+    def get(context):
+        return get_cache(context).library_settings

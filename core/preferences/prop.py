@@ -10,7 +10,6 @@ class Cache(PropertyGroup):
     library_settings: PointerProperty(type=LibraryExportSettings)
     asset_filter_settings: PointerProperty(type=AssetFilterSettings)
     asset_paths: PointerProperty(type=CacheAssetPaths)
-
     def set(self, value):
         for prop_name in self.__annotations__:
             prop = getattr(self, prop_name)

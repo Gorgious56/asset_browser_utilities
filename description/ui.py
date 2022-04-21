@@ -6,6 +6,6 @@ class ABU_MT_description(Menu):
     bl_label = "Description"
 
     def draw(self, context):
-        library_type = LibraryType.get_library_type_from_context(context)
+        library_source_from_context = LibraryType.get_library_type_from_context(context)
         mark_op = self.layout.operator("asset.batch_set_description", text="Set", icon="ADD")
-        mark_op.library_settings.library_type = library_type
+        mark_op.library_settings.source = library_source_from_context

@@ -8,13 +8,13 @@ class ABU_MT_assets(Menu):
     def draw(self, context):
         layout = self.layout
 
-        library_type = LibraryType.get_library_type_from_context(context)
+        library_source_from_context = LibraryType.get_library_type_from_context(context)
         ops = []
         ops.append(layout.operator("asset.batch_mark", text="Mark", icon="SHADERFX"))
         ops.append(layout.operator("asset.batch_unmark", text="Unmark", icon="TRASH"))
-        if library_type == LibraryType.FileCurrent.value:
+        if library_source_from_context == LibraryType.FileCurrent.value:
             layout.operator("asset.batch_export", text="Export", icon="EXPORT")
         else:
             ops.append(layout.operator("asset.batch_import", text="Import", icon="IMPORT"))
         for op in ops:
-            op.library_settings.library_type = library_type
+            op.library_settings.source = library_source_from_context

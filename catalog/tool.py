@@ -1,6 +1,6 @@
 import os.path
 from pathlib import Path
-from asset_browser_utilities.library.prop import LibraryPG, LibraryType
+from asset_browser_utilities.library.prop import LibraryExportSettings, LibraryType
 import bpy
 from asset_browser_utilities.file.path import read_lines_sequentially
 
@@ -15,15 +15,15 @@ class CatalogsHelper:
         return catalog_line.split(":")
 
     def get_catalog_filepath(self, context):
-        library_pg = LibraryPG.get(context)
-        library_type = library_pg.source
-        if library_type == LibraryType.FileCurrent.value:
+        library_settings = LibraryExportSettings.get(context)
+        library_source = library_settings.source
+        if library_source == LibraryType.FileCurrent.value:
             root_folder = Path(bpy.data.filepath).parent
-        elif library_type in (LibraryType.FileExternal.value, LibraryType.FolderExternal.value):
+        elif library_source in (LibraryType.FileExternal.value, LibraryType.FolderExternal.value):
             file_browser_directory = context.area.spaces.active.params.directory  # Byte string
             root_folder = Path(file_browser_directory.decode("UTF-8"))
-        elif library_type == LibraryType.UserLibrary.value:
-            root_folder = Path(library_pg.library_user_path)
+        elif library_source == LibraryType.UserLibrary.value:
+            root_folder = Path(library_settings.library_user_path)
 
         catalogs_filepath = root_folder / self.CATALOGS_FILENAME
         return catalogs_filepath

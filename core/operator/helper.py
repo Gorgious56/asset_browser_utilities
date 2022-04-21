@@ -11,7 +11,7 @@ from asset_browser_utilities.core.ui.message import message_box
 from asset_browser_utilities.file.path import open_file_if_different_from_current
 from asset_browser_utilities.file.save import save_if_possible_and_necessary, save_file_as
 from asset_browser_utilities.filter.main import AssetFilterSettings
-from asset_browser_utilities.library.prop import LibraryExportSettings, LibraryType, LibraryPG
+from asset_browser_utilities.library.prop import LibraryExportSettings, LibraryType
 from asset_browser_utilities.preview.helper import can_preview_be_generated, is_preview_generated
 
 ## Where is this used ?
@@ -21,8 +21,8 @@ class FilterLibraryOperator:
 
     def _invoke(self, context, remove_backup=True, filter_assets=False):
         self.library_settings.init(remove_backup=remove_backup)
-        LibraryPG.get(context).source = self.library_settings.library_type
-        if self.library_settings.library_type in (LibraryType.FileExternal.value, LibraryType.FolderExternal.value):
+        LibraryExportSettings.get(context).source = self.library_settings.source
+        if self.library_settings.source in (LibraryType.FileExternal.value, LibraryType.FolderExternal.value):
             self.asset_filter_settings.init(context, filter_selection=False, filter_assets=filter_assets)
             context.window_manager.fileselect_add(self)
             return {"RUNNING_MODAL"}
@@ -118,9 +118,9 @@ class BatchFolderOperator(ImportHelper):
 
     def _invoke(self, context, remove_backup=True, filter_assets=False):
         self.library_settings.init(remove_backup=remove_backup)
-        LibraryPG.get(context).source = self.library_settings.library_type
-        if self.library_settings.library_type in (LibraryType.FolderExternal.value, LibraryType.FileExternal.value):
-            self.filter_glob = "*.blend" if self.library_settings.library_type == LibraryType.FileExternal.value else ""
+        LibraryExportSettings.get(context).source = self.library_settings.source
+        if self.library_settings.source in (LibraryType.FolderExternal.value, LibraryType.FileExternal.value):
+            self.filter_glob = "*.blend" if self.library_settings.source == LibraryType.FileExternal.value else ""
             self.asset_filter_settings.init(context, filter_selection=False, filter_assets=filter_assets)
             context.window_manager.fileselect_add(self)
             return {"RUNNING_MODAL"}
