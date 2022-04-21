@@ -26,6 +26,18 @@ class LibraryType(Enum):
             return LibraryType.FileCurrent.value
 
 
+class LibraryPG(PropertyGroup):
+    library_type: EnumProperty(items=[(l_t.value,) * 3 for l_t in LibraryType])
+
+    @staticmethod
+    def set_library_type(context, library_type):
+        context.screen.ABU_Library.library_type = library_type
+    
+    @staticmethod
+    def get_library_type(context):
+        return context.screen.ABU_Library.library_type
+
+
 class LibraryExportSettings(PropertyGroup):
     library_type: StringProperty(name="Library Type")
     recursive: BoolProperty(
@@ -73,3 +85,6 @@ class LibraryExportSettings(PropertyGroup):
         else:  # User Library
             folder = Path(self.library_path)
             return get_blend_files_in_folder(folder, recursive=True)
+
+def register():
+    bpy.types.Screen.ABU_Library = bpy.props.PointerProperty(type=LibraryPG)

@@ -9,10 +9,11 @@ class FilterCatalog(PropertyGroup):
     catalog: EnumProperty(items=CatalogsHelper.get_catalogs, name="Catalog")
 
     def draw(self, layout, context):
-        helper = CatalogsHelper(context)
-        if not helper.has_catalogs:
-            return
         box = layout.box()
         box.prop(self, "active", icon="FILTER")
         if self.active:
-            box.prop(self, "catalog")
+            helper = CatalogsHelper(context)
+            if helper.has_catalogs:
+                box.prop(self, "catalog")
+            else:
+                box.label(text="No Catalog", icon="INFO")

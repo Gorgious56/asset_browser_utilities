@@ -1,5 +1,6 @@
+from asset_browser_utilities.library.prop import LibraryPG, LibraryType
 import bpy
-from asset_browser_utilities.core.ui.menu.helper import is_current_file
+
 from bpy.types import PropertyGroup
 from bpy.props import BoolProperty, PointerProperty
 
@@ -27,7 +28,7 @@ If unchecked, items that are not yet assets will be exported and marked as asset
     filter_assets_allow: BoolProperty(default=False)
 
     def init(self, context, filter_selection=False, filter_assets=False):
-        self.filter_selection.allow = filter_selection and is_current_file(context)
+        self.filter_selection.allow = filter_selection and LibraryPG.get_library_type(context) == LibraryType.FileCurrent.value
         self.filter_assets_allow = filter_assets
         self.filter_assets = filter_assets
         self.filter_catalog_allow = filter_assets
@@ -58,6 +59,7 @@ If unchecked, items that are not yet assets will be exported and marked as asset
             self.filter_catalog.draw(layout, context)
 
     def copy(self, other):
+        # Other is the source, self is the target
         copy_simple_property_group(other, self)
         copy_simple_property_group(other.filter_types, self.filter_types)
         copy_simple_property_group(other.filter_name, self.filter_name)
