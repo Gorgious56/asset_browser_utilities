@@ -31,11 +31,11 @@ class LibraryPG(PropertyGroup):
 
     @staticmethod
     def set_library_type(context, library_type):
-        context.screen.ABU_Library.library_type = library_type
+        context.window_manager.ABU_Library.library_type = library_type
     
     @staticmethod
     def get_library_type(context):
-        return context.screen.ABU_Library.library_type
+        return context.window_manager.ABU_Library.library_type
 
 
 class LibraryExportSettings(PropertyGroup):
@@ -87,4 +87,4 @@ class LibraryExportSettings(PropertyGroup):
             return get_blend_files_in_folder(folder, recursive=True)
 
 def register():
-    bpy.types.Screen.ABU_Library = bpy.props.PointerProperty(type=LibraryPG)
+    bpy.types.WindowManager.ABU_Library = bpy.props.PointerProperty(type=LibraryPG)

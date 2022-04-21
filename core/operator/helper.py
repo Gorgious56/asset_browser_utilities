@@ -14,7 +14,7 @@ from asset_browser_utilities.filter.main import AssetFilterSettings
 from asset_browser_utilities.library.prop import LibraryExportSettings, LibraryType, LibraryPG
 from asset_browser_utilities.preview.helper import can_preview_be_generated, is_preview_generated
 
-
+## Where is this used ?
 class FilterLibraryOperator:
     asset_filter_settings: PointerProperty(type=AssetFilterSettings)
     library_settings: PointerProperty(type=LibraryExportSettings)
@@ -119,6 +119,7 @@ class BatchFolderOperator(ImportHelper):
     def _invoke(self, context, remove_backup=True, filter_assets=False):
         self.library_settings.init(remove_backup=remove_backup)
         LibraryPG.set_library_type(context, self.library_settings.library_type)
+        print(context.window_manager)
         if self.library_settings.library_type in (LibraryType.FolderExternal.value, LibraryType.FileExternal.value):
             self.filter_glob = "*.blend" if self.library_settings.library_type == LibraryType.FileExternal.value else ""
             self.asset_filter_settings.init(context, filter_selection=False, filter_assets=filter_assets)
