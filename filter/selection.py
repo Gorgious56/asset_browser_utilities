@@ -1,5 +1,5 @@
 from bpy.types import PropertyGroup
-from bpy.props import EnumProperty, StringProperty, BoolProperty
+from bpy.props import EnumProperty, BoolProperty
 
 
 class Sources:
@@ -25,13 +25,13 @@ class FilterSelection(PropertyGroup):
                 "ASSET_MANAGER",
                 2,
             ),
-            (
-                Sources.OUTLINER,
-                "Outliner",
-                "Filter Selection from the currently selected items in the outliner",
-                "OUTLINER",
-                3,
-            ),
+            # (
+            #     Sources.OUTLINER,
+            #     "Outliner",
+            #     "Filter Selection from the currently selected items in the outliner",
+            #     "OUTLINER",
+            #     3,
+            # ),  # How do I get a link to selected ids in a different outliner context ??
         ),
         default=Sources.ASSET_BROWSER,
     )
@@ -44,6 +44,6 @@ class FilterSelection(PropertyGroup):
         if self.allow:
             box = layout.box()
             box.prop(self, "active", icon="RESTRICT_SELECT_OFF")
-            # row = box.row(align=True)
-            # if self.active:
-            #     row.props_enum(self, "source")
+            row = box.row(align=True)
+            if self.active:
+                row.props_enum(self, "source")

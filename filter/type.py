@@ -2,53 +2,69 @@ import bpy.app
 from bpy.types import PropertyGroup
 from bpy.props import BoolProperty, EnumProperty
 
-from asset_browser_utilities.core.helper import copy_simple_property_group
-
-_flag_types = list(range(40))
-_flag_types_object = list(range(20))
-
 
 def get_types():
     if bpy.app.version > (3, 1, 0):
         return (
-            ("actions", "Actions", "Actions", "ACTION", 2 ** _flag_types.pop(0)),
-            ("brushes", "Brushes", "Brushes", "BRUSH_DATA", 2 ** _flag_types.pop(0)),
-            ("cache_files", "Cache Files", "Cache Files", "FILE_CACHE", 2 ** _flag_types.pop(0)),
-            ("collections", "Collections", "Collections", "OUTLINER_COLLECTION", 2 ** _flag_types.pop(0)),
-            ("linestyles", "Freestyle Linestyles", "", "LINE_DATA", 2 ** _flag_types.pop(0)),
-            ("hair_curves", "Hairs", "Hairs", "CURVES_DATA", 2 ** _flag_types.pop(0)),
-            ("images", "Images", "Images", "IMAGE_DATA", 2 ** _flag_types.pop(0)),
-            ("masks", "Masks", "Masks", "MOD_MASK", 2 ** _flag_types.pop(0)),
-            ("materials", "Materials", "Materials", "MATERIAL", 2 ** _flag_types.pop(0)),
-            ("movieclips", "Movie Clips", "Movie Clips", "FILE_MOVIE", 2 ** _flag_types.pop(0)),
-            ("node_groups", "Node Trees", "Node Trees", "NODETREE", 2 ** _flag_types.pop(0)),
-            ("objects", "Objects", "Objects", "OBJECT_DATA", 2 ** _flag_types.pop(0)),
-            ("palettes", "Palettes", "Palettes", "COLOR", 2 ** _flag_types.pop(0)),
-            ("particles", "Particle Systems", "Particle Systems", "PARTICLES", 2 ** _flag_types.pop(0)),
-            ("scenes", "Scenes", "Scenes", "SCENE_DATA", 2 ** _flag_types.pop(0)),
-            ("sounds", "Sounds", "Sounds", "SOUND", 2 ** _flag_types.pop(0)),
-            ("texts", "Texts", "Texts", "TEXT", 2 ** _flag_types.pop(0)),
-            ("textures", "Textures", "Textures", "TEXTURE_DATA", 2 ** _flag_types.pop(0)),
-            ("worlds", "Worlds", "Worlds", "WORLD", 2 ** _flag_types.pop(0)),
-            ("workspaces", "Workspaces", "Workspaces", "WORKSPACE", 2 ** _flag_types.pop(0)),
+            ("actions", "Actions", "Actions", "ACTION", 2 ** 20),
+            ("brushes", "Brushes", "Brushes", "BRUSH_DATA", 2 ** 1),
+            ("cache_files", "Cache Files", "Cache Files", "FILE_CACHE", 2 ** 2),
+            ("collections", "Collections", "Collections", "OUTLINER_COLLECTION", 2 ** 3),
+            ("linestyles", "Freestyle Linestyles", "", "LINE_DATA", 2 ** 4),
+            ("hair_curves", "Hairs", "Hairs", "CURVES_DATA", 2 ** 5),
+            ("images", "Images", "Images", "IMAGE_DATA", 2 ** 6),
+            ("masks", "Masks", "Masks", "MOD_MASK", 2 ** 7),
+            ("materials", "Materials", "Materials", "MATERIAL", 2 ** 8),
+            ("movieclips", "Movie Clips", "Movie Clips", "FILE_MOVIE", 2 ** 9),
+            ("node_groups", "Node Trees", "Node Trees", "NODETREE", 2 ** 10),
+            ("objects", "Objects", "Objects", "OBJECT_DATA", 2 ** 11),
+            ("palettes", "Palettes", "Palettes", "COLOR", 2 ** 12),
+            ("particles", "Particle Systems", "Particle Systems", "PARTICLES", 2 ** 13),
+            ("scenes", "Scenes", "Scenes", "SCENE_DATA", 2 ** 14),
+            ("sounds", "Sounds", "Sounds", "SOUND", 2 ** 15),
+            ("texts", "Texts", "Texts", "TEXT", 2 ** 16),
+            ("textures", "Textures", "Textures", "TEXTURE_DATA", 2 ** 17),
+            ("worlds", "Worlds", "Worlds", "WORLD", 2 ** 18),
+            ("workspaces", "Workspaces", "Workspaces", "WORKSPACE", 2 ** 19),
         )
     elif bpy.app.version > (3, 0, 0):
         return (
-            ("actions", "Actions", "Action", "ACTION", 2 ** _flag_types.pop(0)),
-            ("materials", "Materials", "Materials", "MATERIAL", 2 ** _flag_types.pop(0)),
-            ("node_groups", "Node Trees", "Node Trees", "NODETREE", 2 ** _flag_types.pop(0)),
-            ("objects", "Objects", "Objects", "OBJECT_DATA", 2 ** _flag_types.pop(0)),
-            ("worlds", "Worlds", "Worlds", "WORLD", 2 ** _flag_types.pop(0)),
+            ("actions", "Actions", "Action", "ACTION", 2 ** 1),
+            ("materials", "Materials", "Materials", "MATERIAL", 2 ** 2),
+            ("node_groups", "Node Trees", "Node Trees", "NODETREE", 2 ** 3),
+            ("objects", "Objects", "Objects", "OBJECT_DATA", 2 ** 4),
+            ("worlds", "Worlds", "Worlds", "WORLD", 2 ** 5),
         )
     return (
-        ("actions", "Actions", "Action", "ACTION", 2 ** _flag_types.pop(0)),
-        ("materials", "Materials", "Materials", "MATERIAL", 2 ** _flag_types.pop(0)),
-        ("objects", "Objects", "Objects", "OBJECT_DATA", 2 ** _flag_types.pop(0)),
-        ("worlds", "Worlds", "Worlds", "WORLD", 2 ** _flag_types.pop(0)),
+        ("actions", "Actions", "Action", "ACTION", 2 ** 1),
+        ("materials", "Materials", "Materials", "MATERIAL", 2 ** 2),
+        ("objects", "Objects", "Objects", "OBJECT_DATA", 2 ** 3),
+        ("worlds", "Worlds", "Worlds", "WORLD", 2 ** 4),
+    )
+
+
+def get_object_types():
+    return (
+        ("ARMATURE", "Armature", "Armature", "ARMATURE_DATA", 2 ** 1),
+        ("CAMERA", "Camera", "Camera", "CAMERA_DATA", 2 ** 2),
+        ("CURVE", "Curve", "Curve", "CURVE_DATA", 2 ** 3),
+        ("EMPTY", "Empty", "Empty", "EMPTY_DATA", 2 ** 4),
+        ("GREASEPENCIL", "Grease Pencil", "Grease Pencil", "OUTLINER_DATA_GREASEPENCIL", 2 ** 5),
+        ("LIGHT", "Light", "Light", "LIGHT", 2 ** 6),
+        ("LIGHT_PROBE", "Light Probe", "Light Probe", "OUTLINER_DATA_LIGHTPROBE", 2 ** 7),
+        ("LATTICE", "Lattice", "Lattice", "LATTICE_DATA", 2 ** 8),
+        ("MESH", "Mesh", "Mesh", "MESH_DATA", 2 ** 9),
+        ("META", "Metaball", "Metaball", "META_DATA", 2 ** 10),
+        ("POINTCLOUD", "Point Cloud", "Point Cloud", "POINTCLOUD_DATA", 2 ** 11),
+        ("SPEAKER", "Speaker", "Speaker", "OUTLINER_DATA_SPEAKER", 2 ** 12),
+        ("SURFACE", "Surface", "Surface", "SURFACE_DATA", 2 ** 13),
+        ("VOLUME", "Volume", "Volume", "VOLUME_DATA", 2 ** 14),
+        ("FONT", "Text", "Text", "FONT_DATA", 2 ** 15),
     )
 
 
 class FilterTypes(PropertyGroup):
+    types_global_filter: BoolProperty(default=True, name="Filter By Type")
     types: EnumProperty(
         options={"ENUM_FLAG"},
         items=get_types(),
@@ -57,35 +73,7 @@ class FilterTypes(PropertyGroup):
     types_object_filter: BoolProperty(default=False, name="Filter Objects")
     types_object: EnumProperty(
         options={"ENUM_FLAG"},
-        items=(
-            ("ARMATURE", "Armature", "Armature", "ARMATURE_DATA", 2 ** _flag_types_object.pop(0)),
-            ("CAMERA", "Camera", "Camera", "CAMERA_DATA", 2 ** _flag_types_object.pop(0)),
-            ("CURVE", "Curve", "Curve", "CURVE_DATA", 2 ** _flag_types_object.pop(0)),
-            ("EMPTY", "Empty", "Empty", "EMPTY_DATA", 2 ** _flag_types_object.pop(0)),
-            (
-                "GREASEPENCIL",
-                "Grease Pencil",
-                "Grease Pencil",
-                "OUTLINER_DATA_GREASEPENCIL",
-                2 ** _flag_types_object.pop(0),
-            ),
-            ("LIGHT", "Light", "Light", "LIGHT", 2 ** _flag_types_object.pop(0)),
-            (
-                "LIGHT_PROBE",
-                "Light Probe",
-                "Light Probe",
-                "OUTLINER_DATA_LIGHTPROBE",
-                2 ** _flag_types_object.pop(0),
-            ),
-            ("LATTICE", "Lattice", "Lattice", "LATTICE_DATA", 2 ** _flag_types_object.pop(0)),
-            ("MESH", "Mesh", "Mesh", "MESH_DATA", 2 ** _flag_types_object.pop(0)),
-            ("META", "Metaball", "Metaball", "META_DATA", 2 ** _flag_types_object.pop(0)),
-            ("POINTCLOUD", "Point Cloud", "Point Cloud", "POINTCLOUD_DATA", 2 ** _flag_types_object.pop(0)),
-            ("SPEAKER", "Speaker", "Speaker", "OUTLINER_DATA_SPEAKER", 2 ** _flag_types_object.pop(0)),
-            ("SURFACE", "Surface", "Surface", "SURFACE_DATA", 2 ** _flag_types_object.pop(0)),
-            ("VOLUME", "Volume", "Volume", "VOLUME_DATA", 2 ** _flag_types_object.pop(0)),
-            ("FONT", "Text", "Text", "FONT_DATA", 2 ** _flag_types_object.pop(0)),
-        ),
+        items=get_object_types(),
         default={
             "CURVE",
             "MESH",
@@ -94,13 +82,17 @@ class FilterTypes(PropertyGroup):
 
     def draw(self, layout):
         box = layout.box()
-        box.label(text="Filter By Type", icon="FILTER")
-        col = box.column(align=True)
-        for filter_type in self.bl_rna.properties["types"].enum_items_static:
-            row = col.row(align=True)
-            row.prop_enum(self, "types", filter_type.identifier)
-            if filter_type.identifier == "objects":
-                self.draw_object_types_selector(col, row)
+
+        row = box.row(align=True)
+        row.prop(self, "types_global_filter", icon="FILTER")
+
+        if self.types_global_filter:
+            col = box.column(align=True)
+            for filter_type in self.bl_rna.properties["types"].enum_items_static:
+                row = col.row(align=True)
+                row.prop_enum(self, "types", filter_type.identifier)
+                if filter_type.identifier == "objects":
+                    self.draw_object_types_selector(col, row)
 
     def draw_object_types_selector(self, layout_items, layout_filter):
         layout_filter.prop(self, "types_object_filter", text="", icon="FILTER")

@@ -50,27 +50,20 @@ class AssetContainer:
                     if not name.endswith(value):
                         items.pop(i)
 
-    def filter_objects_by_selection(self, source):
-        objects = self.assets["objects"]
-        for i in range(len(objects) - 1, -1, -1):
-            if not objects[i].select_get():
-                objects.pop(i)
 
-    def filter_materials_by_selection(self, source):
-        materials = self.assets["materials"]
-        if self.assets_filter["objects"]:
-            objects = self.assets["objects"]
-        else:
-            objects = [o for o in bpy.data.objects if o.select_get()]
-        for i in range(len(materials) - 1, -1, -1):
-            mat = materials[i]
-            found = False
-            for obj in objects:
-                if mat.name in [m_s.name for m_s in obj.material_slots]:
-                    found = True
-                    break
-            if not found:
-                materials.pop(i)
+    def filter_by_selection(self, source):
+        if source == SelectionSources.ASSET_BROWSER:
+            selected_ids = [asset_file.local_id for asset_file in bpy.context.selected_asset_files]
+        elif source == SelectionSources.OUTLINER:
+            pass
+        elif source == SelectionSources.VIEW_3D:
+            selected_ids = [o for o in bpy.context.visible_objects if o.select_get()]
+        for items in self.assets.values():
+            for i in range(len(items) - 1, -1, -1):
+                if items[i] not in selected_ids:
+                    items.pop(i)
+            
+        
 
     @property
     def all_assets(self):

@@ -11,6 +11,7 @@ class ASSET_OT_batch_unmark(Operator, BatchFolderOperator):
     "Batch Unmark Assets"
     bl_idname = "asset.batch_unmark"
     bl_label = "Batch Unmark Assets"
+    bl_options = {"UNDO"}
 
     logic_class = BatchExecuteOverride
 

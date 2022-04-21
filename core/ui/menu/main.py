@@ -1,4 +1,3 @@
-from asset_browser_utilities.core.preferences.helper import get_preferences
 from asset_browser_utilities.library.prop import LibraryType
 import bpy
 from bpy.types import Menu

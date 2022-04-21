@@ -22,11 +22,11 @@ class FilterLibraryOperator:
     def _invoke(self, context, remove_backup=True, filter_assets=False):
         self.library_settings.init(remove_backup=remove_backup)
         if self.library_settings.library_type in (LibraryType.FileExternal.value, LibraryType.FolderExternal.value):
-            self.asset_filter_settings.init(filter_selection=False, filter_assets=filter_assets)
+            self.asset_filter_settings.init(context, filter_selection=False, filter_assets=filter_assets)
             context.window_manager.fileselect_add(self)
             return {"RUNNING_MODAL"}
         else:
-            self.asset_filter_settings.init(filter_selection=True, filter_assets=filter_assets)
+            self.asset_filter_settings.init(context, filter_selection=True, filter_assets=filter_assets)
             return context.window_manager.invoke_props_dialog(self)
 
 
@@ -42,8 +42,12 @@ class BatchExecute:
         self.remove_backup = operator.library_settings.remove_backup
         self.filter_settings = get_from_cache(operator.asset_filter_settings.__class__, context)
 
+        filepath = Path(operator.filepath)
+        if filepath.is_file():
+            filepath = filepath.parent
+
         self.blends = operator.library_settings.get_blend_files(
-            folder=Path(operator.filepath).parent,
+            folder=filepath,
             filepaths=[f.name for f in operator.files],
         )
         self.blend = None
@@ -114,11 +118,11 @@ class BatchFolderOperator(ImportHelper):
         self.library_settings.init(remove_backup=remove_backup)
         if self.library_settings.library_type in (LibraryType.FolderExternal.value, LibraryType.FileExternal.value):
             self.filter_glob = "*.blend" if self.library_settings.library_type == LibraryType.FileExternal.value else ""
-            self.asset_filter_settings.init(filter_selection=False, filter_assets=filter_assets)
+            self.asset_filter_settings.init(context, filter_selection=False, filter_assets=filter_assets)
             context.window_manager.fileselect_add(self)
             return {"RUNNING_MODAL"}
         else:
-            self.asset_filter_settings.init(filter_selection=True, filter_assets=filter_assets)
+            self.asset_filter_settings.init(context, filter_selection=True, filter_assets=filter_assets)
             return context.window_manager.invoke_props_dialog(self)
 
     def execute(self, context):

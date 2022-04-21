@@ -46,6 +46,7 @@ class ASSET_OT_batch_mark(Operator, BatchFolderOperator):
     "Batch Mark Assets"
     bl_idname = "asset.batch_mark"
     bl_label = "Batch Mark Assets"
+    bl_options = {"UNDO"}
 
     operator_settings: PointerProperty(type=OperatorProperties)
     logic_class = BatchExecuteOverride
