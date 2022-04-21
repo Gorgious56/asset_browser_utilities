@@ -133,7 +133,8 @@ class BatchFolderOperator(ImportHelper):
     def execute(self, context):
         # We write settings to cache in addon properties because this instance's properties are lost on new file load
         write_to_cache(self.asset_filter_settings, context)
-        CatalogExportSettings.get_from_cache(context).path = str(CatalogsHelper(context).catalog_filepath)
+        catalog_export_settings = CatalogExportSettings.get_from_cache(context)
+        catalog_export_settings.path = str(CatalogsHelper(context).catalog_filepath)
         save_if_possible_and_necessary()
         logic = self.logic_class(self, context)
         logic.execute_next_blend()

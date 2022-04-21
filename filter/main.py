@@ -1,5 +1,4 @@
 from asset_browser_utilities.library.prop import LibraryExportSettings, LibraryType
-import bpy
 
 from bpy.types import PropertyGroup
 from bpy.props import BoolProperty, PointerProperty
@@ -44,7 +43,7 @@ If unchecked, items that are not yet assets will be exported and marked as asset
         if self.filter_assets:
             asset_container.filter_assets()
             if self.filter_catalog.active:
-                asset_container.filter_by_catalog(self.filter_catalog.catalog)
+                asset_container.filter_by_catalog(self.filter_catalog.catalog_uuid)
         if self.filter_name.active:
             asset_container.filter_by_name(self.filter_name.method, self.filter_name.value)
         if self.filter_selection.active:
@@ -64,6 +63,4 @@ If unchecked, items that are not yet assets will be exported and marked as asset
         copy_simple_property_group(other.filter_types, self.filter_types)
         copy_simple_property_group(other.filter_name, self.filter_name)
         copy_simple_property_group(other.filter_selection, self.filter_selection)
-        helper = CatalogsHelper(bpy.context)
-        if helper.has_catalogs:
-            copy_simple_property_group(other.filter_catalog, self.filter_catalog)
+        copy_simple_property_group(other.filter_catalog, self.filter_catalog)
