@@ -28,7 +28,7 @@ If unchecked, items that are not yet assets will be exported and marked as asset
     filter_assets_allow: BoolProperty(default=False)
 
     def init(self, context, filter_selection=False, filter_assets=False):
-        self.filter_selection.allow = filter_selection and LibraryPG.get_library_type(context) == LibraryType.FileCurrent.value
+        self.filter_selection.allow = filter_selection and LibraryPG.get(context).source == LibraryType.FileCurrent.value
         self.filter_assets_allow = filter_assets
         self.filter_assets = filter_assets
         self.filter_catalog_allow = filter_assets

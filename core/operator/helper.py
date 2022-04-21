@@ -21,7 +21,7 @@ class FilterLibraryOperator:
 
     def _invoke(self, context, remove_backup=True, filter_assets=False):
         self.library_settings.init(remove_backup=remove_backup)
-        LibraryPG.set_library_type(context, self.library_settings.library_type)
+        LibraryPG.get(context).source = self.library_settings.library_type
         if self.library_settings.library_type in (LibraryType.FileExternal.value, LibraryType.FolderExternal.value):
             self.asset_filter_settings.init(context, filter_selection=False, filter_assets=filter_assets)
             context.window_manager.fileselect_add(self)
@@ -118,8 +118,7 @@ class BatchFolderOperator(ImportHelper):
 
     def _invoke(self, context, remove_backup=True, filter_assets=False):
         self.library_settings.init(remove_backup=remove_backup)
-        LibraryPG.set_library_type(context, self.library_settings.library_type)
-        print(context.window_manager)
+        LibraryPG.get(context).source = self.library_settings.library_type
         if self.library_settings.library_type in (LibraryType.FolderExternal.value, LibraryType.FileExternal.value):
             self.filter_glob = "*.blend" if self.library_settings.library_type == LibraryType.FileExternal.value else ""
             self.asset_filter_settings.init(context, filter_selection=False, filter_assets=filter_assets)
@@ -140,7 +139,7 @@ class BatchFolderOperator(ImportHelper):
     def draw(self, context):
         layout = self.layout
 
-        self.library_settings.draw(layout)
+        self.library_settings.draw(layout, context)
         if hasattr(self, "operator_settings") and self.operator_settings and hasattr(self.operator_settings, "draw"):
             self.operator_settings.draw(layout)
         self.asset_filter_settings.draw(layout, context)

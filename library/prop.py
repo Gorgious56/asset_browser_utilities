@@ -27,15 +27,15 @@ class LibraryType(Enum):
 
 
 class LibraryPG(PropertyGroup):
-    library_type: EnumProperty(items=[(l_t.value,) * 3 for l_t in LibraryType])
+    source: EnumProperty(items=[(l_t.value,) * 3 for l_t in LibraryType])
+    library_user_path: EnumProperty(
+        name="User Library",
+        items=lambda s, c: ((a_l.path, a_l.name, "") for a_l in c.preferences.filepaths.asset_libraries),
+    )
 
     @staticmethod
-    def set_library_type(context, library_type):
-        context.window_manager.ABU_Library.library_type = library_type
-    
-    @staticmethod
-    def get_library_type(context):
-        return context.window_manager.ABU_Library.library_type
+    def get(context):
+        return context.window_manager.ABU_Library
 
 
 class LibraryExportSettings(PropertyGroup):
@@ -51,24 +51,21 @@ class LibraryExportSettings(PropertyGroup):
         default=True,
     )
     remove_backup_allow: BoolProperty()
-    library_path: EnumProperty(
-        name="User Library",
-        items=lambda s, c: ((a_l.path, a_l.name, "") for a_l in c.preferences.filepaths.asset_libraries),
-    )
 
     def init(self, remove_backup=False):
         self.remove_backup_allow = remove_backup
         self.remove_backup = remove_backup
 
-    def draw(self, layout):
+    def draw(self, layout, context):
         if self.library_type == LibraryType.FileCurrent.value:
             return
         elif self.library_type == LibraryType.FolderExternal.value:
             layout.prop(self, "recursive", icon="FOLDER_REDIRECT")
         elif self.library_type == LibraryType.UserLibrary.value:
             box = layout.box()
-            box.prop(self, "library_path", icon="FOLDER_REDIRECT")
-            box.label(text=f"Path : {self.library_path}")
+            library_pg = LibraryPG.get(context)
+            box.prop(library_pg, "library_user_path", icon="FOLDER_REDIRECT")
+            box.label(text=f"Path : {library_pg.library_user_path}")
         if self.remove_backup_allow:
             layout.prop(self, "remove_backup", icon="TRASH")
 

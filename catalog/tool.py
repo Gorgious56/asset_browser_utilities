@@ -1,37 +1,36 @@
 import os.path
 from pathlib import Path
+from asset_browser_utilities.library.prop import LibraryPG, LibraryType
 import bpy
-from asset_browser_utilities.library.path import get_library_root
 from asset_browser_utilities.file.path import read_lines_sequentially
 
 
 class CatalogsHelper:
     CATALOGS_FILENAME = "blender_assets.cats.txt"
-
-    def __init__(self, context, blend_filepath=None):
-        if blend_filepath is None:
-            blend_filepath = bpy.data.filepath
-        self.blend_filepath = blend_filepath
+    def __init__(self, context):
         self.catalog_filepath = self.get_catalog_filepath(context)
 
     @classmethod
     def get_catalog_info_from_line(cls, catalog_line):
         return catalog_line.split(":")
 
-    def get_catalog_filepath(self):
-        root = get_library_root()
-        folder = Path(self.blend_filepath).parent
-        filepath = folder / self.CATALOGS_FILENAME
-        while not os.path.exists(filepath):
-            if folder.parent == folder:
-                return None
-            folder = folder.parent
-            filepath = folder / self.CATALOGS_FILENAME
-        return filepath
+    def get_catalog_filepath(self, context):
+        library_pg = LibraryPG.get(context)
+        library_type = library_pg.source
+        if library_type == LibraryType.FileCurrent.value:
+            root_folder = Path(bpy.data.filepath).parent
+        elif library_type in (LibraryType.FileExternal.value, LibraryType.FolderExternal.value):
+            file_browser_directory = context.area.spaces.active.params.directory  # Byte string
+            root_folder = Path(file_browser_directory.decode("UTF-8"))
+        elif library_type == LibraryType.UserLibrary.value:
+            root_folder = Path(library_pg.library_user_path)
+
+        catalogs_filepath = root_folder / self.CATALOGS_FILENAME
+        return catalogs_filepath
 
     @property
     def has_catalogs(self):
-        return self.catalog_filepath is not None
+        return os.path.exists(self.catalog_filepath)
 
     def create_catalog_file(self):
         with open(self.catalog_filepath, "w") as catalog_file:

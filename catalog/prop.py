@@ -16,4 +16,4 @@ class FilterCatalog(PropertyGroup):
             if helper.has_catalogs:
                 box.prop(self, "catalog")
             else:
-                box.label(text="No Catalog", icon="INFO")
+                box.label(text="No catalog in root folder", icon="INFO")
