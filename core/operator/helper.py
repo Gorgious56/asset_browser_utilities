@@ -1,4 +1,6 @@
 from pathlib import Path
+from asset_browser_utilities.catalog.prop import CatalogExportSettings
+from asset_browser_utilities.catalog.tool import CatalogsHelper
 
 import bpy.app.timers
 from bpy.types import OperatorFileListElement
@@ -21,7 +23,7 @@ class FilterLibraryOperator:
 
     def _invoke(self, context, remove_backup=True, filter_assets=False):
         self.library_settings.init(remove_backup=remove_backup)
-        LibraryExportSettings.get(context).source = self.library_settings.source
+        LibraryExportSettings.get_from_cache(context).source = self.library_settings.source
         if self.library_settings.source in (LibraryType.FileExternal.value, LibraryType.FolderExternal.value):
             self.asset_filter_settings.init(context, filter_selection=False, filter_assets=filter_assets)
             context.window_manager.fileselect_add(self)
@@ -118,7 +120,7 @@ class BatchFolderOperator(ImportHelper):
 
     def _invoke(self, context, remove_backup=True, filter_assets=False):
         self.library_settings.init(remove_backup=remove_backup)
-        LibraryExportSettings.get(context).source = self.library_settings.source
+        LibraryExportSettings.get_from_cache(context).source = self.library_settings.source
         if self.library_settings.source in (LibraryType.FolderExternal.value, LibraryType.FileExternal.value):
             self.filter_glob = "*.blend" if self.library_settings.source == LibraryType.FileExternal.value else ""
             self.asset_filter_settings.init(context, filter_selection=False, filter_assets=filter_assets)
@@ -131,6 +133,7 @@ class BatchFolderOperator(ImportHelper):
     def execute(self, context):
         # We write settings to cache in addon properties because this instance's properties are lost on new file load
         write_to_cache(self.asset_filter_settings, context)
+        CatalogExportSettings.get_from_cache(context).path = str(CatalogsHelper(context).catalog_filepath)
         save_if_possible_and_necessary()
         logic = self.logic_class(self, context)
         logic.execute_next_blend()

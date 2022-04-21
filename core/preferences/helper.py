@@ -19,3 +19,10 @@ def get_from_cache(_type, context=None):
     if context is None:
         context = bpy.context
     return get_cache(context).get(_type)
+
+class CacheMapping:
+    CACHE_MAPPING = ""
+
+    @classmethod
+    def get_from_cache(cls, context):
+        return getattr(get_cache(context), cls.CACHE_MAPPING)

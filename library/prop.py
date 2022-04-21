@@ -1,12 +1,12 @@
 from enum import Enum
 from pathlib import Path
 from asset_browser_utilities.core.helper import copy_simple_property_group
-from asset_browser_utilities.core.preferences.helper import get_cache
+from asset_browser_utilities.core.preferences.helper import CacheMapping
 from asset_browser_utilities.library.tool import get_blend_files_in_folder
 
 import bpy
 from bpy.types import PropertyGroup
-from bpy.props import BoolProperty, StringProperty, EnumProperty
+from bpy.props import BoolProperty, EnumProperty
 
 
 class LibraryType(Enum):
@@ -27,7 +27,8 @@ class LibraryType(Enum):
             return LibraryType.FileCurrent.value
 
 
-class LibraryExportSettings(PropertyGroup):
+class LibraryExportSettings(PropertyGroup, CacheMapping):
+    CACHE_MAPPING = "library_settings"
     source: EnumProperty(items=[(l_t.value,) * 3 for l_t in LibraryType])
     library_user_path: EnumProperty(
         name="User Library",
@@ -56,7 +57,7 @@ class LibraryExportSettings(PropertyGroup):
             layout.prop(self, "recursive", icon="FOLDER_REDIRECT")
         elif self.source == LibraryType.UserLibrary.value:
             box = layout.box()
-            library_pg = LibraryExportSettings.get(context)
+            library_pg = LibraryExportSettings.get_from_cache(context)
             box.prop(library_pg, "library_user_path", icon="FOLDER_REDIRECT")
             box.label(text=f"Path : {library_pg.library_user_path}")
         if self.remove_backup_allow:
@@ -75,7 +76,3 @@ class LibraryExportSettings(PropertyGroup):
         else:  # User Library
             folder = Path(self.library_path)
             return get_blend_files_in_folder(folder, recursive=True)
-
-    @staticmethod
-    def get(context):
-        return get_cache(context).library_settings

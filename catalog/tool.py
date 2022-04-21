@@ -1,5 +1,6 @@
 import os.path
 from pathlib import Path
+from asset_browser_utilities.catalog.prop import CatalogExportSettings
 from asset_browser_utilities.library.prop import LibraryExportSettings, LibraryType
 import bpy
 from asset_browser_utilities.file.path import read_lines_sequentially
@@ -15,13 +16,16 @@ class CatalogsHelper:
         return catalog_line.split(":")
 
     def get_catalog_filepath(self, context):
-        library_settings = LibraryExportSettings.get(context)
+        library_settings = LibraryExportSettings.get_from_cache(context)
         library_source = library_settings.source
         if library_source == LibraryType.FileCurrent.value:
             root_folder = Path(bpy.data.filepath).parent
         elif library_source in (LibraryType.FileExternal.value, LibraryType.FolderExternal.value):
-            file_browser_directory = context.area.spaces.active.params.directory  # Byte string
-            root_folder = Path(file_browser_directory.decode("UTF-8"))
+            if context.area is None:
+                root_folder = CatalogExportSettings.get_from_cache(context).path
+            else:
+                file_browser_directory = context.area.spaces.active.params.directory  # Byte string
+                root_folder = Path(file_browser_directory.decode("UTF-8"))
         elif library_source == LibraryType.UserLibrary.value:
             root_folder = Path(library_settings.library_user_path)
 

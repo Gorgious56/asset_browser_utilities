@@ -8,7 +8,7 @@ from asset_browser_utilities.filter.type import FilterTypes, get_object_types, g
 from asset_browser_utilities.filter.name import FilterName
 from asset_browser_utilities.filter.selection import FilterSelection
 from asset_browser_utilities.filter.container import AssetContainer
-from asset_browser_utilities.catalog.prop import FilterCatalog
+from asset_browser_utilities.filter.catalog import FilterCatalog
 from asset_browser_utilities.catalog.tool import CatalogsHelper
 from asset_browser_utilities.core.helper import copy_simple_property_group
 
@@ -28,7 +28,7 @@ If unchecked, items that are not yet assets will be exported and marked as asset
     filter_assets_allow: BoolProperty(default=False)
 
     def init(self, context, filter_selection=False, filter_assets=False):
-        self.filter_selection.allow = filter_selection and LibraryExportSettings.get(context).source == LibraryType.FileCurrent.value
+        self.filter_selection.allow = filter_selection and LibraryExportSettings.get_from_cache(context).source == LibraryType.FileCurrent.value
         self.filter_assets_allow = filter_assets
         self.filter_assets = filter_assets
         self.filter_catalog_allow = filter_assets
