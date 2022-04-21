@@ -16,7 +16,7 @@ class BatchImport(BatchExecute):
         self.filenames = []
         super().__init__(*args, **kwargs)
 
-    def execute_one_file_and_the_next_when_finished(self):
+    def execute_one_file_and_the_next_when_finished(self, context):
         if bpy.data.filepath != self.target_filepath:
             self.add_asset_paths()
             if not self.blends:

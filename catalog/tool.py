@@ -1,18 +1,18 @@
 import os.path
 from pathlib import Path
-from asset_browser_utilities.library.path import get_library_root
 import bpy
+from asset_browser_utilities.library.path import get_library_root
 from asset_browser_utilities.file.path import read_lines_sequentially
 
 
 class CatalogsHelper:
     CATALOGS_FILENAME = "blender_assets.cats.txt"
 
-    def __init__(self, blend_filepath=None):
+    def __init__(self, context, blend_filepath=None):
         if blend_filepath is None:
             blend_filepath = bpy.data.filepath
         self.blend_filepath = blend_filepath
-        self.catalog_filepath = self.get_catalog_filepath()
+        self.catalog_filepath = self.get_catalog_filepath(context)
 
     @classmethod
     def get_catalog_info_from_line(cls, catalog_line):
@@ -77,7 +77,7 @@ class CatalogsHelper:
 
     @staticmethod
     def get_catalogs(filter_catalog, context):
-        helper = CatalogsHelper()
+        helper = CatalogsHelper(context)
         catalogs = []
         if helper.has_catalogs:
             for line in helper.iterate_over_catalogs():

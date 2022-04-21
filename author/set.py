@@ -5,7 +5,7 @@ from asset_browser_utilities.core.operator.helper import BatchExecute, BatchFold
 
 
 class BatchSetAuthor(BatchExecute):
-    def execute_one_file_and_the_next_when_finished(self):
+    def execute_one_file_and_the_next_when_finished(self, context):
         for asset in self.assets:
             asset.asset_data.author = self.author
         self.save_file()

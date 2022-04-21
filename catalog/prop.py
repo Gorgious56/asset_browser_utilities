@@ -1,6 +1,5 @@
-import bpy
 from bpy.types import PropertyGroup
-from bpy.props import EnumProperty, StringProperty, BoolProperty
+from bpy.props import EnumProperty, BoolProperty
 
 from asset_browser_utilities.catalog.tool import CatalogsHelper
 
@@ -9,8 +8,8 @@ class FilterCatalog(PropertyGroup):
     active: BoolProperty(default=False, name="Filter By Catalog")
     catalog: EnumProperty(items=CatalogsHelper.get_catalogs, name="Catalog")
 
-    def draw(self, layout):
-        helper = CatalogsHelper()
+    def draw(self, layout, context):
+        helper = CatalogsHelper(context)
         if not helper.has_catalogs:
             return
         box = layout.box()

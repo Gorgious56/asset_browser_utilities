@@ -1,3 +1,4 @@
+import bpy
 from asset_browser_utilities.core.ui.menu.helper import is_current_file
 from bpy.types import PropertyGroup
 from bpy.props import BoolProperty, PointerProperty
@@ -49,18 +50,18 @@ If unchecked, items that are not yet assets will be exported and marked as asset
             asset_container.filter_by_selection(self.filter_selection.source)
         return list(asset_container.all_assets)
 
-    def draw(self, layout):
+    def draw(self, layout, context):
         self.filter_selection.draw(layout)
         self.filter_types.draw(layout)
         self.filter_name.draw(layout)
         if self.filter_catalog_allow:
-            self.filter_catalog.draw(layout)
+            self.filter_catalog.draw(layout, context)
 
     def copy(self, other):
         copy_simple_property_group(other, self)
         copy_simple_property_group(other.filter_types, self.filter_types)
         copy_simple_property_group(other.filter_name, self.filter_name)
         copy_simple_property_group(other.filter_selection, self.filter_selection)
-        helper = CatalogsHelper()
+        helper = CatalogsHelper(bpy.context)
         if helper.has_catalogs:
             copy_simple_property_group(other.filter_catalog, self.filter_catalog)

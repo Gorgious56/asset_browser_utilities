@@ -59,10 +59,11 @@ class BatchExecute:
         [a.tag_redraw() for a in context.screen.areas if a.ui_type == "ASSETS" and hasattr(context, "screen")]
 
     def execute_next_blend(self):
+        context = bpy.context
         if not self.blends:
             print("Work completed")
             message_box(message="Work completed !")
-            self.callback(bpy.context)
+            self.callback(context)
             return
         print(f"{len(self.blends)} file{'s' if len(self.blends) > 1 else ''} left")
 
@@ -70,7 +71,7 @@ class BatchExecute:
         self.assets = self.filter_settings.get_objects_that_satisfy_filters()
 
         # Give slight delay otherwise stack overflow
-        bpy.app.timers.register(self.execute_one_file_and_the_next_when_finished, first_interval=self.INTERVAL)
+        bpy.app.timers.register(lambda: self.execute_one_file_and_the_next_when_finished(context), first_interval=self.INTERVAL)
 
     def save_file(self):
         save_file_as(str(self.blend), remove_backup=self.remove_backup)
@@ -89,7 +90,7 @@ class BatchExecute:
         self.execute_next_blend()
         return None
 
-    def execute_one_file_and_the_next_when_finished(self):
+    def execute_one_file_and_the_next_when_finished(self, context):
         if self.assets:
             for asset in self.assets:
                 self.do_on_asset(asset)
@@ -139,4 +140,4 @@ class BatchFolderOperator(ImportHelper):
         self.library_settings.draw(layout)
         if hasattr(self, "operator_settings") and self.operator_settings and hasattr(self.operator_settings, "draw"):
             self.operator_settings.draw(layout)
-        self.asset_filter_settings.draw(layout)
+        self.asset_filter_settings.draw(layout, context)

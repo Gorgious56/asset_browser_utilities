@@ -6,7 +6,7 @@ from asset_browser_utilities.core.operator.helper import BatchExecute, BatchFold
 
 
 class BatchExecuteOverride(BatchExecute):
-    def execute_one_file_and_the_next_when_finished(self):
+    def execute_one_file_and_the_next_when_finished(self, context):
         if not self.assets:
             self.execute_next_blend()
             return
