@@ -7,7 +7,7 @@ class ABU_MT_catalogs(Menu):
 
     def draw(self, context):
         layout = self.layout
-        library_type = LibraryType.get(context)
+        library_type = LibraryType.get_library_type_from_context(context)
         ops = []
         ops.append(layout.operator("asset.batch_move_to_catalog", text="Move To Catalog", icon="ADD"))
         ops.append(layout.operator("asset.batch_remove_from_catalog", text="Remove From Catalog", icon="REMOVE"))

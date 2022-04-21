@@ -15,7 +15,7 @@ class LibraryType(Enum):
     UserLibrary = "user_library"
 
     @staticmethod
-    def get(context):
+    def get_library_type_from_context(context):
         if hasattr(context, LibraryType.UserLibrary.value):
             return LibraryType.UserLibrary.value
         elif hasattr(context, LibraryType.FolderExternal.value):

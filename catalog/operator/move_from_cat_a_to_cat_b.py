@@ -1,4 +1,3 @@
-from bpy_extras.io_utils import ImportHelper
 from bpy.types import Operator, PropertyGroup
 from bpy.props import PointerProperty, StringProperty
 

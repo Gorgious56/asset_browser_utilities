@@ -1,7 +1,7 @@
 from asset_browser_utilities.library.prop import LibraryType
 import bpy
 from bpy.types import Menu
-from .helper import set_layout_file_external, set_layout_folder_external, set_layout_library_user
+from .helper import set_layout_library_file_external, set_layout_library_folder, set_layout_library_user
 
 
 class ABU_MT_submenu(Menu):
@@ -33,9 +33,9 @@ class ABU_MT_menu(Menu):
     def draw(self, context):
         layout = self.layout
         layout.menu("ABU_MT_submenu", text="Current File", icon="FILE_BLEND")
-        set_layout_file_external(layout)
+        set_layout_library_file_external(layout)
         layout.menu("ABU_MT_submenu", text="External File(s)", icon="FILE")
-        set_layout_folder_external(layout)
+        set_layout_library_folder(layout)
         layout.menu("ABU_MT_submenu", text="External Folder", icon="FILE_FOLDER")
         set_layout_library_user(layout)
         layout.menu("ABU_MT_submenu", text="User Library", icon="ASSET_MANAGER")
