@@ -50,7 +50,6 @@ class SmartTag(Enum):
         if member == SmartTag.TriangleCount.value:
             return get_triangle_count
         elif member == SmartTag.VertexCount.value:
-            print("vertex")
             return get_vertex_count
         elif member == SmartTag.CustomProperty.value:
             return lambda asset, smart_tag: asset.get(smart_tag.custom_property_name, None)

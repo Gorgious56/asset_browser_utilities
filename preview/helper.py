@@ -6,11 +6,17 @@ def can_preview_be_generated(asset):
     if isinstance(
         asset,
         (
-            bpy.types.Material,
             bpy.types.Action,
+            bpy.types.Brush,
+            bpy.types.Collection,
+            bpy.types.ShaderNodeTree,
             bpy.types.Image,
+            bpy.types.Light,
+            bpy.types.Material,
             bpy.types.Scene,
+            bpy.types.Screen,
             bpy.types.Texture,
+            bpy.types.World,
         ),
     ):
         return True
