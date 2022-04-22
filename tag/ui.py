@@ -12,3 +12,5 @@ class ABU_MT_tags(Menu):
         add_tags_op.library_settings.source = library_source_from_context
         remove_tags_op = layout.operator("asset.batch_remove_tags", text="Remove", icon="REMOVE")
         remove_tags_op.library_settings.source = library_source_from_context
+        add_tags_smart_op = layout.operator("asset.tags_add_smart", text="Add Smart", icon="OUTLINER_OB_LIGHT")
+        add_tags_smart_op.library_settings.source = library_source_from_context

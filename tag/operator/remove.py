@@ -1,10 +1,8 @@
-import bpy
-from bpy_extras.io_utils import ImportHelper
-from bpy.types import Operator, PropertyGroup
+from bpy.types import Operator
 from bpy.props import PointerProperty
 
 from asset_browser_utilities.core.operator.helper import BatchExecute, BatchFolderOperator
-from asset_browser_utilities.tag.tag_collection import TagCollection
+from asset_browser_utilities.tag.operator.tool import AddOrRemoveTagsOperatorProperties
 
 
 class BatchExecuteOverride(BatchExecute):
@@ -26,23 +24,10 @@ class BatchExecuteOverride(BatchExecute):
             self.remove_tags(asset_tags, self.tags)
 
     def remove_tags(self, asset_tags, tags_to_remove):
-        print(tags_to_remove)
         for i in range(len(asset_tags) - 1, -1, -1):
-            print(asset_tags[i].name)
             if asset_tags[i].name in tags_to_remove:
                 asset_tags.remove(asset_tags[i])
 
-
-class OperatorProperties(PropertyGroup):
-    tag_collection: PointerProperty(type=TagCollection)
-    MAX_TAGS = 10
-
-    def init(self, add=True):
-        self.tag_collection.add = add
-        self.tag_collection.init(tags=self.MAX_TAGS)
-
-    def draw(self, layout):
-        self.tag_collection.draw(layout)
 
 
 class ASSET_OT_batch_remove_tags(Operator, BatchFolderOperator):
@@ -50,7 +35,7 @@ class ASSET_OT_batch_remove_tags(Operator, BatchFolderOperator):
     bl_idname = "asset.batch_remove_tags"
     bl_label = "Remove tags"
 
-    operator_settings: PointerProperty(type=OperatorProperties)
+    operator_settings: PointerProperty(type=AddOrRemoveTagsOperatorProperties)
     logic_class = BatchExecuteOverride
 
     def invoke(self, context, event):
