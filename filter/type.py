@@ -13,6 +13,7 @@ def get_types():
             ("linestyles", "Freestyle Linestyles", "", "LINE_DATA", 2 ** 4),
             ("hair_curves", "Hairs", "Hairs", "CURVES_DATA", 2 ** 5),
             ("images", "Images", "Images", "IMAGE_DATA", 2 ** 6),
+            ("meshes", "Meshes", "Meshes", "MESH_DATA", 2 ** 21),
             ("masks", "Masks", "Masks", "MOD_MASK", 2 ** 7),
             ("materials", "Materials", "Materials", "MATERIAL", 2 ** 8),
             ("movieclips", "Movie Clips", "Movie Clips", "FILE_MOVIE", 2 ** 9),
