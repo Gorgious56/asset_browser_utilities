@@ -29,7 +29,7 @@ class OperationSettings(PropertyGroup, CacheMapping):
 
     def draw(self, layout, context):
         box = layout.box()
-        box.prop(self, "active", text="Additional Operations", toggle=True, icon="MODIFIER")
+        box.prop(self, "active", text="Custom Operation", toggle=True, icon="MODIFIER")
         if self.active:
             box.prop(self, "operation")
 
