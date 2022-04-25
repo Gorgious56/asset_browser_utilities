@@ -1,4 +1,3 @@
-
 from bpy.types import Operator, PropertyGroup
 from bpy.props import PointerProperty, StringProperty, FloatProperty, IntProperty, FloatVectorProperty, EnumProperty
 
@@ -18,6 +17,10 @@ class BatchExecuteOverride(BatchExecute):
         super().do_on_asset(asset)
         asset_data = asset.asset_data
         asset_data[self.custom_prop_name] = self.custom_prop_value
+        if isinstance(self.custom_prop_value, list):  # Color
+            asset_data.id_properties_ensure()
+            property_manager = asset_data.id_properties_ui(self.custom_prop_name)
+            property_manager.update(subtype="COLOR")
 
 
 class SetCustomPropertyOperatorProperties(PropertyGroup):
