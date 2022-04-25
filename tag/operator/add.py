@@ -11,6 +11,7 @@ class BatchExecuteOverride(BatchExecute):
         super().__init__(operator, context)
 
     def do_on_asset(self, asset):
+        super().do_on_asset(asset)
         asset_data = asset.asset_data
         asset_tags = asset_data.tags
         for tag in self.tags:

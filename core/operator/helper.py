@@ -1,6 +1,7 @@
 from pathlib import Path
 from asset_browser_utilities.catalog.prop import CatalogExportSettings
 from asset_browser_utilities.catalog.tool import CatalogsHelper
+from asset_browser_utilities.core.operator.operation import OperationSettings
 
 import bpy.app.timers
 from bpy.types import OperatorFileListElement
@@ -8,7 +9,7 @@ from bpy.props import PointerProperty, StringProperty, PointerProperty, Collecti
 from bpy_extras.io_utils import ImportHelper
 
 from asset_browser_utilities.core.helper import copy_simple_property_group
-from asset_browser_utilities.core.preferences.helper import write_to_cache, get_from_cache
+from asset_browser_utilities.core.cache.tool import write_to_cache, get_from_cache
 from asset_browser_utilities.core.ui.message import message_box
 from asset_browser_utilities.file.path import open_file_if_different_from_current
 from asset_browser_utilities.file.save import save_if_possible_and_necessary, save_file_as
@@ -44,6 +45,7 @@ class BatchExecute:
 
         self.remove_backup = operator.library_settings.remove_backup
         self.filter_settings = get_from_cache(operator.asset_filter_settings.__class__, context)
+        self.operation_settings = OperationSettings.get_from_cache(context)
 
         filepath = Path(operator.filepath)
         if filepath.is_file():
@@ -72,9 +74,12 @@ class BatchExecute:
 
         self.open_next_blend()
         self.assets = self.filter_settings.get_objects_that_satisfy_filters()
+        self.operation_settings.execute(self.assets)
 
         # Give slight delay otherwise stack overflow
-        bpy.app.timers.register(lambda: self.execute_one_file_and_the_next_when_finished(context), first_interval=self.INTERVAL)
+        bpy.app.timers.register(
+            lambda: self.execute_one_file_and_the_next_when_finished(context), first_interval=self.INTERVAL
+        )
 
     def save_file(self):
         save_file_as(str(self.blend), remove_backup=self.remove_backup)
@@ -110,6 +115,7 @@ class BatchFolderOperator(ImportHelper):
         options={"HIDDEN"},
         maxlen=255,  # Max internal buffer length, longer would be clamped.
     )
+    operation_settings: PointerProperty(type=OperationSettings)
     asset_filter_settings: PointerProperty(type=AssetFilterSettings)
     library_settings: PointerProperty(type=LibraryExportSettings)
     # https://docs.blender.org/api/current/bpy.types.OperatorFileListElement.html
@@ -133,6 +139,7 @@ class BatchFolderOperator(ImportHelper):
     def execute(self, context):
         # We write settings to cache in addon properties because this instance's properties are lost on new file load
         write_to_cache(self.asset_filter_settings, context)
+        copy_simple_property_group(self.operation_settings, OperationSettings.get_from_cache(context))
         catalog_export_settings = CatalogExportSettings.get_from_cache(context)
         catalog_export_settings.path = str(CatalogsHelper(context).catalog_filepath)
         save_if_possible_and_necessary()
@@ -147,3 +154,4 @@ class BatchFolderOperator(ImportHelper):
         if hasattr(self, "operator_settings") and self.operator_settings and hasattr(self.operator_settings, "draw"):
             self.operator_settings.draw(layout)
         self.asset_filter_settings.draw(layout, context)
+        self.operation_settings.draw(layout, context)

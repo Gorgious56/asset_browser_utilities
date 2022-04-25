@@ -1,7 +1,7 @@
 from bpy.types import AddonPreferences
 from bpy.props import PointerProperty
 
-from .prop import Cache
+from asset_browser_utilities.core.cache.prop import Cache
 
 
 class AssetBrowserUtilitiesAddonPreferences(AddonPreferences):

@@ -1,7 +1,7 @@
 from enum import Enum
 from pathlib import Path
 from asset_browser_utilities.core.helper import copy_simple_property_group
-from asset_browser_utilities.core.preferences.helper import CacheMapping
+from asset_browser_utilities.core.cache.tool import CacheMapping
 from asset_browser_utilities.library.tool import get_blend_files_in_folder
 
 import bpy

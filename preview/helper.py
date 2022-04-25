@@ -21,7 +21,7 @@ def can_preview_be_generated(asset):
     ):
         return True
     elif isinstance(asset, bpy.types.Object):
-        if asset.type in ("MESH", "FONT", "LIGHT", "GREASEPENCIL", "VOLUME", "SURFACE", "META"):
+        if asset.type in ("MESH", "FONT", "LIGHT", "GREASEPENCIL", "SURFACE", "META"):
             if asset.type == "MESH" and len(asset.data.polygons) == 0:
                 return False
             return True

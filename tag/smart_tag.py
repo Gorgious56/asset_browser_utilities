@@ -4,7 +4,7 @@ import math
 from bpy.types import PropertyGroup
 from bpy.props import EnumProperty, StringProperty, IntProperty
 
-from asset_browser_utilities.core.preferences.helper import CacheMapping
+from asset_browser_utilities.core.cache.tool import CacheMapping
 
 
 def get_triangle_count(asset, smart_tag):

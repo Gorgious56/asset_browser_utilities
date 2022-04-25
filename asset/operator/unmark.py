@@ -5,6 +5,7 @@ from asset_browser_utilities.core.operator.helper import BatchExecute, BatchFold
 
 class BatchExecuteOverride(BatchExecute):
     def do_on_asset(self, asset):
+        super().do_on_asset(asset)
         asset.asset_clear()
 
 class ASSET_OT_batch_unmark(Operator, BatchFolderOperator):
