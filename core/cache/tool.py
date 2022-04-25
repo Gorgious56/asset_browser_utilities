@@ -1,4 +1,4 @@
-from asset_browser_utilities.core.preferences.helper import get_preferences
+from asset_browser_utilities.core.preferences.tool import get_preferences
 import bpy
 
 
