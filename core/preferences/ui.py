@@ -8,6 +8,8 @@ class AssetBrowserUtilitiesAddonPreferences(AddonPreferences):
     bl_idname = "asset_browser_utilities"
 
     cache: PointerProperty(type=Cache, options={"HIDDEN"})
+    defaults: PointerProperty(type=Cache)
+    show_defaults: BoolProperty(name="Set Operator Defaults")
     show_custom_props: BoolProperty(
         default=True,
         name="Show Asset Custom Properties",
@@ -17,3 +19,14 @@ class AssetBrowserUtilitiesAddonPreferences(AddonPreferences):
     def draw(self, context):
         layout = self.layout
         layout.prop(self, "show_custom_props")
+
+        self.defaults.asset_filter_settings.filter_selection.allow = True
+        self.defaults.asset_filter_settings.filter_catalog_allow = True
+
+        box = layout.box()
+        box.prop(self, "show_defaults", toggle=True)
+        if self.show_defaults:
+            for attr in self.defaults.__annotations__:
+                default_setting = getattr(self.defaults, attr)
+                if hasattr(default_setting, "draw"):
+                    default_setting.draw(box, context)

@@ -63,7 +63,7 @@ class SmartTagPG(PropertyGroup, CacheMapping):
     increment: IntProperty(min=1, default=500, name="Increment")
     round_mode: EnumProperty(name="Round", items=(("Up",) * 3, ("Down",) * 3))
 
-    def draw(self, layout):
+    def draw(self, layout, context=None):
         box = layout.box()
         box.label(text="Smart Tag")
         box.prop(self, "operation", text="")

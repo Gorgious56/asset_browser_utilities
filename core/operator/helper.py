@@ -1,7 +1,9 @@
 from pathlib import Path
+
 from asset_browser_utilities.catalog.prop import CatalogExportSettings
 from asset_browser_utilities.catalog.tool import CatalogsHelper
 from asset_browser_utilities.core.operator.operation import OperationSettings
+from asset_browser_utilities.core.preferences.tool import get_preferences
 
 import bpy.app.timers
 from bpy.types import OperatorFileListElement
@@ -125,6 +127,7 @@ class BatchFolderOperator(ImportHelper):
     )
 
     def _invoke(self, context, remove_backup=True, filter_assets=False):
+        self.setup_default_settings(context)
         self.library_settings.init(remove_backup=remove_backup)
         LibraryExportSettings.get_from_cache(context).source = self.library_settings.source
         if self.library_settings.source in (LibraryType.FolderExternal.value, LibraryType.FileExternal.value):
@@ -146,6 +149,18 @@ class BatchFolderOperator(ImportHelper):
         logic = self.logic_class(self, context)
         logic.execute_next_blend()
         return {"FINISHED"}
+
+    def setup_default_settings(self, context):
+        defaults = get_preferences(context).defaults
+        for attr in defaults.__annotations__:
+            if not hasattr(self, attr):
+                continue
+            default_setting = getattr(defaults, attr)
+            setting = getattr(self, attr)
+            if hasattr(setting, "copy"):  # Assume it's a "complicated" property group if copy is implemented
+                setting.copy(default_setting)
+            else:
+                copy_simple_property_group(default_setting, setting)
 
     def draw(self, context):
         layout = self.layout
