@@ -8,14 +8,14 @@ class CacheAssetPath(PropertyGroup):
     filepath: StringProperty()
 
 
-class CacheAssetPaths(PropertyGroup):
-    items: CollectionProperty(type=CacheAssetPath)
+# class CacheAssetPaths(PropertyGroup):
+#     items: CollectionProperty(type=CacheAssetPath)
 
-    def draw(self, layout):
-        # Used for debugging purpose
-        for item in self.items:
-            for prop_name in item.__annotations__:
-                layout.prop(item, prop_name)
+#     def draw(self, layout):
+#         # Used for debugging purpose
+#         for item in self.items:
+#             for prop_name in item.__annotations__:
+#                 layout.prop(item, prop_name)
 
 
 class ExportProperties(PropertyGroup):
