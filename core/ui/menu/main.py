@@ -20,6 +20,7 @@ class ABU_MT_submenu(Menu):
         layout = self.layout
         layout.menu("ABU_MT_assets", icon="ASSET_MANAGER")
         layout.menu("ABU_MT_tags", icon="BOOKMARKS")
+        layout.menu("ABU_MT_custom_properties", icon="PROPERTIES")
         layout.menu("ABU_MT_previews", icon="SEQ_PREVIEW")
         layout.menu("ABU_MT_catalogs", icon="OUTLINER_COLLECTION")
         layout.menu("ABU_MT_author", icon="USER")
