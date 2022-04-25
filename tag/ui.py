@@ -1,16 +1,11 @@
 from bpy.types import Menu
-from asset_browser_utilities.library.prop import LibraryType
+from asset_browser_utilities.core.ui.menu.operators import ABUOperatorsMenu
 
 
-class ABU_MT_tags(Menu):
+class ABU_MT_tags(Menu, ABUOperatorsMenu):
     bl_label = "Tags"
 
-    def draw(self, context):
-        layout = self.layout
-        library_source_from_context = LibraryType.get_library_type_from_context(context)
-        add_tags_smart_op = layout.operator("asset.tags_add_smart", text="Add Smart", icon="OUTLINER_OB_LIGHT")
-        add_tags_smart_op.library_settings.source = library_source_from_context
-        add_tags_op = layout.operator("asset.batch_add_tags", text="Add", icon="ADD")
-        add_tags_op.library_settings.source = library_source_from_context
-        remove_tags_op = layout.operator("asset.batch_remove_tags", text="Remove", icon="REMOVE")
-        remove_tags_op.library_settings.source = library_source_from_context
+    def setup_ops(self, layout, context):
+        self.add_op(layout, "asset.batch_add_tags", "Add", "ADD")
+        self.add_op(layout, "asset.batch_remove_tags", "Remove", "REMOVE")
+        self.add_op(layout, "asset.tags_add_smart", "Add Smart", "OUTLINER_OB_LIGHT")

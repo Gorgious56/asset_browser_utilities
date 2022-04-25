@@ -1,21 +1,17 @@
 from bpy.types import Menu
 from asset_browser_utilities.library.prop import LibraryType
+from asset_browser_utilities.core.ui.menu.operators import ABUOperatorsMenu
 
 
-class ABU_MT_assets(Menu):
+class ABU_MT_assets(Menu, ABUOperatorsMenu):
     bl_label = "Assets"
 
-    def draw(self, context):
-        layout = self.layout
-
+    def setup_ops(self, layout, context):
         library_source_from_context = LibraryType.get_library_type_from_context(context)
-        ops = []
-        ops.append(layout.operator("asset.batch_mark", text="Mark", icon="SHADERFX"))
-        ops.append(layout.operator("asset.batch_unmark", text="Unmark", icon="TRASH"))
-        ops.append(layout.operator("asset.batch_operate", text="Custom Operation", icon="MODIFIER"))
+        self.add_op(layout, "asset.batch_mark", "Mark", "SHADERFX")
+        self.add_op(layout, "asset.batch_unmark", "Unmark", "TRASH")
+        self.add_op(layout, "asset.batch_operate", "Custom Operation", "MODIFIER")
         if library_source_from_context == LibraryType.FileCurrent.value:
             layout.operator("asset.batch_export", text="Export", icon="EXPORT")
         else:
-            ops.append(layout.operator("asset.batch_import", text="Import", icon="IMPORT"))
-        for op in ops:
-            op.library_settings.source = library_source_from_context
+            self.add_op(layout, "asset.batch_import", "Import", "IMPORT")
