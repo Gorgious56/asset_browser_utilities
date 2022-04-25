@@ -1,4 +1,4 @@
-class TransformApplyOperation:
+class ApplyTransformOperation:
     MAPPING = "TRANSFORMS"
     LABEL = "Apply Transforms"
     DESCRIPTION = "Apply Location, Rotation, Scale"
@@ -7,28 +7,28 @@ class TransformApplyOperation:
     ADDITIONAL_ATTRIBUTES = "location=True, rotation=True, scale=True"
 
 
-class LocationApplyOperation:
+class ApplyLocationOperation:
     MAPPING = "TRANSFORM_LOCATION"
     LABEL = "Apply Location"
     DESCRIPTION = "Apply Location"
-    OPERATION = TransformApplyOperation.OPERATION
-    ATTRIBUTE = TransformApplyOperation.ATTRIBUTE
+    OPERATION = ApplyTransformOperation.OPERATION
+    ATTRIBUTE = ApplyTransformOperation.ATTRIBUTE
     ADDITIONAL_ATTRIBUTES = "location=True, rotation=False, scale=False"
 
 
-class RotationApplyOperation:
+class ApplyRotationOperation:
     MAPPING = "TRANSFORM_ROTATION"
     LABEL = "Apply Rotation"
     DESCRIPTION = "Apply Rotation"
-    OPERATION = TransformApplyOperation.OPERATION
-    ATTRIBUTE = TransformApplyOperation.ATTRIBUTE
+    OPERATION = ApplyTransformOperation.OPERATION
+    ATTRIBUTE = ApplyTransformOperation.ATTRIBUTE
     ADDITIONAL_ATTRIBUTES = "location=False, rotation=True, scale=False"
 
 
-class ScaleApplyOperation:
+class ApplyScaleOperation:
     MAPPING = "TRANSFORM_SCALE"
     LABEL = "Apply Scale"
     DESCRIPTION = "Apply Scale"
-    OPERATION = TransformApplyOperation.OPERATION
-    ATTRIBUTE = TransformApplyOperation.ATTRIBUTE
+    OPERATION = ApplyTransformOperation.OPERATION
+    ATTRIBUTE = ApplyTransformOperation.ATTRIBUTE
     ADDITIONAL_ATTRIBUTES = "location=False, rotation=False, scale=True"

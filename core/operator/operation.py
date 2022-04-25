@@ -1,20 +1,20 @@
 import bpy  # Do not remove even if it seems unused !!
 from asset_browser_utilities.core.cache.tool import CacheMapping
 from asset_browser_utilities.transform.operation import (
-    TransformApplyOperation,
-    LocationApplyOperation,
-    ScaleApplyOperation,
-    RotationApplyOperation,
+    ApplyTransformOperation,
+    ApplyLocationOperation,
+    ApplyScaleOperation,
+    ApplyRotationOperation,
 )
 from bpy.types import PropertyGroup
 from bpy.props import EnumProperty, BoolProperty
 
 
 OPERATION_MAPPING = {
-    TransformApplyOperation.MAPPING: TransformApplyOperation,
-    LocationApplyOperation.MAPPING: LocationApplyOperation,
-    RotationApplyOperation.MAPPING: RotationApplyOperation,
-    ScaleApplyOperation.MAPPING: ScaleApplyOperation,
+    ApplyTransformOperation.MAPPING: ApplyTransformOperation,
+    ApplyLocationOperation.MAPPING: ApplyLocationOperation,
+    ApplyRotationOperation.MAPPING: ApplyRotationOperation,
+    ApplyScaleOperation.MAPPING: ApplyScaleOperation,
 }
 
 
