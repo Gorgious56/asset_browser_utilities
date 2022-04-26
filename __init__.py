@@ -5,9 +5,9 @@
 bl_info = {
     "name": "Asset Browser Utilities ",
     "author": "Gorgious",
-    "description": "Asset Browser QOL utilities and batch operations",
+    "description": "Asset Browser QOL tools and batch operations",
     "blender": (3, 0, 0),
-    "version": (0, 1, 0),
+    "version": (0, 2, 0),
     "location": "",
     "warning": "",
     "category": "Import-Export",
