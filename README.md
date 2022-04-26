@@ -67,3 +67,15 @@ Setup the preset on top of the operator popup panel
 Display asset custom properties with a toggle in the addon preferences
 
 ![image](https://user-images.githubusercontent.com/25156105/165246047-39b3b3e8-43dc-489c-80a8-23e09c551148.png)
+
+
+4.__Custom Operations__
+
+Add custom operations on top of batch operations, like applying transforms to all assets
+
+![image](https://user-images.githubusercontent.com/25156105/165247805-f7c45856-15d8-47c4-97a2-9d05f9fb572f.png)
+
+Use the custom operation standalone
+
+![image](https://user-images.githubusercontent.com/25156105/165247884-8dc5168c-14bb-4eac-84bb-b12c5d1f99d5.png)
+
