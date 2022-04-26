@@ -7,7 +7,7 @@ from asset_browser_utilities.core.preferences.tool import get_preferences
 
 import bpy.app.timers
 from bpy.types import OperatorFileListElement
-from bpy.props import PointerProperty, StringProperty, PointerProperty, CollectionProperty, EnumProperty
+from bpy.props import PointerProperty, StringProperty, PointerProperty, CollectionProperty, EnumProperty, BoolProperty
 from bpy_extras.io_utils import ImportHelper
 
 from asset_browser_utilities.core.helper import copy_simple_property_group
@@ -111,6 +111,13 @@ class BatchExecute:
         pass
 
 
+def update_asset_filter_allow(self, context):
+    if self.library_settings.source in (LibraryType.FolderExternal.value, LibraryType.FileExternal.value):
+        self.asset_filter_settings.init(context, filter_selection=False, filter_assets=self.filter_assets)
+    else:
+        self.asset_filter_settings.init(context, filter_selection=True, filter_assets=self.filter_assets)
+
+
 def update_preset(self, context):
     preset_name = self.preset
     if preset_name == "ABU_DEFAULT":
@@ -126,6 +133,7 @@ def update_preset(self, context):
             setting.copy(default_setting)
         else:
             copy_simple_property_group(default_setting, setting)
+    update_asset_filter_allow(self, context)
 
 
 class BatchFolderOperator(ImportHelper):
@@ -134,6 +142,7 @@ class BatchFolderOperator(ImportHelper):
         options={"HIDDEN"},
         maxlen=255,  # Max internal buffer length, longer would be clamped.
     )
+    filter_assets: BoolProperty()
     preset: EnumProperty(name="Preset", items=get_presets, update=update_preset)
     operation_settings: PointerProperty(type=OperationSettings)
     asset_filter_settings: PointerProperty(type=AssetFilterSettings)
@@ -145,16 +154,15 @@ class BatchFolderOperator(ImportHelper):
     )
 
     def _invoke(self, context, remove_backup=True, filter_assets=False):
+        self.filter_assets = filter_assets
         update_preset(self, context)
         self.library_settings.init(remove_backup=remove_backup)
         LibraryExportSettings.get_from_cache(context).source = self.library_settings.source
         if self.library_settings.source in (LibraryType.FolderExternal.value, LibraryType.FileExternal.value):
             self.filter_glob = "*.blend" if self.library_settings.source == LibraryType.FileExternal.value else ""
-            self.asset_filter_settings.init(context, filter_selection=False, filter_assets=filter_assets)
             context.window_manager.fileselect_add(self)
             return {"RUNNING_MODAL"}
         else:
-            self.asset_filter_settings.init(context, filter_selection=True, filter_assets=filter_assets)
             return context.window_manager.invoke_props_dialog(self)
 
     def execute(self, context):
