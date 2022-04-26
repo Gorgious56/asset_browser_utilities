@@ -15,7 +15,7 @@ class ABU_OT_presets_add_or_remove(Operator):
             new = presets.add()
             new.name = "New Preset"
             new.asset_filter_settings.filter_selection.allow = True
-            new.asset_filter_settings.filter_catalog_allow = True
+            new.asset_filter_settings.filter_catalog.allow = True
         else:
             try:
                 presets.remove(self.index)

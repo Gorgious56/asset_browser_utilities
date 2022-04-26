@@ -21,7 +21,7 @@ class AssetBrowserUtilitiesAddonPreferences(AddonPreferences):
         layout.prop(self, "show_custom_props")
 
         self.defaults.asset_filter_settings.filter_selection.allow = True
-        self.defaults.asset_filter_settings.filter_catalog_allow = True
+        self.defaults.asset_filter_settings.filter_catalog.allow = True
 
         box = layout.box()
         self.defaults.draw(box, context, header="Set Defaults")
