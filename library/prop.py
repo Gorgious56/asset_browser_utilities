@@ -74,5 +74,5 @@ class LibraryExportSettings(PropertyGroup, CacheMapping):
         elif self.source == LibraryType.FileExternal.value:
             return [folder / filepath for filepath in filepaths]
         else:  # User Library
-            folder = Path(self.library_path)
+            folder = Path(LibraryExportSettings.get_from_cache(bpy.context).library_user_path)
             return get_blend_files_in_folder(folder, recursive=True)
