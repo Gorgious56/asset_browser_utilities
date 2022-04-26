@@ -26,7 +26,8 @@ def generate_asset_preview(filepath, asset=None):
     if asset is None:
         bpy.ops.ed.lib_id_load_custom_preview(filepath=str(filepath))
     else:
-        bpy.ops.ed.lib_id_load_custom_preview({"id": asset}, filepath=str(filepath))
+        with bpy.context.temp_override(id=asset):
+            bpy.ops.ed.lib_id_load_custom_preview(filepath=str(filepath))
 
 
 def get_blend_library_name(asset):

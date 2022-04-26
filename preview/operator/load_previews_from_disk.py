@@ -72,4 +72,4 @@ class ASSET_OT_load_previews_from_disk(Operator, ImportHelper):
 
     def draw(self, context):
         layout = self.layout
-        self.library_settings.draw(layout)
+        self.library_settings.draw(layout, context)
