@@ -125,6 +125,8 @@ def update_preset(self, context):
     else:
         preset = next(p for p in get_preferences(context).presets if p.name == preset_name)
     for attr in preset.__annotations__:
+        if attr == "library_settings":
+            continue
         if not hasattr(self, attr):
             continue
         default_setting = getattr(preset, attr)
