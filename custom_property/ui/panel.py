@@ -13,4 +13,4 @@ class ABU_PT_asset_meta_data_custom_properties(Panel, PropertyPanel):
 
     @classmethod
     def poll(cls, context):
-        return get_preferences(context).show_custom_props
+        return get_preferences(context).show_custom_props and hasattr(context, "id") and context.id is not None
