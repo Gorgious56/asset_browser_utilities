@@ -1,6 +1,6 @@
 from bpy.types import Operator
 
-from asset_browser_utilities.core.operator.helper import BatchExecute, BatchFolderOperator
+from asset_browser_utilities.core.operator.tool import BatchExecute, BatchFolderOperator
 
 
 class BatchExecuteOverride(BatchExecute):

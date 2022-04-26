@@ -2,8 +2,8 @@ from bpy_extras.io_utils import ImportHelper
 from bpy.types import Operator, PropertyGroup
 from bpy.props import PointerProperty, StringProperty
 
-from asset_browser_utilities.core.operator.helper import BatchExecute
-from asset_browser_utilities.core.operator.helper import BatchFolderOperator
+from asset_browser_utilities.core.operator.tool import BatchExecute
+from asset_browser_utilities.core.operator.tool import BatchFolderOperator
 
 
 class BatchSetDescription(BatchExecute):

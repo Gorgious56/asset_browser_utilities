@@ -2,7 +2,7 @@ import bpy
 from bpy.types import Operator, PropertyGroup
 from bpy.props import PointerProperty
 
-from asset_browser_utilities.core.operator.helper import BatchExecute, BatchFolderOperator
+from asset_browser_utilities.core.operator.tool import BatchExecute, BatchFolderOperator
 
 
 class BatchExecuteOverride(BatchExecute):
