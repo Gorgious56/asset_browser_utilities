@@ -18,6 +18,14 @@ def get_from_cache(_type, context=None):
     return get_cache(context).get(_type)
 
 
+def get_presets(op, context):
+    # First entry is the default preset
+    enum = [("ABU_DEFAULT", "Default", "Use default values (defined in Addon Preferences)")]
+    for preset in get_preferences(context).presets:
+        enum.append((preset.name,) * 3)
+    return enum
+
+
 class CacheMapping:
     CACHE_MAPPING = ""
 

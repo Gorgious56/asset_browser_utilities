@@ -7,11 +7,11 @@ from asset_browser_utilities.core.preferences.tool import get_preferences
 
 import bpy.app.timers
 from bpy.types import OperatorFileListElement
-from bpy.props import PointerProperty, StringProperty, PointerProperty, CollectionProperty
+from bpy.props import PointerProperty, StringProperty, PointerProperty, CollectionProperty, EnumProperty
 from bpy_extras.io_utils import ImportHelper
 
 from asset_browser_utilities.core.helper import copy_simple_property_group
-from asset_browser_utilities.core.cache.tool import write_to_cache, get_from_cache
+from asset_browser_utilities.core.cache.tool import get_presets, write_to_cache, get_from_cache
 from asset_browser_utilities.core.ui.message import message_box
 from asset_browser_utilities.file.path import open_file_if_different_from_current
 from asset_browser_utilities.file.save import save_if_possible_and_necessary, save_file_as
@@ -111,12 +111,30 @@ class BatchExecute:
         pass
 
 
+def update_preset(self, context):
+    preset_name = self.preset
+    if preset_name == "ABU_DEFAULT":
+        preset = get_preferences(context).defaults
+    else:
+        preset = next(p for p in get_preferences(context).presets if p.name == preset_name)
+    for attr in preset.__annotations__:
+        if not hasattr(self, attr):
+            continue
+        default_setting = getattr(preset, attr)
+        setting = getattr(self, attr)
+        if hasattr(setting, "copy"):  # Assume it's a "complicated" property group if copy is implemented
+            setting.copy(default_setting)
+        else:
+            copy_simple_property_group(default_setting, setting)
+
+
 class BatchFolderOperator(ImportHelper):
     filter_glob: StringProperty(
         default="",
         options={"HIDDEN"},
         maxlen=255,  # Max internal buffer length, longer would be clamped.
     )
+    preset: EnumProperty(name="Preset", items=get_presets, update=update_preset)
     operation_settings: PointerProperty(type=OperationSettings)
     asset_filter_settings: PointerProperty(type=AssetFilterSettings)
     library_settings: PointerProperty(type=LibraryExportSettings)
@@ -127,7 +145,7 @@ class BatchFolderOperator(ImportHelper):
     )
 
     def _invoke(self, context, remove_backup=True, filter_assets=False):
-        self.setup_default_settings(context)
+        update_preset(self, context)
         self.library_settings.init(remove_backup=remove_backup)
         LibraryExportSettings.get_from_cache(context).source = self.library_settings.source
         if self.library_settings.source in (LibraryType.FolderExternal.value, LibraryType.FileExternal.value):
@@ -150,20 +168,10 @@ class BatchFolderOperator(ImportHelper):
         logic.execute_next_blend()
         return {"FINISHED"}
 
-    def setup_default_settings(self, context):
-        defaults = get_preferences(context).defaults
-        for attr in defaults.__annotations__:
-            if not hasattr(self, attr):
-                continue
-            default_setting = getattr(defaults, attr)
-            setting = getattr(self, attr)
-            if hasattr(setting, "copy"):  # Assume it's a "complicated" property group if copy is implemented
-                setting.copy(default_setting)
-            else:
-                copy_simple_property_group(default_setting, setting)
-
     def draw(self, context):
         layout = self.layout
+
+        layout.prop(self, "preset")
 
         self.library_settings.draw(layout, context)
         if hasattr(self, "operator_settings") and self.operator_settings and hasattr(self.operator_settings, "draw"):
