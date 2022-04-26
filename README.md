@@ -1,103 +1,69 @@
 This add-on aims to provide several utilities to reduce the time it takes to do operations on large libraries :
 
-Available tools :
+Features :
 
-
-1. __Batch Mark (or Unmark) Objects as Assets__
-
-2. __Export Assets__
-
-3. __Batch Add or Remove tags__
-
-4. __Batch setup image previews from disk__
-
-5. __Batch Generate Asset Previews__
-
-7. __Batch Move To or Remove From Catalog__
-
-8. __Batch Set Author or Description__
-
-
-___ __Batch Mark (or Unmark) Objects as Assets__ ___
-
-Mark Objects as assets and generate the preview of all assets in the folder the user selects.
-
-1. Go to the Asset Browser Editor and look for the add-on menu in the header
-
-![image](https://user-images.githubusercontent.com/25156105/148301139-7daf3546-229d-4fb1-872b-e2f1d6617f37.png)
-
-2. 
- - If you choose an external library : In the file selector, navigate to the folder where the blend files are located. 
- - If you choose to mark assets in the current file : Change the parameters in the popup window
-
-On the right hand side you have a few options :
-
-- Recursively search in subfolders (and sub-sub folders, etc.) of the selected folder
-- Prevent creation of file.blend1 backup file when saving library file
-- Prevent overwriting items that have already been marked as assets
-- Generate previews (Unchecking simply marks objects as assets without generating a preview, which is way faster)
-- Filter by Item Type(s)
-- Filter by name, using a prefix, suffix or simply checking if the name contains specified text
-
-![image](https://user-images.githubusercontent.com/25156105/148301410-34eee9cc-e0dd-468e-b31d-48c3704b1539.png)
-
-3. Validate by clicking on the Blue button.
-
-the whole process should be really fast, but one has to wait a little bit for heavier object previews to generate.
-
-It's a good idea to enable the console with Window > Toggle System Console beforehand so you can see how many files you have marked yet.
+1. __Mark Items as Assets__
 
 Example Result :
 
 ![image](https://user-images.githubusercontent.com/25156105/145268274-c65c2c7d-3378-48cf-980c-ce7ef79a566f.png)
 
 
-___ __Export Assets__ ___
- 
- Export assets from the current file.
- 
- ![image](https://user-images.githubusercontent.com/25156105/148301735-4ddb73d1-d73b-4396-9bb5-d0cd293c77d4.png)
- 
-All filters are additive.
-- Filter by selection (export only selected objects)
-- Filter by Item Type(s)
-- Filter by name, using a prefix, suffix or simply checking if the name contains specified text
+2. __Unmarks Assets__
+
+3. __Export Assets__ (WIP, backup your files beforehand)
+
+Export assets from the current file.
 
 You can choose an existing file to append the assets to, or a new filepath will create a brand new file with the assets.
 
+4. __Add or Remove tags__
 
-___ __Batch Add or Remove tags__ ___
+5. __Add "Smart" tags__
 
-Batch add or remove tags from assets in current file or external library. You can filter assets like the other tools. Up to 10 tags can be added or removed at a time :
+![image](https://user-images.githubusercontent.com/25156105/165244827-2889c441-60ae-4766-b8ab-d7ca6bf5d0d2.png)
 
-![image](https://user-images.githubusercontent.com/25156105/148535455-bedbfb62-9767-473c-95cc-c27a2b88ed63.png)
+6. __Add or Remove Custom Properties__
 
+Add float, string, integer or color custom properties
+![image](https://user-images.githubusercontent.com/25156105/165245945-1531d036-66e3-49f6-bbb5-e5b03081411c.png)
 
-___ __Batch Load Asset Previews From Disk__ ___
+7. __Setup image previews from disk__
 
 Select a folder on disk containing previews and the addon will automatically match the image files named like assets in the file with their preview.
 
 ![BES_49](https://user-images.githubusercontent.com/25156105/149016391-3b026feb-cd40-42a9-a0f3-3894faa99dc9.gif)
 
+8. __Generate Asset Previews__
 
-___ __Batch Generate Asset Previews__ ___
+9. __Move To or Remove From Catalog__
 
-Generate Asset Previews without modifying any other property on existing assets. Same filtering options as other operators apply.
+10. __Set Author or Description__
 
-![image](https://user-images.githubusercontent.com/25156105/149673006-21e60465-d85c-4594-bba2-f047dae9f609.png)
+Specifics :
 
+1. __Filters__
 
-___ __Batch Move To or Remove From Catalog__ ___
+All operators feature a selection set which can be setup in depth to ensure specific asset selections
+![image](https://user-images.githubusercontent.com/25156105/165245372-bdd5c72a-663d-4520-b5a5-a72e40546ee8.png)
 
-Move Filtered assets to catalog (and create catalog file if it doesn't exist) or remove all filtered assets from catalog
+- Filter by selection (Asset Browser or 3D viewport), outliner planned
+- Filter By item type
+- Filter by item name
+- Filter by catalog (when applicable)
 
-![image](https://user-images.githubusercontent.com/25156105/149837335-8f120930-2e6c-42f1-afee-67411ef8cc9c.png)
+2. __Defaults and presets__
 
-___ __Batch Set Author or Description__ ___
+Define default values and presets inside the addon preferences
 
-Set Author or Description on filter assets. Leave field empty to remove instead.
+![image](https://user-images.githubusercontent.com/25156105/165246186-cdb06369-163c-4090-87bb-362e1f26ef87.png)
 
-![image](https://user-images.githubusercontent.com/25156105/149837406-74dbc775-56a8-44d3-9569-768781baab6b.png)
+Setup the preset on top of the operator popup panel
 
+![image](https://user-images.githubusercontent.com/25156105/165246257-10420ffe-6af2-4ea2-86b5-4582d7617a74.png)
 
+3. __Asset custom properties__
 
+Display asset custom properties with a toggle in the addon preferences
+
+![image](https://user-images.githubusercontent.com/25156105/165246047-39b3b3e8-43dc-489c-80a8-23e09c551148.png)
