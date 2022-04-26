@@ -20,20 +20,20 @@ from asset_browser_utilities.library.prop import LibraryExportSettings, LibraryT
 from asset_browser_utilities.preview.helper import can_preview_be_generated, is_preview_generated
 
 ## Where is this used ?
-class FilterLibraryOperator:
-    asset_filter_settings: PointerProperty(type=AssetFilterSettings)
-    library_settings: PointerProperty(type=LibraryExportSettings)
+# class FilterLibraryOperator:
+#     asset_filter_settings: PointerProperty(type=AssetFilterSettings)
+#     library_settings: PointerProperty(type=LibraryExportSettings)
 
-    def _invoke(self, context, remove_backup=True, filter_assets=False):
-        self.library_settings.init(remove_backup=remove_backup)
-        LibraryExportSettings.get_from_cache(context).source = self.library_settings.source
-        if self.library_settings.source in (LibraryType.FileExternal.value, LibraryType.FolderExternal.value):
-            self.asset_filter_settings.init(context, filter_selection=False, filter_assets=filter_assets)
-            context.window_manager.fileselect_add(self)
-            return {"RUNNING_MODAL"}
-        else:
-            self.asset_filter_settings.init(context, filter_selection=True, filter_assets=filter_assets)
-            return context.window_manager.invoke_props_dialog(self)
+#     def _invoke(self, context, remove_backup=True, filter_assets=False):
+#         self.library_settings.init(remove_backup=remove_backup)
+#         LibraryExportSettings.get_from_cache(context).source = self.library_settings.source
+#         if self.library_settings.source in (LibraryType.FileExternal.value, LibraryType.FolderExternal.value):
+#             self.asset_filter_settings.init(context, filter_selection=False, filter_assets=filter_assets)
+#             context.window_manager.fileselect_add(self)
+#             return {"RUNNING_MODAL"}
+#         else:
+#             self.asset_filter_settings.init(context, filter_selection=True, filter_assets=filter_assets)
+#             return context.window_manager.invoke_props_dialog(self)
 
 
 class BatchExecute:

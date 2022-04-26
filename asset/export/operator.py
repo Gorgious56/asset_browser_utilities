@@ -8,7 +8,7 @@ from bpy.types import Operator, PropertyGroup
 from bpy.props import StringProperty, PointerProperty, BoolProperty
 
 from asset_browser_utilities.core.ui.message import message_box
-from asset_browser_utilities.core.operator.tool import FilterLibraryOperator
+# from asset_browser_utilities.core.operator.tool import FilterLibraryOperator
 from asset_browser_utilities.console.builder import CommandBuilder
 from asset_browser_utilities.file.path import is_this_current_file
 from asset_browser_utilities.file.save import create_new_file_and_set_as_current, save_file, save_if_possible_and_necessary
