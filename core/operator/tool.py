@@ -17,7 +17,7 @@ from asset_browser_utilities.file.path import open_file_if_different_from_curren
 from asset_browser_utilities.file.save import save_if_possible_and_necessary, save_file_as
 from asset_browser_utilities.filter.main import AssetFilterSettings
 from asset_browser_utilities.library.prop import LibraryExportSettings, LibraryType
-from asset_browser_utilities.preview.helper import can_preview_be_generated, is_preview_generated
+from asset_browser_utilities.preview.tool import can_preview_be_generated, is_preview_generated
 
 ## Where is this used ?
 # class FilterLibraryOperator:
@@ -92,7 +92,7 @@ class BatchExecute:
 
     def sleep_until_previews_are_done_and_execute_next_file(self):
         while self.assets:
-            if not can_preview_be_generated(self.assets[0]) or is_preview_generated(self.assets[0]):
+            if is_preview_generated(self.assets[0]) or not can_preview_be_generated(self.assets[0]) :
                 self.assets.pop(0)
             else:
                 return self.INTERVAL

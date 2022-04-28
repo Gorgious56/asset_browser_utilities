@@ -1,6 +1,9 @@
 from enum import Enum
+from os.path import getsize
 import math
+from asset_browser_utilities.library.path import get_asset_filepath
 
+import bpy
 from bpy.types import PropertyGroup
 from bpy.props import EnumProperty, StringProperty, IntProperty
 
@@ -40,10 +43,30 @@ def get_vertex_count(asset, smart_tag):
     )
 
 
+def get_dimensions(asset, smart_tag):
+    ret = "Dim. : "
+    for i, axis in enumerate(("X", "Y", "Z")):
+        ret += f"{round(asset.dimensions[i], 3)}m"
+        if i < 2:
+            ret += " * "
+    return ret
+
+
+def get_scale(asset, smart_tag):
+    ret = "Scale : "
+    for i, axis in enumerate(("X", "Y", "Z")):
+        ret += f"{round(asset.scale[i], 3)}"
+        if i < 2:
+            ret += " * "
+    return ret
+
+
 class SmartTag(Enum):
-    TriangleCount = "Triangle Count"
-    VertexCount = "Vertex Count"
     CustomProperty = "Custom Property"
+    Dimensions = "Dimensions"
+    TriangleCount = "Triangle Count"
+    Scale = "Scale"
+    VertexCount = "Vertex Count"
 
     @staticmethod
     def operation(member):
@@ -53,6 +76,10 @@ class SmartTag(Enum):
             return get_vertex_count
         elif member == SmartTag.CustomProperty.value:
             return lambda asset, smart_tag: asset.get(smart_tag.custom_property_name, None)
+        elif member == SmartTag.Dimensions.value:
+            return get_dimensions
+        elif member == SmartTag.Scale.value:
+            return get_scale
 
 
 class SmartTagPG(PropertyGroup, CacheMapping):
