@@ -1,4 +1,5 @@
-from mathutils import Vector
+from math import radians
+from mathutils import Vector, Euler
 
 
 class ApplyTransformOperation:
@@ -57,3 +58,20 @@ class ScaleOperation:
     OPERATOR = False
     OPERATION = lambda assets, vector: [setattr(a, "scale", a.scale * Vector(vector)) for a in assets]
     ATTRIBUTE = "vector_value"
+
+
+def rotat_euler(obj, vector):
+    vector = [radians(a) for a in vector]
+    obj_euler = obj.rotation_euler
+    obj_euler.rotate(Euler(vector))
+    obj.rotation_euler = obj_euler
+
+
+class RotateOperation:
+    MAPPING = "ROTATE"
+    LABEL = "Rotate"
+    DESCRIPTION = "Rotate Euler Values as degrees in global coordinates"
+    OPERATOR = False
+    OPERATION = lambda assets, vector: [rotat_euler(a, vector) for a in assets]
+    ATTRIBUTE = "vector_value"
+    ATTRIBUTE_NAME = "Angles (Degrees)"

@@ -9,6 +9,7 @@ from asset_browser_utilities.transform.operation import (
     ApplyRotationOperation,
     TranslateOperation,
     ScaleOperation,
+    RotateOperation,
 )
 
 
@@ -19,6 +20,7 @@ OPERATION_MAPPING = {
     ApplyScaleOperation.MAPPING: ApplyScaleOperation,
     TranslateOperation.MAPPING: TranslateOperation,
     ScaleOperation.MAPPING: ScaleOperation,
+    RotateOperation.MAPPING: RotateOperation,
 }
 
 
@@ -39,7 +41,10 @@ class OperationSettings(PropertyGroup, CacheMapping):
             box.prop(self, "operation")
             operation_cls = OPERATION_MAPPING.get(self.operation)
             if operation_cls and not operation_cls.OPERATOR:
-                box.prop(self, operation_cls.ATTRIBUTE)
+                try:
+                    box.prop(self, operation_cls.ATTRIBUTE, text=operation_cls.ATTRIBUTE_NAME)
+                except AttributeError:
+                    box.prop(self, operation_cls.ATTRIBUTE)
 
     def execute(self, assets):
         if not self.active:
