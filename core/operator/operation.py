@@ -8,6 +8,7 @@ from asset_browser_utilities.transform.operation import (
     ApplyScaleOperation,
     ApplyRotationOperation,
     TranslateOperation,
+    ScaleOperation,
 )
 
 
@@ -17,6 +18,7 @@ OPERATION_MAPPING = {
     ApplyRotationOperation.MAPPING: ApplyRotationOperation,
     ApplyScaleOperation.MAPPING: ApplyScaleOperation,
     TranslateOperation.MAPPING: TranslateOperation,
+    ScaleOperation.MAPPING: ScaleOperation,
 }
 
 

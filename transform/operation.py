@@ -49,3 +49,11 @@ class TranslateOperation:
     OPERATION = lambda assets, vector: [setattr(a, "location", a.location + Vector(vector)) for a in assets]
     ATTRIBUTE = "vector_value"
 
+
+class ScaleOperation:
+    MAPPING = "SCALE"
+    LABEL = "Scale"
+    DESCRIPTION = "Scale"
+    OPERATOR = False
+    OPERATION = lambda assets, vector: [setattr(a, "scale", a.scale * Vector(vector)) for a in assets]
+    ATTRIBUTE = "vector_value"
