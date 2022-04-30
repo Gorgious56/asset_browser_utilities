@@ -159,6 +159,7 @@ class BatchFolderOperator(ImportHelper):
         self.filter_assets = filter_assets
         update_preset(self, context)
         self.library_settings.init(remove_backup=remove_backup)
+        self.operation_settings.init()
         LibraryExportSettings.get_from_cache(context).source = self.library_settings.source
         if self.library_settings.source in (LibraryType.FolderExternal.value, LibraryType.FileExternal.value):
             self.filter_glob = "*.blend" if self.library_settings.source == LibraryType.FileExternal.value else ""
@@ -170,7 +171,7 @@ class BatchFolderOperator(ImportHelper):
     def execute(self, context):
         # We write settings to cache in addon properties because this instance's properties are lost on new file load
         write_to_cache(self.asset_filter_settings, context)
-        copy_simple_property_group(self.operation_settings, OperationSettings.get_from_cache(context))
+        write_to_cache(self.operation_settings, context)
         catalog_export_settings = CatalogExportSettings.get_from_cache(context)
         catalog_export_settings.path = str(CatalogsHelper(context).catalog_filepath)
         save_if_possible_and_necessary()
