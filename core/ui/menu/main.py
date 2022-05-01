@@ -25,6 +25,7 @@ class ABU_MT_submenu(Menu):
         layout.menu("ABU_MT_catalogs", icon="OUTLINER_COLLECTION")
         layout.menu("ABU_MT_author", icon="USER")
         layout.menu("ABU_MT_description", icon="FILE_TEXT")
+        layout.menu("ABU_MT_operations", icon="MODIFIER")
 
 
 class ABU_MT_menu(Menu):
