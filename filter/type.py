@@ -19,6 +19,7 @@ def get_types():
             ("movieclips", "Movie Clips", "Movie Clips", "FILE_MOVIE", 2 ** 9),
             ("node_groups", "Node Trees", "Node Trees", "NODETREE", 2 ** 10),
             ("objects", "Objects", "Objects", "OBJECT_DATA", 2 ** 11),
+            ("paint_curves", "Paint Curves", "Paint Curves", "CURVE_BEZCURVE", 2 ** 22),
             ("palettes", "Palettes", "Palettes", "COLOR", 2 ** 12),
             ("particles", "Particle Systems", "Particle Systems", "PARTICLES", 2 ** 13),
             ("scenes", "Scenes", "Scenes", "SCENE_DATA", 2 ** 14),
