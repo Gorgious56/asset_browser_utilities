@@ -1,53 +1,48 @@
 from math import radians
 from mathutils import Vector, Euler
+import bpy
+
+
+def apply_transforms(assets, loc=False, rot=False, scale=False):
+    with bpy.context.temp_override(selected_editable_objects=[a for a in assets if hasattr(a, "matrix_world")]):
+        bpy.ops.object.transform_apply(location=loc, rotation=rot, scale=scale)
 
 
 class ApplyTransformOperation:
-    MAPPING = "TRANSFORMS"
+    MAPPING = "APPLY_TRANSFORMS"
     LABEL = "Apply Transforms"
     DESCRIPTION = "Apply Location, Rotation, Scale"
-    OPERATOR = True
-    OPERATION = "object.transform_apply"
-    ATTRIBUTE = "selected_editable_objects"
-    ADDITIONAL_ATTRIBUTES = "location=True, rotation=True, scale=True"
+    OPERATION = lambda assets: apply_transforms(assets, loc=True, rot=True, scale=True)
 
 
 class ApplyLocationOperation:
-    MAPPING = "TRANSFORM_LOCATION"
+    MAPPING = "APPLY_LOCATION"
     LABEL = "Apply Location"
     DESCRIPTION = "Apply Location"
-    OPERATOR = True
-    OPERATION = ApplyTransformOperation.OPERATION
-    ATTRIBUTE = ApplyTransformOperation.ATTRIBUTE
-    ADDITIONAL_ATTRIBUTES = "location=True, rotation=False, scale=False"
+    OPERATION = lambda assets: apply_transforms(assets, loc=True)
 
 
 class ApplyRotationOperation:
-    MAPPING = "TRANSFORM_ROTATION"
+    MAPPING = "APPLY_ROTATION"
     LABEL = "Apply Rotation"
     DESCRIPTION = "Apply Rotation"
-    OPERATOR = True
-    OPERATION = ApplyTransformOperation.OPERATION
-    ATTRIBUTE = ApplyTransformOperation.ATTRIBUTE
-    ADDITIONAL_ATTRIBUTES = "location=False, rotation=True, scale=False"
+    OPERATION = lambda assets: apply_transforms(assets, rot=True)
 
 
 class ApplyScaleOperation:
-    MAPPING = "TRANSFORM_SCALE"
+    MAPPING = "APPLY_SCALE"
     LABEL = "Apply Scale"
     DESCRIPTION = "Apply Scale"
-    OPERATOR = True
-    OPERATION = ApplyTransformOperation.OPERATION
-    ATTRIBUTE = ApplyTransformOperation.ATTRIBUTE
-    ADDITIONAL_ATTRIBUTES = "location=False, rotation=False, scale=True"
+    OPERATION = lambda assets: apply_transforms(assets, scale=True)
 
 
 class TranslateOperation:
     MAPPING = "TRANSLATE"
     LABEL = "Translate"
     DESCRIPTION = "Translate"
-    OPERATOR = False
-    OPERATION = lambda assets, vector: [setattr(a, "location", a.location + Vector(vector)) for a in assets]
+    OPERATION = lambda assets, vector: [
+        setattr(a, "location", a.location + Vector(vector)) for a in assets if hasattr(a, "location")
+    ]
     ATTRIBUTE = "vector_value"
 
 
@@ -55,8 +50,9 @@ class ScaleOperation:
     MAPPING = "SCALE"
     LABEL = "Scale"
     DESCRIPTION = "Scale"
-    OPERATOR = False
-    OPERATION = lambda assets, vector: [setattr(a, "scale", a.scale * Vector(vector)) for a in assets]
+    OPERATION = lambda assets, vector: [
+        setattr(a, "scale", a.scale * Vector(vector)) for a in assets if hasattr(a, "scale")
+    ]
     ATTRIBUTE = "vector_value"
 
 
@@ -71,7 +67,6 @@ class RotateOperation:
     MAPPING = "ROTATE"
     LABEL = "Rotate"
     DESCRIPTION = "Rotate Euler Values as degrees in global coordinates"
-    OPERATOR = False
-    OPERATION = lambda assets, vector: [rotate_euler(a, vector) for a in assets]
+    OPERATION = lambda assets, vector: [rotate_euler(a, vector) for a in assets if hasattr(a, "rotation_euler")]
     ATTRIBUTE = "vector_value"
     ATTRIBUTE_NAME = "Angles (Degrees)"

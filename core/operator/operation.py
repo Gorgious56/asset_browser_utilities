@@ -58,7 +58,7 @@ def get_enum_items(self, context):
     if hasattr(operation_cls, "get_enum_items"):
         return operation_cls.get_enum_items()
     else:
-        return []
+        return [("NONE",) * 3]
 
 
 class OperationSetting(PropertyGroup):
@@ -106,12 +106,7 @@ class OperationSettings(PropertyGroup, CacheMapping):
                 op_box = box.box()
                 op_box.prop(operation_pg, "type")
                 operation_cls = OPERATION_MAPPING.get(operation_pg.type)
-                if (
-                    operation_cls
-                    and not isinstance(operation_cls, NONE_OPERATION)
-                    and hasattr(operation_cls, "OPERATOR")
-                    and not operation_cls.OPERATOR
-                ):
+                if operation_cls and not isinstance(operation_cls, NONE_OPERATION):
                     if hasattr(operation_cls, "ATTRIBUTE"):
                         attributes = [operation_cls.ATTRIBUTE]
                         attributes_names = (
@@ -120,6 +115,8 @@ class OperationSettings(PropertyGroup, CacheMapping):
                     elif hasattr(operation_cls, "ATTRIBUTES"):
                         attributes = operation_cls.ATTRIBUTES
                         attributes_names = operation_cls.ATTRIBUTES_NAMES
+                    else:
+                        continue
                     for attr, name in zip(attributes, attributes_names):
                         if name is not None:
                             op_box.prop(operation_pg, attr, text=name)
@@ -136,16 +133,14 @@ class OperationSettings(PropertyGroup, CacheMapping):
             operation_cls = OPERATION_MAPPING.get(operation_pg.type)
             if not operation_cls:
                 return
-            if operation_cls.OPERATOR:
-                operation = f"bpy.ops.{operation_cls.OPERATION}({{'{operation_cls.ATTRIBUTE}': assets}}, {operation_cls.ADDITIONAL_ATTRIBUTES})"
-                exec(operation)
+            if hasattr(operation_cls, "ATTRIBUTE"):
+                value = getattr(operation_pg, operation_cls.ATTRIBUTE)
+                operation_cls.OPERATION(assets, value)
+            elif hasattr(operation_cls, "ATTRIBUTES"):
+                values = [getattr(operation_pg, attr) for attr in operation_cls.ATTRIBUTES]
+                operation_cls.OPERATION(assets, *values)
             else:
-                if hasattr(operation_cls, "ATTRIBUTE"):
-                    value = getattr(operation_pg, operation_cls.ATTRIBUTE)
-                    operation_cls.OPERATION(assets, value)
-                else:
-                    values = [getattr(operation_pg, attr) for attr in operation_cls.ATTRIBUTES]
-                    operation_cls.OPERATION(assets, *values)
+                operation_cls.OPERATION(assets)
 
     def copy(self, source):
         copy_simple_property_group(source, self)

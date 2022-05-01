@@ -14,7 +14,6 @@ class DecimateOperation:
     MAPPING = "DECIMATE"
     LABEL = "Decimate"
     DESCRIPTION = "Decimate the mesh (only applicable on mesh objects)"
-    OPERATOR = False
     OPERATION = lambda assets, tris, apply: [
         decimate(a, tris, apply) for a in assets if hasattr(a, "type") and a.type == "MESH"
     ]

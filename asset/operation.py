@@ -23,7 +23,6 @@ class RenameAssetOperation:
     MAPPING = "RENAME_ASSET"
     LABEL = "Rename Asset"
     DESCRIPTION = "Rename Asset"
-    OPERATOR = False
     OPERATION = lambda assets, mode, value, : [rename(a, mode, value, False) for a in assets]
     ATTRIBUTES = ("enum_value", "string_value")
     ATTRIBUTES_NAMES = ("Mode", None)
