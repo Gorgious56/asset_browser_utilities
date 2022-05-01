@@ -20,6 +20,7 @@ class BatchExecuteOverride(BatchExecute):
 
 class OperatorProperties(PropertyGroup):
     smart_tag: PointerProperty(type=SmartTagPG)
+
     def draw(self, layout):
         self.smart_tag.draw(layout)
 
