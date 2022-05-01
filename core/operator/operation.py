@@ -1,7 +1,14 @@
-from asset_browser_utilities.core.helper import copy_simple_property_group
+
 import bpy  # Do not remove even if it seems unused !!
 from bpy.types import PropertyGroup
-from bpy.props import EnumProperty, BoolProperty, FloatVectorProperty, CollectionProperty, IntProperty
+from bpy.props import (
+    EnumProperty,
+    BoolProperty,
+    FloatVectorProperty,
+    CollectionProperty,
+    IntProperty,
+)
+from asset_browser_utilities.core.helper import copy_simple_property_group
 from asset_browser_utilities.core.cache.tool import CacheMapping
 from asset_browser_utilities.transform.operation import (
     ApplyTransformOperation,
@@ -12,6 +19,7 @@ from asset_browser_utilities.transform.operation import (
     ScaleOperation,
     RotateOperation,
 )
+from asset_browser_utilities.mesh.operation import DecimateOperation
 
 
 class NONE_OPERATION:
@@ -29,6 +37,7 @@ OPERATION_MAPPING = {
     TranslateOperation.MAPPING: TranslateOperation,
     ScaleOperation.MAPPING: ScaleOperation,
     RotateOperation.MAPPING: RotateOperation,
+    DecimateOperation.MAPPING: DecimateOperation,
 }
 
 
@@ -48,6 +57,8 @@ class OperationSetting(PropertyGroup):
         items=[(op.MAPPING, op.LABEL, op.DESCRIPTION) for op in OPERATION_MAPPING.values()],
     )
     vector_value: FloatVectorProperty(name="Value")
+    int_value: IntProperty(name="Value")
+    bool_value: BoolProperty(name="Value")
 
 
 class OperationSettings(PropertyGroup, CacheMapping):
@@ -89,10 +100,19 @@ class OperationSettings(PropertyGroup, CacheMapping):
                     and hasattr(operation_cls, "OPERATOR")
                     and not operation_cls.OPERATOR
                 ):
-                    try:
-                        op_box.prop(operation_pg, operation_cls.ATTRIBUTE, text=operation_cls.ATTRIBUTE_NAME)
-                    except AttributeError:
-                        op_box.prop(operation_pg, operation_cls.ATTRIBUTE)
+                    if hasattr(operation_cls, "ATTRIBUTE"):
+                        attributes = [operation_cls.ATTRIBUTE]
+                        attributes_names = (
+                            [operation_cls.ATTRIBUTE_NAME] if hasattr(operation_cls, "ATTRIBUTE_NAME") else [None]
+                        )
+                    elif hasattr(operation_cls, "ATTRIBUTES"):
+                        attributes = operation_cls.ATTRIBUTES
+                        attributes_names = operation_cls.ATTRIBUTES_NAMES
+                    for attr, name in zip(attributes, attributes_names):
+                        if name is not None:
+                            op_box.prop(operation_pg, attr, text=name)
+                        else:
+                            op_box.prop(operation_pg, attr)
 
     def execute(self, assets):
         if not self.active:
@@ -108,8 +128,12 @@ class OperationSettings(PropertyGroup, CacheMapping):
                 operation = f"bpy.ops.{operation_cls.OPERATION}({{'{operation_cls.ATTRIBUTE}': assets}}, {operation_cls.ADDITIONAL_ATTRIBUTES})"
                 exec(operation)
             else:
-                value = getattr(operation_pg, operation_cls.ATTRIBUTE)
-                operation_cls.OPERATION(assets, value)
+                if hasattr(operation_cls, "ATTRIBUTE"):
+                    value = getattr(operation_pg, operation_cls.ATTRIBUTE)
+                    operation_cls.OPERATION(assets, value)
+                else:
+                    values = [getattr(operation_pg, attr) for attr in operation_cls.ATTRIBUTES]
+                    operation_cls.OPERATION(assets, *values)
 
     def copy(self, source):
         copy_simple_property_group(source, self)
