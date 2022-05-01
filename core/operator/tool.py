@@ -155,7 +155,7 @@ class BatchFolderOperator(ImportHelper):
         options={"HIDDEN", "SKIP_SAVE"},
     )
 
-    def _invoke(self, context, remove_backup=True, filter_assets=False):
+    def _invoke(self, context, remove_backup=True, filter_assets=False, enforce_filebrowser=False):
         self.filter_assets = filter_assets
         update_preset(self, context)
         self.library_settings.init(remove_backup=remove_backup)
@@ -166,7 +166,11 @@ class BatchFolderOperator(ImportHelper):
             context.window_manager.fileselect_add(self)
             return {"RUNNING_MODAL"}
         else:
-            return context.window_manager.invoke_props_dialog(self)
+            if enforce_filebrowser:
+                context.window_manager.fileselect_add(self)
+                return {"RUNNING_MODAL"}
+            else:
+                return context.window_manager.invoke_props_dialog(self)
 
     def execute(self, context):
         # We write settings to cache in addon properties because this instance's properties are lost on new file load

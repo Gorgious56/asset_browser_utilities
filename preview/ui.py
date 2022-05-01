@@ -11,3 +11,4 @@ class ABU_MT_previews(Menu, ABUOperatorsMenu):
         library_source_from_context = LibraryType.get_library_type_from_context(context)
         if library_source_from_context == LibraryType.FileCurrent.value:
             layout.operator("asset.load_previews_from_disk", text="Load From Disk", icon="IMPORT")
+            layout.operator("abu.previews_extract", text="Extract to Disk", icon="EXPORT")

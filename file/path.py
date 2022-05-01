@@ -1,3 +1,4 @@
+from pathlib import Path
 import bpy
 
 
@@ -25,3 +26,11 @@ def read_lines_sequentially(filepath):
                 yield next(file)
             except StopIteration:
                 break
+
+
+def get_folder_from_path(path):
+    path = Path(path)
+    if path.is_dir():
+        return path
+    else:
+        return path.parent
