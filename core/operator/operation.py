@@ -20,7 +20,7 @@ from asset_browser_utilities.transform.operation import (
     RotateOperation,
 )
 from asset_browser_utilities.mesh.operation import DecimateOperation
-from asset_browser_utilities.asset.operation import RenameAssetOperation, RenameDataOperation
+from asset_browser_utilities.asset.operation import RenameAssetOperation, RenameDataOperation, RenameMaterialOperation
 
 
 class NONE_OPERATION:
@@ -41,6 +41,7 @@ OPERATION_MAPPING = {
     DecimateOperation.MAPPING: DecimateOperation,
     RenameAssetOperation.MAPPING: RenameAssetOperation,
     RenameDataOperation.MAPPING: RenameDataOperation,
+    RenameMaterialOperation.MAPPING: RenameMaterialOperation,
 }
 
 
