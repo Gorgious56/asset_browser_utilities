@@ -1,4 +1,3 @@
-
 import bpy  # Do not remove even if it seems unused !!
 from bpy.types import PropertyGroup
 from bpy.props import (
@@ -7,6 +6,7 @@ from bpy.props import (
     FloatVectorProperty,
     CollectionProperty,
     IntProperty,
+    StringProperty,
 )
 from asset_browser_utilities.core.helper import copy_simple_property_group
 from asset_browser_utilities.core.cache.tool import CacheMapping
@@ -20,6 +20,7 @@ from asset_browser_utilities.transform.operation import (
     RotateOperation,
 )
 from asset_browser_utilities.mesh.operation import DecimateOperation
+from asset_browser_utilities.asset.operation import RenameAssetOperation
 
 
 class NONE_OPERATION:
@@ -38,6 +39,7 @@ OPERATION_MAPPING = {
     ScaleOperation.MAPPING: ScaleOperation,
     RotateOperation.MAPPING: RotateOperation,
     DecimateOperation.MAPPING: DecimateOperation,
+    RenameAssetOperation.MAPPING: RenameAssetOperation,
 }
 
 
@@ -51,6 +53,14 @@ def set_shown_operation(self, value):
         self.shown_ops -= 1
 
 
+def get_enum_items(self, context):
+    operation_cls = OPERATION_MAPPING.get(self.type)
+    if hasattr(operation_cls, "get_enum_items"):
+        return operation_cls.get_enum_items()
+    else:
+        return []
+
+
 class OperationSetting(PropertyGroup):
     type: EnumProperty(
         name="Operation",
@@ -59,6 +69,8 @@ class OperationSetting(PropertyGroup):
     vector_value: FloatVectorProperty(name="Value")
     int_value: IntProperty(name="Value")
     bool_value: BoolProperty(name="Value")
+    enum_value: EnumProperty(items=get_enum_items)
+    string_value: StringProperty(name="Value")
 
 
 class OperationSettings(PropertyGroup, CacheMapping):
