@@ -8,49 +8,60 @@ def remove_trailing_numbers(obj, prop_name):
         setattr(obj, prop_name, name[0 : search.start()])
 
 
-def rename(obj, mode, value, remove_trailing):
+def rename(obj, mode, value, value_from, remove_trailing):
+    "obj can be any object that has 'name' as an attribute"
     if remove_trailing:
         remove_trailing_numbers(obj, "name")
     if mode == "Prefix":
         obj.name = value + obj.name
-    elif mode == "Replace":
+    elif mode == "Set":
         obj.name = value
     elif mode == "Suffix":
         obj.name = obj.name + value
+    elif mode == "Replace":
+        obj.name = obj.name.replace(value_from, value)
 
 
 def get_enum_items():
-    return (("Prefix",) * 3, ("Replace",) * 3, ("Suffix",) * 3)
+    return (("Set",) * 3, ("Prefix",) * 3, ("Replace",) * 3, ("Suffix",) * 3)
 
 
 class RenameAssetOperation:
     MAPPING = "RENAME_ASSET"
     LABEL = "Rename Asset"
     DESCRIPTION = "Rename Asset"
-    OPERATION = lambda assets, mode, value: [rename(a, mode, value, False) for a in assets]
-    ATTRIBUTES = ("enum_value", "string_value")
-    ATTRIBUTES_NAMES = ("Mode", None)
+    OPERATION = lambda assets, mode, value, value_from: [rename(a, mode, value, value_from, False) for a in assets]
+    ATTRIBUTES = ("enum_value", "string_value", "string_value_2")
 
     @staticmethod
     def get_enum_items():
         return get_enum_items()
 
+    @staticmethod
+    def draw(layout, operation_pg):
+        layout.prop(operation_pg, "enum_value", text="Mode")
+        if operation_pg.enum_value == "Replace":
+            layout.prop(operation_pg, "string_value_2", text="Replace")
+            layout.prop(operation_pg, "string_value", text="With")
+        else:
+            layout.prop(operation_pg, "string_value")
 
 class RenameDataOperation:
     MAPPING = "RENAME_DATA"
     LABEL = "Rename Data"
     DESCRIPTION = "Rename Data"
-    OPERATION = lambda assets, mode, value, same_as_asset: [
+    OPERATION = lambda assets, mode, value, value_from, same_as_asset: [
         rename(
             a.data,
             "Replace" if same_as_asset else mode,
+            value_from,
             a.name if same_as_asset else value,
             False,
         )
         for a in assets
         if hasattr(a, "data") and a.data is not None
     ]
-    ATTRIBUTES = ("enum_value", "string_value", "bool_value")
+    ATTRIBUTES = ("enum_value", "string_value", "string_value_2", "bool_value")
 
     @staticmethod
     def get_enum_items():
@@ -61,17 +72,22 @@ class RenameDataOperation:
         layout.prop(operation_pg, "bool_value", text="Same as Asset ?")
         if not operation_pg.bool_value:
             layout.prop(operation_pg, "enum_value", text="Mode")
-            layout.prop(operation_pg, "string_value")
+            if operation_pg.enum_value == "Replace":
+                layout.prop(operation_pg, "string_value_2", text="Replace")
+                layout.prop(operation_pg, "string_value", text="With")
+            else:
+                layout.prop(operation_pg, "string_value")
 
 
 class RenameMaterialOperation:
     MAPPING = "RENAME_MATERIAL"
     LABEL = "Rename Material"
     DESCRIPTION = "Rename Material"
-    OPERATION = lambda assets, mode, value, same_as_asset, slot: [
+    OPERATION = lambda assets, mode, value, value_from, same_as_asset, slot: [
         rename(
             a.data.materials[slot],
             "Replace" if same_as_asset else mode,
+            value_from,
             a.name if same_as_asset else value,
             False,
         )
@@ -83,7 +99,7 @@ class RenameMaterialOperation:
         and len(a.data.materials) > slot
         and a.data.materials[slot] is not None
     ]
-    ATTRIBUTES = ("enum_value", "string_value", "bool_value", "int_value")
+    ATTRIBUTES = ("enum_value", "string_value", "string_value_2", "bool_value", "int_value")
 
     @staticmethod
     def get_enum_items():
@@ -95,4 +111,8 @@ class RenameMaterialOperation:
         layout.prop(operation_pg, "bool_value", text="Same as Asset ?")
         if not operation_pg.bool_value:
             layout.prop(operation_pg, "enum_value", text="Mode")
-            layout.prop(operation_pg, "string_value")
+            if operation_pg.enum_value == "Replace":
+                layout.prop(operation_pg, "string_value_2", text="Replace")
+                layout.prop(operation_pg, "string_value", text="With")
+            else:
+                layout.prop(operation_pg, "string_value")

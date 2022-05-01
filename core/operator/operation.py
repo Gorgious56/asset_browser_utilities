@@ -73,6 +73,7 @@ class OperationSetting(PropertyGroup):
     bool_value: BoolProperty(name="Value")
     enum_value: EnumProperty(items=get_enum_items)
     string_value: StringProperty(name="Value")
+    string_value_2: StringProperty(name="Value")
 
 
 class OperationSettings(PropertyGroup, CacheMapping):
