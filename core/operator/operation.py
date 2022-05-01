@@ -20,7 +20,7 @@ from asset_browser_utilities.transform.operation import (
     RotateOperation,
 )
 from asset_browser_utilities.mesh.operation import DecimateOperation
-from asset_browser_utilities.asset.operation import RenameAssetOperation
+from asset_browser_utilities.asset.operation import RenameAssetOperation, RenameDataOperation
 
 
 class NONE_OPERATION:
@@ -40,6 +40,7 @@ OPERATION_MAPPING = {
     RotateOperation.MAPPING: RotateOperation,
     DecimateOperation.MAPPING: DecimateOperation,
     RenameAssetOperation.MAPPING: RenameAssetOperation,
+    RenameDataOperation.MAPPING: RenameDataOperation,
 }
 
 
@@ -107,7 +108,10 @@ class OperationSettings(PropertyGroup, CacheMapping):
                 op_box.prop(operation_pg, "type")
                 operation_cls = OPERATION_MAPPING.get(operation_pg.type)
                 if operation_cls and not isinstance(operation_cls, NONE_OPERATION):
-                    if hasattr(operation_cls, "ATTRIBUTE"):
+                    if hasattr(operation_cls, "draw"):
+                        operation_cls.draw(op_box, operation_pg)
+                        continue
+                    elif hasattr(operation_cls, "ATTRIBUTE"):
                         attributes = [operation_cls.ATTRIBUTE]
                         attributes_names = (
                             [operation_cls.ATTRIBUTE_NAME] if hasattr(operation_cls, "ATTRIBUTE_NAME") else [None]
