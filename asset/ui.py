@@ -12,5 +12,7 @@ class ABU_MT_assets(Menu, ABUOperatorsMenu):
         self.add_op(layout, "asset.batch_unmark", "Unmark", "TRASH")
         if library_source_from_context == LibraryType.FileCurrent.value:
             layout.operator("asset.batch_export", text="Export", icon="EXPORT")
+            self.add_op(layout, "abu.copy_from_active", "Copy From Active", "COPYDOWN")
         else:
             self.add_op(layout, "asset.batch_import", "Import", "IMPORT")
+        self.add_op(layout, "asset.batch_operate", "Custom Operation", "MODIFIER")
