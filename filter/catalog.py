@@ -20,7 +20,7 @@ class FilterCatalog(PropertyGroup):
         box = layout.box()
         box.prop(self, "active", icon="FILTER")
         if self.active:
-            helper = CatalogsHelper(context)
+            helper = CatalogsHelper()
             if helper.has_catalogs:
                 box.prop(self, "catalog")
             else:

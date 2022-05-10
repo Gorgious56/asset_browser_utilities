@@ -25,13 +25,17 @@ If unchecked, items that are not yet assets will be exported and marked as asset
     filter_assets_allow: BoolProperty(default=False)
 
     def init(self, context, filter_selection=False, filter_assets=False):
-        self.filter_selection.allow = filter_selection and LibraryExportSettings.get_from_cache(context).source == LibraryType.FileCurrent.value
+        self.filter_selection.allow = (
+            filter_selection and LibraryExportSettings.get_from_cache().source == LibraryType.FileCurrent.value
+        )
         self.filter_assets_allow = filter_assets
         self.filter_assets = filter_assets
         self.filter_catalog.allow = filter_assets
 
     def get_objects_that_satisfy_filters(self):
-        data_containers = list(self.filter_types.types) if self.filter_types.types_global_filter else [t[0] for t in get_types()]
+        data_containers = (
+            list(self.filter_types.types) if self.filter_types.types_global_filter else [t[0] for t in get_types()]
+        )
         object_types = (
             list(self.filter_types.types_object)
             if (self.filter_types.types_object_filter and self.filter_types.types_global_filter)

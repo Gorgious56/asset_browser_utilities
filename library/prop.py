@@ -57,7 +57,7 @@ class LibraryExportSettings(PropertyGroup, CacheMapping):
             layout.prop(self, "recursive", icon="FOLDER_REDIRECT")
         elif self.source == LibraryType.UserLibrary.value:
             box = layout.box()
-            library_pg = LibraryExportSettings.get_from_cache(context)
+            library_pg = LibraryExportSettings.get_from_cache()
             box.prop(library_pg, "library_user_path", icon="FOLDER_REDIRECT")
             box.label(text=f"Path : {library_pg.library_user_path}")
         if self.remove_backup_allow:
@@ -74,5 +74,5 @@ class LibraryExportSettings(PropertyGroup, CacheMapping):
         elif self.source == LibraryType.FileExternal.value:
             return [folder / filepath for filepath in filepaths]
         else:  # User Library
-            folder = Path(LibraryExportSettings.get_from_cache(bpy.context).library_user_path)
+            folder = Path(LibraryExportSettings.get_from_cache().library_user_path)
             return get_blend_files_in_folder(folder, recursive=True)

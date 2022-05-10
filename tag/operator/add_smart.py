@@ -8,8 +8,8 @@ from asset_browser_utilities.core.helper import copy_simple_property_group
 
 class BatchExecuteOverride(BatchExecute):
     def __init__(self, operator, context):
-        smart_tags_cache = SmartTagPG.get_from_cache(context)
-        copy_simple_property_group(operator.operator_settings.smart_tag, SmartTagPG.get_from_cache(context))
+        smart_tags_cache = SmartTagPG.get_from_cache()
+        copy_simple_property_group(operator.operator_settings.smart_tag, SmartTagPG.get_from_cache())
         self.smart_tags = smart_tags_cache
         super().__init__(operator, context)
 

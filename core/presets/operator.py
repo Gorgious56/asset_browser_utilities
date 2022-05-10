@@ -10,7 +10,7 @@ class ABU_OT_presets_add_or_remove(Operator):
     index: IntProperty()
 
     def execute(self, context):
-        presets = get_preferences(context).presets
+        presets = get_preferences().presets
         if self.index < 0:
             new = presets.add()
             new.name = "New Preset"

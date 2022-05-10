@@ -7,7 +7,7 @@ from asset_browser_utilities.core.operator.tool import BatchFolderOperator
 
 
 class BatchSetDescription(BatchExecute):
-    def execute_one_file_and_the_next_when_finished(self, context):
+    def execute_one_file_and_the_next_when_finished(self):
         for asset in self.assets:
             asset.asset_data.description = self.description
         self.save_file()

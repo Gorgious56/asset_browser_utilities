@@ -1,6 +1,7 @@
 import os.path
 from pathlib import Path
 from asset_browser_utilities.catalog.prop import CatalogExportSettings
+from asset_browser_utilities.core.cache.tool import write_to_cache
 from asset_browser_utilities.library.prop import LibraryExportSettings, LibraryType
 import bpy
 from asset_browser_utilities.file.path import read_lines_sequentially
@@ -8,27 +9,32 @@ from asset_browser_utilities.file.path import read_lines_sequentially
 
 class CatalogsHelper:
     CATALOGS_FILENAME = "blender_assets.cats.txt"
-    def __init__(self, context):
-        self.catalog_filepath = self.get_catalog_filepath(context)
+
+    def __init__(self):
+        self.catalog_filepath = self.get_catalog_filepath()
 
     @classmethod
     def get_catalog_info_from_line(cls, catalog_line):
         return catalog_line.split(":")
 
-    def get_catalog_filepath(self, context):
-        library_settings = LibraryExportSettings.get_from_cache(context)
+    def get_catalog_filepath(self):
+        context = bpy.context
+        library_settings = LibraryExportSettings.get_from_cache()
         library_source = library_settings.source
         if library_source == LibraryType.FileCurrent.value:
             root_folder = Path(bpy.data.filepath).parent
         elif library_source in (LibraryType.FileExternal.value, LibraryType.FolderExternal.value):
-            if context.area is None:
-                root_folder = CatalogExportSettings.get_from_cache(context).path
+            if context.area is None or context.area.type != "FILE_BROWSER":
+                root_folder = Path(CatalogExportSettings.get_from_cache().path)
             else:
                 file_browser_directory = context.area.spaces.active.params.directory  # Byte string
                 root_folder = Path(file_browser_directory.decode("UTF-8"))
+                if root_folder and str(root_folder) != ".":
+                    CatalogExportSettings.get_from_cache().path = str(root_folder)
+                else:
+                    root_folder = Path(CatalogExportSettings.get_from_cache().path)
         elif library_source == LibraryType.UserLibrary.value:
             root_folder = Path(library_settings.library_user_path)
-
         catalogs_filepath = root_folder / self.CATALOGS_FILENAME
         return catalogs_filepath
 
@@ -79,8 +85,8 @@ class CatalogsHelper:
                 return line
 
     @staticmethod
-    def get_catalogs(filter_catalog, context):
-        helper = CatalogsHelper(context)
+    def get_catalogs(filter_catalog, context):  # Keep both arguments even if not used. It's a callback !
+        helper = CatalogsHelper()
         catalogs = []
         if helper.has_catalogs:
             for line in helper.iterate_over_catalogs():

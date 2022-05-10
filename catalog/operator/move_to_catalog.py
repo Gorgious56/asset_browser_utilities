@@ -7,8 +7,8 @@ from asset_browser_utilities.catalog.tool import CatalogsHelper
 
 
 class BatchMoveToCatalog(BatchExecute):
-    def execute_one_file_and_the_next_when_finished(self, context):
-        helper = CatalogsHelper(context)
+    def execute_one_file_and_the_next_when_finished(self):
+        helper = CatalogsHelper()
         uuid, tree, name = helper.get_catalog_info_from_line(self.catalog_line)
         helper.ensure_catalog_exists(uuid, tree, name)
         for asset in self.assets:
@@ -39,6 +39,6 @@ class ASSET_OT_batch_move_to_catalog(Operator, BatchFolderOperator):
         return self._invoke(context, filter_assets=True)
 
     def execute(self, context):
-        helper = CatalogsHelper(context)
+        helper = CatalogsHelper()
         self.operator_settings.catalog_line = helper.get_catalog_line_from_uuid(self.operator_settings.catalog.catalog)
         return super().execute(context)

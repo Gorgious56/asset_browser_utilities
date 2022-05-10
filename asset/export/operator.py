@@ -7,12 +7,11 @@ from bpy_extras.io_utils import ExportHelper
 from bpy.types import Operator, PropertyGroup
 from bpy.props import StringProperty, PointerProperty, BoolProperty
 
-from asset_browser_utilities.core.ui.message import message_box
-# from asset_browser_utilities.core.operator.tool import FilterLibraryOperator
+
 from asset_browser_utilities.console.builder import CommandBuilder
 from asset_browser_utilities.file.path import is_this_current_file
-from asset_browser_utilities.file.save import create_new_file_and_set_as_current, save_file, save_if_possible_and_necessary
-from asset_browser_utilities.library.tool import get_blend_library_name, append_asset, item_exists
+from asset_browser_utilities.file.save import save_if_possible_and_necessary
+from asset_browser_utilities.library.tool import get_blend_library_name, append_asset
 
 from asset_browser_utilities.library.tool import append_asset, get_blend_library_name
 
@@ -40,13 +39,8 @@ class BatchExport(BatchExecute):
         self.remove_backup = remove_backup
         self.overwrite = overwrite
         self.individual_files = individual_files
-    # def __init__(self, *args, **kwargs):
-    #     self.filepaths = []
-    #     self.directories = []
-    #     self.filenames = []
-    #     super().__init__(*args, **kwargs)
 
-    def execute_one_file_and_the_next_when_finished(self, context):
+    def execute_one_file_and_the_next_when_finished(self):
         if bpy.data.filepath != self.target_filepath:
             self.add_asset_paths()
             if not self.blends:

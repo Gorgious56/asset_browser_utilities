@@ -7,7 +7,7 @@ from asset_browser_utilities.preview.tool import is_preview_generated
 
 
 class BatchExecuteOverride(BatchExecute):
-    def execute_one_file_and_the_next_when_finished(self, context):
+    def execute_one_file_and_the_next_when_finished(self):
         for asset in self.assets:
             if self.overwrite or not is_preview_generated(asset):
                 asset.asset_generate_preview()

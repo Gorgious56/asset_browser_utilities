@@ -7,8 +7,8 @@ from asset_browser_utilities.catalog.tool import CatalogsHelper
 
 
 class BatchMoveFromCatalogToCatalog(BatchExecute):
-    def execute_one_file_and_the_next_when_finished(self, context):
-        helper = CatalogsHelper(context)
+    def execute_one_file_and_the_next_when_finished(self):
+        helper = CatalogsHelper()
         uuid_from, tree_from, name_from = helper.get_catalog_info_from_line(self.catalog_from_line)
         uuid_to, tree_to, name_to = helper.get_catalog_info_from_line(self.catalog_to_line)
         if uuid_from != uuid_to:
@@ -50,7 +50,7 @@ class ASSET_OT_batch_move_from_cat_a_to_cat_b(Operator, BatchFolderOperator):
         return self._invoke(context, filter_assets=True)
 
     def execute(self, context):
-        helper = CatalogsHelper(context)
+        helper = CatalogsHelper()
         self.operator_settings.catalog_from_line = helper.get_catalog_line_from_uuid(
             self.operator_settings.catalog_from.catalog
         )

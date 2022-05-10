@@ -26,7 +26,7 @@ from asset_browser_utilities.preview.tool import can_preview_be_generated, is_pr
 
 #     def _invoke(self, context, remove_backup=True, filter_assets=False):
 #         self.library_settings.init(remove_backup=remove_backup)
-#         LibraryExportSettings.get_from_cache(context).source = self.library_settings.source
+#         LibraryExportSettings.get_from_cache().source = self.library_settings.source
 #         if self.library_settings.source in (LibraryType.FileExternal.value, LibraryType.FolderExternal.value):
 #             self.asset_filter_settings.init(context, filter_selection=False, filter_assets=filter_assets)
 #             context.window_manager.fileselect_add(self)
@@ -46,8 +46,8 @@ class BatchExecute:
             copy_simple_property_group(operator_settings, self)
 
         self.remove_backup = operator.library_settings.remove_backup
-        self.filter_settings = get_from_cache(operator.asset_filter_settings.__class__, context)
-        self.operation_settings = OperationSettings.get_from_cache(context)
+        self.filter_settings = get_from_cache(operator.asset_filter_settings.__class__)
+        self.operation_settings = OperationSettings.get_from_cache()
 
         filepath = Path(operator.filepath)
         if filepath.is_file():
@@ -75,13 +75,18 @@ class BatchExecute:
         print(f"{len(self.blends)} file{'s' if len(self.blends) > 1 else ''} left")
 
         self.open_next_blend()
-        self.assets = self.filter_settings.get_objects_that_satisfy_filters()
-        self.operation_settings.execute(self.assets)
+        if LibraryExportSettings.get_from_cache().source == LibraryType.FileCurrent.value:
+            self.assets = self.filter_settings.get_objects_that_satisfy_filters()
+            self.operation_settings.execute(self.assets)
 
-        # Give slight delay otherwise stack overflow
-        bpy.app.timers.register(
-            lambda: self.execute_one_file_and_the_next_when_finished(context), first_interval=self.INTERVAL
-        )
+            self.execute_one_file_and_the_next_when_finished()
+        else:
+            window = context.window_manager.windows[0]
+            with context.temp_override(window=window):
+                self.assets = self.filter_settings.get_objects_that_satisfy_filters()
+                self.operation_settings.execute(self.assets)
+
+                self.execute_one_file_and_the_next_when_finished()
 
     def save_file(self):
         save_file_as(str(self.blend), remove_backup=self.remove_backup)
@@ -92,7 +97,7 @@ class BatchExecute:
 
     def sleep_until_previews_are_done_and_execute_next_file(self):
         while self.assets:
-            if is_preview_generated(self.assets[0]) or not can_preview_be_generated(self.assets[0]) :
+            if not can_preview_be_generated(self.assets[0]) or is_preview_generated(self.assets[0]):
                 self.assets.pop(0)
             else:
                 return self.INTERVAL
@@ -100,7 +105,7 @@ class BatchExecute:
         self.execute_next_blend()
         return None
 
-    def execute_one_file_and_the_next_when_finished(self, context):
+    def execute_one_file_and_the_next_when_finished(self):
         if self.assets:
             for asset in self.assets:
                 self.do_on_asset(asset)
@@ -121,9 +126,9 @@ def update_asset_filter_allow(self, context):
 def update_preset(self, context):
     preset_name = self.preset
     if preset_name == "ABU_DEFAULT":
-        preset = get_preferences(context).defaults
+        preset = get_preferences().defaults
     else:
-        preset = next(p for p in get_preferences(context).presets if p.name == preset_name)
+        preset = next(p for p in get_preferences().presets if p.name == preset_name)
     for attr in preset.__annotations__:
         if attr == "library_settings":
             continue
@@ -155,29 +160,22 @@ class BatchFolderOperator(ImportHelper):
         options={"HIDDEN", "SKIP_SAVE"},
     )
 
-    def _invoke(self, context, remove_backup=True, filter_assets=False, enforce_filebrowser=False):
+    def _invoke(self, context, remove_backup=True, filter_assets=False):
         self.filter_assets = filter_assets
         update_preset(self, context)
         self.library_settings.init(remove_backup=remove_backup)
-        self.operation_settings.init()
-        LibraryExportSettings.get_from_cache(context).source = self.library_settings.source
+        LibraryExportSettings.get_from_cache().source = self.library_settings.source
         if self.library_settings.source in (LibraryType.FolderExternal.value, LibraryType.FileExternal.value):
             self.filter_glob = "*.blend" if self.library_settings.source == LibraryType.FileExternal.value else ""
             context.window_manager.fileselect_add(self)
             return {"RUNNING_MODAL"}
         else:
-            if enforce_filebrowser:
-                context.window_manager.fileselect_add(self)
-                return {"RUNNING_MODAL"}
-            else:
-                return context.window_manager.invoke_props_dialog(self)
+            return context.window_manager.invoke_props_dialog(self)
 
     def execute(self, context):
         # We write settings to cache in addon properties because this instance's properties are lost on new file load
-        write_to_cache(self.asset_filter_settings, context)
-        write_to_cache(self.operation_settings, context)
-        catalog_export_settings = CatalogExportSettings.get_from_cache(context)
-        catalog_export_settings.path = str(CatalogsHelper(context).catalog_filepath)
+        write_to_cache(self.asset_filter_settings)
+        copy_simple_property_group(self.operation_settings, OperationSettings.get_from_cache())
         save_if_possible_and_necessary()
         logic = self.logic_class(self, context)
         logic.execute_next_blend()
