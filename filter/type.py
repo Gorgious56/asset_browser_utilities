@@ -4,7 +4,7 @@ from bpy.props import BoolProperty, EnumProperty
 
 
 def get_types():
-    if bpy.app.version > (3, 1, 0):
+    if bpy.app.version >= (3, 2, 0):
         return (
             ("actions", "Actions", "Actions", "ACTION", 2 ** 20),
             ("brushes", "Brushes", "Brushes", "BRUSH_DATA", 2 ** 1),
@@ -29,7 +29,7 @@ def get_types():
             ("worlds", "Worlds", "Worlds", "WORLD", 2 ** 18),
             ("workspaces", "Workspaces", "Workspaces", "WORKSPACE", 2 ** 19),
         )
-    elif bpy.app.version > (3, 0, 0):
+    elif bpy.app.version >= (3, 1, 0):
         return (
             ("actions", "Actions", "Action", "ACTION", 2 ** 1),
             ("materials", "Materials", "Materials", "MATERIAL", 2 ** 2),

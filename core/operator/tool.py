@@ -81,12 +81,19 @@ class BatchExecute:
 
             self.execute_one_file_and_the_next_when_finished()
         else:
-            window = context.window_manager.windows[0]
-            with context.temp_override(window=window):
+            if hasattr(context, "temp_override"):
+                window = context.window_manager.windows[0]
+                with context.temp_override(window=window):
+                    self.assets = self.filter_settings.get_objects_that_satisfy_filters()
+                    self.operation_settings.execute(self.assets)
+
+                    self.execute_one_file_and_the_next_when_finished()
+            else:  # For Blender < 3.2
                 self.assets = self.filter_settings.get_objects_that_satisfy_filters()
                 self.operation_settings.execute(self.assets)
 
-                self.execute_one_file_and_the_next_when_finished()
+                # Give slight delay otherwise stack overflow
+                bpy.app.timers.register(self.execute_one_file_and_the_next_when_finished, first_interval=self.INTERVAL)
 
     def save_file(self):
         save_file_as(str(self.blend), remove_backup=self.remove_backup)
