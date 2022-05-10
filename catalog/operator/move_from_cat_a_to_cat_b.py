@@ -36,6 +36,7 @@ class OperatorProperties(PropertyGroup):
         split = box.split(factor=0.35)
         split.label(text="TO")
         split.prop(self.catalog_to, "catalog", icon="ASSET_MANAGER", text="")
+        self.catalog_from.draw_filepath(box)
 
 
 class ASSET_OT_batch_move_from_cat_a_to_cat_b(Operator, BatchFolderOperator):

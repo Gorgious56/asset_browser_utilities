@@ -1,9 +1,8 @@
-import os.path
 from pathlib import Path
+import bpy
 from asset_browser_utilities.catalog.prop import CatalogExportSettings
 from asset_browser_utilities.core.cache.tool import write_to_cache
 from asset_browser_utilities.library.prop import LibraryExportSettings, LibraryType
-import bpy
 from asset_browser_utilities.file.path import read_lines_sequentially
 
 
@@ -36,11 +35,15 @@ class CatalogsHelper:
         elif library_source == LibraryType.UserLibrary.value:
             root_folder = Path(library_settings.library_user_path)
         catalogs_filepath = root_folder / self.CATALOGS_FILENAME
+        while not catalogs_filepath.exists():
+            if catalogs_filepath.parent == catalogs_filepath.parent.parent:  # Root of the disk
+                return None
+            catalogs_filepath = catalogs_filepath.parent.parent / self.CATALOGS_FILENAME
         return catalogs_filepath
 
     @property
     def has_catalogs(self):
-        return os.path.exists(self.catalog_filepath)
+        return self.catalog_filepath is not None and Path(self.catalog_filepath).exists()
 
     def create_catalog_file(self):
         with open(self.catalog_filepath, "w") as catalog_file:

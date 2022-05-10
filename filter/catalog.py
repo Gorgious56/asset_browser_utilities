@@ -16,6 +16,10 @@ class FilterCatalog(PropertyGroup):
     catalog_uuid: StringProperty()
     catalog_filepath: StringProperty()
 
+    def draw_filepath(self, layout):
+        helper = CatalogsHelper()
+        layout.label(icon="INFO", text="File : " + str(helper.catalog_filepath))
+
     def draw(self, layout, context):
         box = layout.box()
         box.prop(self, "active", icon="FILTER")
@@ -25,3 +29,4 @@ class FilterCatalog(PropertyGroup):
                 box.prop(self, "catalog")
             else:
                 box.label(text="No catalog in root folder", icon="INFO")
+            self.draw_filepath(box)

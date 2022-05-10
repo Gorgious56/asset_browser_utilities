@@ -33,6 +33,7 @@ class OperatorProperties(PropertyGroup):
         row.prop(self, "filter", icon="FILTER", text="")
         if self.filter:
             box.prop(self.catalog, "catalog", icon="ASSET_MANAGER")
+        self.catalog.draw_filepath(box)
 
 
 class ASSET_OT_batch_move_to_catalog(Operator, BatchFolderOperator):

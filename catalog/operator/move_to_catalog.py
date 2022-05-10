@@ -25,6 +25,7 @@ class OperatorProperties(PropertyGroup):
         box = layout.box()
         box.label(text="Move Assets to This Catalog")
         box.prop(self.catalog, "catalog", icon="ASSET_MANAGER")
+        self.catalog.draw_filepath(box)
 
 
 class ASSET_OT_batch_move_to_catalog(Operator, BatchFolderOperator):
