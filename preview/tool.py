@@ -10,10 +10,9 @@ def can_preview_be_generated(asset):
             bpy.types.Brush,
             bpy.types.Collection,
             bpy.types.ShaderNodeTree,
-            bpy.types.Image,
             bpy.types.Light,
             bpy.types.Material,
-            bpy.types.Scene,
+            # bpy.types.Scene,
             bpy.types.Screen,
             bpy.types.Texture,
             bpy.types.World,
@@ -25,6 +24,8 @@ def can_preview_be_generated(asset):
             if asset.type == "MESH" and len(asset.data.polygons) == 0:
                 return False
             return True
+    elif isinstance(asset, bpy.types.Image):
+        return bool(asset.pixels)
     return False
 
 
@@ -32,6 +33,7 @@ def is_preview_generated(asset):
     preview = asset.preview
     if preview is None:
         asset.asset_generate_preview()
+        return False
     else:
         if not preview.image_pixels:
             return True
