@@ -1,8 +1,6 @@
 from collections import defaultdict
 import bpy
 
-from asset_browser_utilities.filter.selection import Sources as SelectionSources
-
 
 class AssetContainer:
     def __init__(self, filter_types=None, filter_object_types=None):
@@ -50,20 +48,18 @@ class AssetContainer:
                     if not name.endswith(value):
                         items.pop(i)
 
-
-    def filter_by_selection(self, source):
-        if source == SelectionSources.ASSET_BROWSER:
-            selected_ids = [asset_file.local_id for asset_file in bpy.context.selected_asset_files]
-        elif source == SelectionSources.OUTLINER:
-            pass
-        elif source == SelectionSources.VIEW_3D:
-            selected_ids = [o for o in bpy.context.visible_objects if o.select_get()]
+    def filter_by_selection(self, filter_selection):
+        if not filter_selection.active:
+            return
+        if filter_selection.asset_browser:
+            selected_ids_in_asset_browser = set(asset_file.local_id for asset_file in bpy.context.selected_asset_files)
+        if filter_selection.view_3d:
+            selected_ids_in_viewport = set(o for o in bpy.context.visible_objects if o.select_get())
+        selected_ids = selected_ids_in_asset_browser.union(selected_ids_in_viewport)
         for items in self.assets.values():
             for i in range(len(items) - 1, -1, -1):
                 if items[i] not in selected_ids:
                     items.pop(i)
-            
-        
 
     @property
     def all_assets(self):

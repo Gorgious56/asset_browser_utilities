@@ -24,9 +24,18 @@ If unchecked, items that are not yet assets will be exported and marked as asset
     )
     filter_assets_allow: BoolProperty(default=False)
 
-    def init(self, context, filter_selection=False, filter_assets=False):
-        self.filter_selection.allow = (
-            filter_selection and LibraryExportSettings.get_from_cache().source == LibraryType.FileCurrent.value
+    def init(
+        self,
+        context,
+        filter_selection=False,
+        filter_assets=False,
+        filter_selection_allow_view_3d=True,
+        filter_selection_allow_asset_browser=True,
+    ):
+        self.filter_selection.init(
+            allow=filter_selection and LibraryExportSettings.get_from_cache().source == LibraryType.FileCurrent.value,
+            allow_view_3d=filter_selection_allow_view_3d,
+            allow_asset_browser=filter_selection_allow_asset_browser,
         )
         self.filter_assets_allow = filter_assets
         self.filter_assets = filter_assets
@@ -48,8 +57,7 @@ If unchecked, items that are not yet assets will be exported and marked as asset
                 asset_container.filter_by_catalog(self.filter_catalog.catalog_uuid)
         if self.filter_name.active:
             asset_container.filter_by_name(self.filter_name.method, self.filter_name.value)
-        if self.filter_selection.active:
-            asset_container.filter_by_selection(self.filter_selection.source)
+        asset_container.filter_by_selection(self.filter_selection)
         return list(asset_container.all_assets)
 
     def draw(self, layout, context):
