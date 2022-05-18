@@ -148,7 +148,7 @@ class OperationSettings(PropertyGroup, CacheMapping):
             else:
                 operation_cls.OPERATION(assets)
 
-    def copy(self, source):
+    def copy_from(self, source):
         copy_simple_property_group(source, self)
         self.operations.clear()
         for op in source.operations:

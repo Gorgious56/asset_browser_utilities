@@ -1,7 +1,5 @@
 from pathlib import Path
 
-from asset_browser_utilities.catalog.prop import CatalogExportSettings
-from asset_browser_utilities.catalog.tool import CatalogsHelper
 from asset_browser_utilities.core.operator.operation import OperationSettings
 from asset_browser_utilities.core.preferences.tool import get_preferences
 
@@ -178,7 +176,7 @@ class BatchFolderOperator(ImportHelper):
     def execute(self, context):
         # We write settings to cache in addon properties because this instance's properties are lost on new file load
         write_to_cache(self.asset_filter_settings)
-        copy_simple_property_group(self.operation_settings, OperationSettings.get_from_cache())
+        OperationSettings.get_from_cache().copy_from(self.operation_settings)
         save_if_possible_and_necessary()
         logic = self.logic_class(self, context)
         logic.execute_next_blend()
