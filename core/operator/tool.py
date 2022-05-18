@@ -19,22 +19,6 @@ from asset_browser_utilities.filter.main import AssetFilterSettings
 from asset_browser_utilities.library.prop import LibraryExportSettings, LibraryType
 from asset_browser_utilities.preview.tool import can_preview_be_generated, is_preview_generated
 
-## Where is this used ?
-# class FilterLibraryOperator:
-#     asset_filter_settings: PointerProperty(type=AssetFilterSettings)
-#     library_settings: PointerProperty(type=LibraryExportSettings)
-
-#     def _invoke(self, context, remove_backup=True, filter_assets=False):
-#         self.library_settings.init(remove_backup=remove_backup)
-#         LibraryExportSettings.get_from_cache().source = self.library_settings.source
-#         if self.library_settings.source in (LibraryType.FileExternal.value, LibraryType.FolderExternal.value):
-#             self.asset_filter_settings.init(context, filter_selection=False, filter_assets=filter_assets)
-#             context.window_manager.fileselect_add(self)
-#             return {"RUNNING_MODAL"}
-#         else:
-#             self.asset_filter_settings.init(context, filter_selection=True, filter_assets=filter_assets)
-#             return context.window_manager.invoke_props_dialog(self)
-
 
 class BatchExecute:
     INTERVAL = 0.2
@@ -124,10 +108,17 @@ class BatchExecute:
 
 
 def update_asset_filter_allow(self, context):
-    if self.library_settings.source in (LibraryType.FolderExternal.value, LibraryType.FileExternal.value):
-        self.asset_filter_settings.init(context, filter_selection=False, filter_assets=self.filter_assets)
-    else:
-        self.asset_filter_settings.init(context, filter_selection=True, filter_assets=self.filter_assets)
+    filter_selection = not self.library_settings.source in (
+        LibraryType.FolderExternal.value,
+        LibraryType.FileExternal.value,
+    )
+    filter_selection_asset_browser = self.bl_idname not in ("ABU_OT_previews_extract",)
+    self.asset_filter_settings.init(
+        context,
+        filter_selection=filter_selection,
+        filter_assets=self.filter_assets,
+        filter_selection_allow_asset_browser=filter_selection_asset_browser,
+    )
 
 
 def update_preset(self, context):
