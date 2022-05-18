@@ -23,9 +23,12 @@ You can choose an existing file to append the assets to, or a new filepath will 
 
 ![image](https://user-images.githubusercontent.com/25156105/165244827-2889c441-60ae-4766-b8ab-d7ca6bf5d0d2.png)
 
+![capture](https://user-images.githubusercontent.com/25156105/169003624-6b0ac61a-3232-45ae-8ce9-06bd86594b7d.gif)
+
 6. __Add or Remove Custom Properties__
 
 Add float, string, integer or color custom properties
+
 ![image](https://user-images.githubusercontent.com/25156105/165245945-1531d036-66e3-49f6-bbb5-e5b03081411c.png)
 
 7. __Setup image previews from disk__
@@ -34,11 +37,20 @@ Select a folder on disk containing previews and the addon will automatically mat
 
 ![BES_49](https://user-images.githubusercontent.com/25156105/149016391-3b026feb-cd40-42a9-a0f3-3894faa99dc9.gif)
 
-8. __Generate Asset Previews__
+8. __Extract asset thumbnails to disk__
 
-9. __Move To or Remove From Catalog__
+![capture (1)](https://user-images.githubusercontent.com/25156105/169008746-e8aed658-0e22-4cdc-aeaf-e9895c5bfa2d.gif)
 
-10. __Set Author or Description__
+9. __Generate Asset Previews__
+
+10. __Move To or Remove From Catalog__
+
+11. __Set Author or Description__
+
+12. __Copy from active to selected__
+
+![capture (2)](https://user-images.githubusercontent.com/25156105/169009363-1f5b79b3-28fa-491a-906a-106929cdf7bf.gif)
+
 
 Specifics :
 
@@ -74,6 +86,7 @@ Display asset custom properties with a toggle in the addon preferences
 Add custom operations on top of batch operations, like applying transforms to all assets
 
 ![image](https://user-images.githubusercontent.com/25156105/165247805-f7c45856-15d8-47c4-97a2-9d05f9fb572f.png)
+![capture](https://user-images.githubusercontent.com/25156105/169005241-aaf64e6c-ce49-4c59-b128-499dcbb2cba9.gif)
 
 Use the custom operation standalone
 
