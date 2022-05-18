@@ -51,11 +51,11 @@ class AssetContainer:
     def filter_by_selection(self, filter_selection):
         if not filter_selection.active:
             return
+        selected_ids = set()
         if filter_selection.asset_browser:
-            selected_ids_in_asset_browser = set(asset_file.local_id for asset_file in bpy.context.selected_asset_files)
+            selected_ids.update(asset_file.local_id for asset_file in bpy.context.selected_asset_files)
         if filter_selection.view_3d:
-            selected_ids_in_viewport = set(o for o in bpy.context.visible_objects if o.select_get())
-        selected_ids = selected_ids_in_asset_browser.union(selected_ids_in_viewport)
+            selected_ids.update(o for o in bpy.context.visible_objects if o.select_get())
         for items in self.assets.values():
             for i in range(len(items) - 1, -1, -1):
                 if items[i] not in selected_ids:
