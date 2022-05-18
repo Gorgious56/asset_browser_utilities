@@ -3,46 +3,47 @@ from bpy.types import PropertyGroup
 from bpy.props import BoolProperty, EnumProperty
 
 
-def get_types():
-    if bpy.app.version >= (3, 2, 0):
-        return (
-            ("actions", "Actions", "Actions", "ACTION", 2 ** 20),
-            ("brushes", "Brushes", "Brushes", "BRUSH_DATA", 2 ** 1),
-            ("cache_files", "Cache Files", "Cache Files", "FILE_CACHE", 2 ** 2),
-            ("collections", "Collections", "Collections", "OUTLINER_COLLECTION", 2 ** 3),
-            ("linestyles", "Freestyle Linestyles", "", "LINE_DATA", 2 ** 4),
-            ("hair_curves", "Hairs", "Hairs", "CURVES_DATA", 2 ** 5),
-            ("images", "Images", "Images", "IMAGE_DATA", 2 ** 6),
-            ("meshes", "Meshes", "Meshes", "MESH_DATA", 2 ** 21),
-            ("masks", "Masks", "Masks", "MOD_MASK", 2 ** 7),
-            ("materials", "Materials", "Materials", "MATERIAL", 2 ** 8),
-            ("movieclips", "Movie Clips", "Movie Clips", "FILE_MOVIE", 2 ** 9),
-            ("node_groups", "Node Trees", "Node Trees", "NODETREE", 2 ** 10),
-            ("objects", "Objects", "Objects", "OBJECT_DATA", 2 ** 11),
-            ("paint_curves", "Paint Curves", "Paint Curves", "CURVE_BEZCURVE", 2 ** 22),
-            ("palettes", "Palettes", "Palettes", "COLOR", 2 ** 12),
-            ("particles", "Particle Systems", "Particle Systems", "PARTICLES", 2 ** 13),
-            ("scenes", "Scenes", "Scenes", "SCENE_DATA", 2 ** 14),
-            ("sounds", "Sounds", "Sounds", "SOUND", 2 ** 15),
-            ("texts", "Texts", "Texts", "TEXT", 2 ** 16),
-            ("textures", "Textures", "Textures", "TEXTURE_DATA", 2 ** 17),
-            ("worlds", "Worlds", "Worlds", "WORLD", 2 ** 18),
-            ("workspaces", "Workspaces", "Workspaces", "WORKSPACE", 2 ** 19),
+flags_enum = iter(range(1, 100, 1))
+asset_types = [
+    ("actions", "Actions", "Action", "ACTION", 2 ** next(flags_enum)),
+    ("materials", "Materials", "Materials", "MATERIAL", 2 ** next(flags_enum)),
+    ("objects", "Objects", "Objects", "OBJECT_DATA", 2 ** next(flags_enum)),
+    ("worlds", "Worlds", "Worlds", "WORLD", 2 ** next(flags_enum)),
+]
+if bpy.app.version >= (3, 1, 0):
+    asset_types.extend(
+        (
+            ("node_groups", "Node Trees", "Node Trees", "NODETREE", 2 ** next(flags_enum)),
+            ("collections", "Collections", "Collections", "OUTLINER_COLLECTION", 2 ** next(flags_enum)),
         )
-    elif bpy.app.version >= (3, 1, 0):
-        return (
-            ("actions", "Actions", "Action", "ACTION", 2 ** 1),
-            ("materials", "Materials", "Materials", "MATERIAL", 2 ** 2),
-            ("node_groups", "Node Trees", "Node Trees", "NODETREE", 2 ** 3),
-            ("objects", "Objects", "Objects", "OBJECT_DATA", 2 ** 4),
-            ("worlds", "Worlds", "Worlds", "WORLD", 2 ** 5),
-        )
-    return (
-        ("actions", "Actions", "Action", "ACTION", 2 ** 1),
-        ("materials", "Materials", "Materials", "MATERIAL", 2 ** 2),
-        ("objects", "Objects", "Objects", "OBJECT_DATA", 2 ** 3),
-        ("worlds", "Worlds", "Worlds", "WORLD", 2 ** 4),
     )
+if bpy.app.version >= (3, 2, 0):
+    asset_types.extend(
+        (
+            ("brushes", "Brushes", "Brushes", "BRUSH_DATA", 2 ** next(flags_enum)),
+            ("cache_files", "Cache Files", "Cache Files", "FILE_CACHE", 2 ** next(flags_enum)),
+            ("linestyles", "Freestyle Linestyles", "", "LINE_DATA", 2 ** next(flags_enum)),
+            ("images", "Images", "Images", "IMAGE_DATA", 2 ** next(flags_enum)),
+            ("meshes", "Meshes", "Meshes", "MESH_DATA", 2 ** next(flags_enum)),
+            ("masks", "Masks", "Masks", "MOD_MASK", 2 ** next(flags_enum)),
+            ("movieclips", "Movie Clips", "Movie Clips", "FILE_MOVIE", 2 ** next(flags_enum)),
+            ("paint_curves", "Paint Curves", "Paint Curves", "CURVE_BEZCURVE", 2 ** next(flags_enum)),
+            ("palettes", "Palettes", "Palettes", "COLOR", 2 ** next(flags_enum)),
+            ("particles", "Particle Systems", "Particle Systems", "PARTICLES", 2 ** next(flags_enum)),
+            ("scenes", "Scenes", "Scenes", "SCENE_DATA", 2 ** next(flags_enum)),
+            ("sounds", "Sounds", "Sounds", "SOUND", 2 ** next(flags_enum)),
+            ("texts", "Texts", "Texts", "TEXT", 2 ** next(flags_enum)),
+            ("textures", "Textures", "Textures", "TEXTURE_DATA", 2 ** next(flags_enum)),
+            ("workspaces", "Workspaces", "Workspaces", "WORKSPACE", 2 ** next(flags_enum)),
+        )
+    )
+if bpy.app.version >= (3, 3, 0):
+    asset_types.extend((("hair_curves", "Hairs", "Hairs", "CURVES_DATA", 2 ** next(flags_enum)),))
+asset_types.sort(key=lambda t: t[0])
+
+
+def get_types(*args, **kwargs):
+    return asset_types
 
 
 def get_object_types():
