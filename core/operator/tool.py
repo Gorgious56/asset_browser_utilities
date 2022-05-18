@@ -167,17 +167,22 @@ class BatchFolderOperator(ImportHelper):
         options={"HIDDEN", "SKIP_SAVE"},
     )
 
-    def _invoke(self, context, remove_backup=True, filter_assets=False):
+    def _invoke(self, context, remove_backup=True, filter_assets=False, enforce_filebrowser=False):
         self.filter_assets = filter_assets
         update_preset(self, context)
         self.library_settings.init(remove_backup=remove_backup)
+        self.operation_settings.init()
         LibraryExportSettings.get_from_cache().source = self.library_settings.source
         if self.library_settings.source in (LibraryType.FolderExternal.value, LibraryType.FileExternal.value):
             self.filter_glob = "*.blend" if self.library_settings.source == LibraryType.FileExternal.value else ""
             context.window_manager.fileselect_add(self)
             return {"RUNNING_MODAL"}
         else:
-            return context.window_manager.invoke_props_dialog(self)
+            if enforce_filebrowser:
+                context.window_manager.fileselect_add(self)
+                return {"RUNNING_MODAL"}
+            else:
+                return context.window_manager.invoke_props_dialog(self)
 
     def execute(self, context):
         # We write settings to cache in addon properties because this instance's properties are lost on new file load
