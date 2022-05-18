@@ -19,9 +19,13 @@ class BatchExecuteOverride(BatchExecute):
             img = create_image(asset.name, asset_preview.image_size[0], asset_preview.image_size[1])
             images.append(img)
             img.file_format = "PNG"
+            for char in ("/", "\\", ":",  "|", '"', "!", "?", "<", ">", "*"):
+                if char in img.name:
+                    img.name = img.name.replace(char, "_")
             img.filepath = str(self.folder / (img.name + ".png"))
             img.pixels.foreach_set(asset_preview.image_pixels_float)
             img.save()
+            print(f"Saved thumbnail from {asset.name} to {img.filepath}")
         bpy.data.batch_remove(images)
         super().do_on_asset(asset)
 
