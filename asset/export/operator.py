@@ -221,7 +221,7 @@ class ASSET_OT_batch_import(Operator, ExportHelper, BatchFolderOperator):
     def draw(self, context):
         layout = self.layout
         self.operator_settings.draw(layout)
-        self.asset_filter_settings.draw(layout)
+        self.asset_filter_settings.draw(layout, context)
         # return self._invoke(context, remove_backup=False, filter_assets=True)
 
 # class ASSET_OT_batch_export(Operator, ExportHelper, FilterLibraryOperator):
