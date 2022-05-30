@@ -24,7 +24,7 @@ class BatchExecuteOverride(BatchExecute):
             if asset.name in self.images_names:
                 load_preview(str(self.images[self.images_names.index(asset.name)]), asset)
 
-        bpy.app.timers.register(self.sleep_until_previews_are_done_and_execute_next_file)
+        self.execute_next_blend()
 
 
 class OperatorProperties(PropertyGroup):
