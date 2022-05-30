@@ -8,7 +8,7 @@ class ABU_MT_previews(Menu, ABUOperatorsMenu):
 
     def setup_ops(self, layout, context):
         self.add_op(layout, "asset.batch_generate_previews", "Generate", "FILE_REFRESH")
+        self.add_op(layout, "asset.load_previews_from_disk", "Load From Disk", "IMPORT")
         library_source_from_context = LibraryType.get_library_type_from_context(context)
         if library_source_from_context == LibraryType.FileCurrent.value:
-            layout.operator("asset.load_previews_from_disk", text="Load From Disk", icon="IMPORT")
             layout.operator("abu.previews_extract", text="Extract to Disk", icon="EXPORT")

@@ -1,75 +1,43 @@
-import os.path
 from pathlib import Path
 import bpy
-from bpy_extras.io_utils import ImportHelper
-from bpy.types import Operator, OperatorFileListElement
-from bpy.props import StringProperty, CollectionProperty, PointerProperty
+import bpy.app.timers
+from bpy.types import Operator, PropertyGroup
+from bpy.props import PointerProperty, PointerProperty
 
-from asset_browser_utilities.library.tool import get_all_assets_in_file, generate_asset_preview
-from asset_browser_utilities.library.prop import LibraryExportSettings, LibraryType
+from asset_browser_utilities.library.tool import load_preview
+from asset_browser_utilities.core.operator.tool import BatchExecute, BatchFolderOperator
 from asset_browser_utilities.file.path import get_supported_images
 
 
-class ASSET_OT_load_previews_from_disk(Operator, ImportHelper):
+class BatchExecuteOverride(BatchExecute):
+    def __init__(self, operator, context):
+        folder = Path(operator.filepath)
+        if folder.is_file():
+            folder = folder.parent
+
+        self.images = list(get_supported_images(folder, recursive=True))
+        self.images_names = [file.stem for file in self.images]
+        super().__init__(operator, context)
+
+    def execute_one_file_and_the_next_when_finished(self):
+        for asset in self.assets:
+            if asset.name in self.images_names:
+                load_preview(str(self.images[self.images_names.index(asset.name)]), asset)
+
+        bpy.app.timers.register(self.sleep_until_previews_are_done_and_execute_next_file)
+
+
+class OperatorProperties(PropertyGroup):
+    pass
+
+
+class ASSET_OT_load_previews_from_disk(Operator, BatchFolderOperator):
     "Load Previews From Disk"
     bl_idname = "asset.load_previews_from_disk"
     bl_label = "Load Previews From Disk"
 
-    filter_glob: StringProperty(
-        default="*" + ";*".join(bpy.path.extensions_image),
-        options={"HIDDEN"},
-        maxlen=255,  # Max internal buffer length, longer would be clamped.
-    )
-    # https://docs.blender.org/api/current/bpy.types.OperatorFileListElement.html
-    files: CollectionProperty(
-        type=OperatorFileListElement,
-        options={"HIDDEN", "SKIP_SAVE"},
-    )
-    library_settings: PointerProperty(type=LibraryExportSettings)
+    operator_settings: PointerProperty(type=OperatorProperties)
+    logic_class = BatchExecuteOverride
 
     def invoke(self, context, event):
-        self.filepath = ""
-        self.library_settings.source = LibraryType.FolderExternal.value
-        context.window_manager.fileselect_add(self)
-        return {"RUNNING_MODAL"}
-
-    def execute(self, context):
-        self.assets = get_all_assets_in_file()
-        if self.is_only_folder_selected():
-            self.load_from_folder()
-        else:
-            self.load_from_selected_files()
-        return {"FINISHED"}
-
-    def load_from_folder(self):
-        folder = Path(self.filepath)
-        files = []
-        for extension in get_supported_images(folder, self.library_settings.recursive):
-            files.extend(extension)
-        files_basenames_without_ext = [os.path.splitext(os.path.basename(file))[0] for file in files]
-        for asset in self.assets:
-            asset_name = asset.name
-            try:
-                index = files_basenames_without_ext.index(asset_name)
-                generate_asset_preview(str(files[index]), asset)
-            except ValueError:
-                pass
-
-    def load_from_selected_files(self):
-        folder = Path(self.filepath).parent
-        files = [f.name for f in self.files]
-        files_basenames_without_ext = [os.path.splitext(file)[0] for file in files]
-        for asset in self.assets:
-            asset_name = asset.name
-            try:
-                index = files_basenames_without_ext.index(asset_name)
-                generate_asset_preview(str(folder / files[index]), asset)
-            except ValueError:
-                pass
-
-    def is_only_folder_selected(self):
-        return self.files[0].name == ""
-
-    def draw(self, context):
-        layout = self.layout
-        self.library_settings.draw(layout, context)
+        return self._invoke(context, filter_assets=True, enforce_filebrowser=True)

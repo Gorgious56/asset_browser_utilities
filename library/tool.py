@@ -22,12 +22,15 @@ def get_all_assets_in_file():
     return assets
 
 
-def generate_asset_preview(filepath, asset=None):
+def load_preview(filepath, asset=None):
     if asset is None:
         bpy.ops.ed.lib_id_load_custom_preview(filepath=str(filepath))
     else:
-        with bpy.context.temp_override(id=asset):
-            bpy.ops.ed.lib_id_load_custom_preview(filepath=str(filepath))
+        if bpy.app.version >= (3, 2, 0):
+            with bpy.context.temp_override(id=asset):
+                bpy.ops.ed.lib_id_load_custom_preview(filepath=str(filepath))
+        else:
+            bpy.ops.ed.lib_id_load_custom_preview({"id": asset}, filepath=str(filepath))
 
 
 def get_blend_library_name(asset):

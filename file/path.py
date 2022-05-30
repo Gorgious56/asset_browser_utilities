@@ -5,9 +5,9 @@ import bpy
 def get_supported_images(folder, recursive):
     for ext in bpy.path.extensions_image:  # All supported image extensions in Blender
         if recursive:
-            yield [fp for fp in folder.glob("**/*" + ext) if fp.is_file()]
+            yield from [fp for fp in folder.glob("**/*" + ext) if fp.is_file()]
         else:
-            yield [fp for fp in folder.glob("*" + ext) if fp.is_file()]
+            yield from [fp for fp in folder.glob("*" + ext) if fp.is_file()]
 
 
 def is_this_current_file(filepath):
