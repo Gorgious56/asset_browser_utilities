@@ -12,7 +12,7 @@ class BatchExecuteOverride(BatchExecute):
         for asset in self.assets:
             if self.overwrite or not is_preview_generated(asset):
                 asset.asset_generate_preview()
-                Logger.display(f"Generated preview for {asset.name}")
+                Logger.display(f"Launched preview generation for {asset.name}")
 
         bpy.app.timers.register(self.sleep_until_previews_are_done_and_execute_next_file)
 

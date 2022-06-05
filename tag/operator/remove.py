@@ -14,6 +14,7 @@ class BatchExecuteOverride(BatchExecute):
         self.filter_name_allow = operator.operator_settings.filter_name.active
         self.filter_name_method = operator.operator_settings.filter_name.method
         self.filter_name_text = operator.operator_settings.filter_name.value
+        self.filter_name_case_sensitive = operator.operator_settings.filter_name.case_sensitive
         super().__init__(operator, context)
 
     def do_on_asset(self, asset):
@@ -31,7 +32,12 @@ class BatchExecuteOverride(BatchExecute):
                     [
                         t.name
                         for t in asset_tags
-                        if FilterName.filter_static(t.name, self.filter_name_method, self.filter_name_text)
+                        if FilterName.filter_static(
+                            t.name,
+                            self.filter_name_method,
+                            self.filter_name_text,
+                            self.filter_name_case_sensitive,
+                        )
                     ],
                 )
             else:
