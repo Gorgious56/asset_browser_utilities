@@ -161,7 +161,7 @@ class BatchFolderOperator(ImportHelper):
         update_preset(self, context)
         self.library_settings.init(remove_backup=remove_backup)
         self.operation_settings.init()
-        LibraryExportSettings.get_from_cache().source = self.library_settings.source
+        copy_simple_property_group(self.library_settings, LibraryExportSettings.get_from_cache())
         if self.library_settings.source in (LibraryType.FolderExternal.value, LibraryType.FileExternal.value):
             self.filter_glob = "*.blend" if self.library_settings.source == LibraryType.FileExternal.value else ""
             context.window_manager.fileselect_add(self)
