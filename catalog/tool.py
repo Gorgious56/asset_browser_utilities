@@ -64,7 +64,7 @@ class CatalogsHelper:
             catalog_file.write("VERSION 1\n")
             catalog_file.write("\n")
         
-        Logger.display("Created catalog definition file at {filepath}")
+        Logger.display(f"Created catalog definition file at {filepath}")
 
     def add_catalog_to_catalog_file(self, catalog_uuid, catalog_tree, catalog_name):
         with open(self.catalog_filepath, "a") as catalog_file:
