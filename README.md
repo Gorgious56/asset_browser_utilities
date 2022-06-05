@@ -51,6 +51,17 @@ Select a folder on disk containing previews and the addon will automatically mat
 
 ![capture (2)](https://user-images.githubusercontent.com/25156105/169009363-1f5b79b3-28fa-491a-906a-106929cdf7bf.gif)
 
+13. __Copy folder structure as catalogs and place assets__
+
+![image](https://user-images.githubusercontent.com/25156105/172049379-96ed55da-667b-44a3-af4f-94cf88bb6f84.png)
+
+Example of asset directory
+
+![image](https://user-images.githubusercontent.com/25156105/172049460-41f5954d-14c0-44ac-b4f6-9ccedb253afc.png)
+
+Result after executing the sort operation
+
+![image](https://user-images.githubusercontent.com/25156105/172049536-6260e781-a318-4a8e-b986-51ac652557ed.png)
 
 Specifics :
 
