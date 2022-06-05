@@ -93,7 +93,7 @@ class CatalogsHelper:
                 catalog_line = f"{uuid}:{tree}:{catalog_name}"
                 catalog_file.write(catalog_line)
                 catalog_file.write("\n")
-                Logger.displat("Created catalog definition {catalog_line} in {self.catalog_filepath}")
+                Logger.display(f"Created catalog definition {catalog_line} in {self.catalog_filepath}")
         return uuid
 
     def is_catalog_in_catalog_file(self, uuid):
