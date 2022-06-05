@@ -1,4 +1,5 @@
 from pathlib import Path
+from uuid import uuid4
 import bpy
 from asset_browser_utilities.catalog.prop import CatalogExportSettings
 from asset_browser_utilities.core.cache.tool import write_to_cache
@@ -71,6 +72,24 @@ class CatalogsHelper:
             self.create_catalog_file()
         if not self.is_catalog_in_catalog_file(catalog_uuid):
             self.add_catalog_to_catalog_file(catalog_uuid, catalog_tree, catalog_name)
+
+    def ensure_or_create_catalog_definition(self, tree):
+        if not self.has_catalogs:
+            self.create_catalog_file()
+        catalog_definition_lines_existing = list(self.iterate_over_catalogs())
+        uuids_existing = [line.split(":")[0] for line in catalog_definition_lines_existing]
+        catalog_trees_existing = [line.split(":")[1] for line in catalog_definition_lines_existing]
+        with open(self.catalog_filepath, "a") as catalog_file:
+            tree = str(tree)
+            tree = tree.replace("\\", "/")
+            if tree in catalog_trees_existing:
+                uuid = uuids_existing[catalog_trees_existing.index(tree)]
+            else:
+                uuid = str(uuid4())
+                catalog_name = tree.replace("/", "-")
+                catalog_file.write(f"{uuid}:{tree}:{catalog_name}")
+                catalog_file.write("\n")
+        return uuid
 
     def is_catalog_in_catalog_file(self, uuid):
         return self.get_catalog_info_from_uuid(uuid) is not None
