@@ -24,3 +24,15 @@ class FilterName(PropertyGroup):
             box.prop(self, "value", text="Text")
             row = box.row(align=True)
             row.props_enum(self, "method")
+
+    def filter(self, test):
+        return FilterName.filter_static(test, self.method, self.value)
+
+    @staticmethod
+    def filter_static(test, method, value):
+        if method == "Prefix":
+            return test.startswith(value)
+        elif method == "Contains":
+            return value in test
+        elif method == "Suffix":
+            return test.endswith(value)
