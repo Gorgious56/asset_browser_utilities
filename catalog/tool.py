@@ -49,16 +49,18 @@ class CatalogsHelper:
     def has_catalogs(self):
         return self.catalog_filepath is not None and Path(self.catalog_filepath).exists()
 
-    def create_catalog_file(self):
-        with open(self.catalog_filepath, "w") as catalog_file:
-            catalog_file.write("# This is an Asset Catalog Definition file for Blender.")
-            catalog_file.write("#")
-            catalog_file.write("# Empty lines and lines starting with `#` will be ignored.")
-            catalog_file.write("# The first non-ignored line should be the version indicator.")
-            catalog_file.write('# Other lines are of the format "UUID:catalog/path/for/assets:simple catalog name"')
-            catalog_file.write("")
-            catalog_file.write("VERSION 1")
-            catalog_file.write("")
+    def create_catalog_file(self, filepath=None):
+        if filepath is None:
+            filepath = self.catalog_filepath
+        with open(filepath, "w") as catalog_file:
+            catalog_file.write("# This is an Asset Catalog Definition file for Blender.\n")
+            catalog_file.write("#\n")
+            catalog_file.write("# Empty lines and lines starting with `#` will be ignored.\n")
+            catalog_file.write("# The first non-ignored line should be the version indicator.\n")
+            catalog_file.write('# Other lines are of the format "UUID:catalog/path/for/assets:simple catalog name"\n')
+            catalog_file.write("\n")
+            catalog_file.write("VERSION 1\n")
+            catalog_file.write("\n")
 
     def add_catalog_to_catalog_file(self, catalog_uuid, catalog_tree, catalog_name):
         with open(self.catalog_filepath, "a") as catalog_file:
