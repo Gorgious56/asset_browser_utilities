@@ -158,6 +158,7 @@ class BatchFolderOperator(ImportHelper):
     )
 
     def _invoke(self, context, remove_backup=True, filter_assets=False, enforce_filebrowser=False):
+        Logger.active = get_preferences().verbose
         self.filter_assets = filter_assets
         update_preset(self, context)
         self.library_settings.init(remove_backup=remove_backup)

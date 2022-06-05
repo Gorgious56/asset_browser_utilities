@@ -1,6 +1,6 @@
 class Logger:
     active = False
-    _log = ""
+    _log = []
     
     @classmethod
     def log(cls, message):
