@@ -1,4 +1,5 @@
 from asset_browser_utilities.core.log.logger import Logger
+from asset_browser_utilities.filter.name import FilterName
 from bpy.types import Operator
 from bpy.props import PointerProperty
 
@@ -10,6 +11,9 @@ class BatchExecuteOverride(BatchExecute):
     def __init__(self, operator, context):
         self.tags = [t.name for t in operator.operator_settings.tag_collection.items if not t.is_empty()]
         self.remove_all = operator.operator_settings.tag_collection.remove_all
+        self.filter_name_allow = operator.operator_settings.filter_name.active
+        self.filter_name_method = operator.operator_settings.filter_name.method
+        self.filter_name_text = operator.operator_settings.filter_name.value
         super().__init__(operator, context)
 
     def do_on_asset(self, asset):
@@ -21,8 +25,18 @@ class BatchExecuteOverride(BatchExecute):
 
     def execute_tags(self, asset_tags):
         if self.remove_all:
-            while asset_tags:
-                asset_tags.remove(asset_tags[0])
+            if self.filter_name_allow:
+                self.remove_tags(
+                    asset_tags,
+                    [
+                        t.name
+                        for t in asset_tags
+                        if FilterName.filter_static(t.name, self.filter_name_method, self.filter_name_text)
+                    ],
+                )
+            else:
+                while asset_tags:
+                    asset_tags.remove(asset_tags[0])
         else:
             self.remove_tags(asset_tags, self.tags)
 
@@ -30,7 +44,6 @@ class BatchExecuteOverride(BatchExecute):
         for i in range(len(asset_tags) - 1, -1, -1):
             if asset_tags[i].name in tags_to_remove:
                 asset_tags.remove(asset_tags[i])
-
 
 
 class ASSET_OT_batch_remove_tags(Operator, BatchFolderOperator):

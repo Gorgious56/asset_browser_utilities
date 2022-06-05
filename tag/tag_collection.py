@@ -39,7 +39,7 @@ class TagCollection(PropertyGroup):
             self.items.add()
 
     def draw(self, layout):
-        box = layout.box()
+        box = layout
         row = box.row()
         split = row.split(factor=0.2)
         split.label(text="Tags")
