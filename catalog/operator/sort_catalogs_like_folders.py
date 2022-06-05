@@ -50,7 +50,7 @@ class BatchExecuteOverride(BatchExecute):
 class OperatorProperties(PropertyGroup):
     are_assets_in_subfolders: BoolProperty(
         description="Check this if each asset is located in its own individual subfolder",
-        default=True,
+        default=False,
     )
 
     def draw(self, layout):
