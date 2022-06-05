@@ -1,3 +1,4 @@
+from asset_browser_utilities.core.log.logger import Logger
 from asset_browser_utilities.library.tool import append_asset, get_blend_library_name
 
 import bpy
@@ -31,10 +32,12 @@ class BatchImport(BatchExecute):
             self.filepaths.append(str(self.blend))
             self.directories.append(str(get_blend_library_name(asset)))
             self.filenames.append(str(asset.name))
+            Logger.display(f"Found '{self.filepaths[-1]}\\{self.directories[-1]}\\{self.filenames[-1]}'")
 
     def append_assets(self):
         for filepath, directory, filename in zip(self.filepaths, self.directories, self.filenames):
             append_asset(filepath, directory, filename)
+            Logger.display(f"Import '{filepath}\\{directory}\\{filename}'")
         self.execute_next_blend()
 
 
