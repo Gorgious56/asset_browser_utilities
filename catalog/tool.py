@@ -34,6 +34,10 @@ class CatalogsHelper:
                     root_folder = Path(CatalogExportSettings.get_from_cache().path)
         elif library_source == LibraryType.UserLibrary.value:
             root_folder = Path(library_settings.library_user_path)
+            catalogs_filepath = root_folder / self.CATALOGS_FILENAME
+            if not catalogs_filepath.exists():
+                self.create_catalog_file(catalogs_filepath)
+            return catalogs_filepath
         catalogs_filepath = root_folder / self.CATALOGS_FILENAME
         while not catalogs_filepath.exists():
             if catalogs_filepath.parent == catalogs_filepath.parent.parent:  # Root of the disk
