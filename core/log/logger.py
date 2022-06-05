@@ -1,5 +1,7 @@
+from asset_browser_utilities.core.preferences.tool import get_preferences
+
+
 class Logger:
-    active = False
     _log = []
     
     @classmethod
@@ -9,6 +11,6 @@ class Logger:
     @classmethod
     def display(cls, message):
         cls._log.append(message)
-        if cls.active:
+        if get_preferences().verbose:
             print(message)
         

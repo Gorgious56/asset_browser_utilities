@@ -56,7 +56,11 @@ If unchecked, items that are not yet assets will be exported and marked as asset
             if self.filter_catalog.active:
                 asset_container.filter_by_catalog(self.filter_catalog.catalog_uuid)
         if self.filter_name.active:
-            asset_container.filter_by_name(self.filter_name.method, self.filter_name.value)
+            asset_container.filter_by_name(
+                self.filter_name.method,
+                self.filter_name.value,
+                self.filter_name.case_sensitive,
+            )
         asset_container.filter_by_selection(self.filter_selection)
         return list(asset_container.all_assets)
 

@@ -1,4 +1,5 @@
 from collections import defaultdict
+from asset_browser_utilities.filter.name import FilterName
 import bpy
 
 
@@ -34,19 +35,12 @@ class AssetContainer:
                 if not items[i].asset_data.catalog_id == uuid:
                     items.pop(i)
 
-    def filter_by_name(self, method, value):
+    def filter_by_name(self, method, value, case_sensitive):
         for items in self.assets.values():
             for i in range(len(items) - 1, -1, -1):
                 name = items[i].name
-                if method == "Prefix":
-                    if not name.startswith(value):
-                        items.pop(i)
-                elif method == "Contains":
-                    if value not in name:
-                        items.pop(i)
-                elif method == "Suffix":
-                    if not name.endswith(value):
-                        items.pop(i)
+                if not FilterName.filter_static(name, method, value, case_sensitive):
+                    items.pop(i)
 
     def filter_by_selection(self, filter_selection):
         if not filter_selection.active:
