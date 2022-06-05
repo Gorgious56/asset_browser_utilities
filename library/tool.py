@@ -1,3 +1,4 @@
+from asset_browser_utilities.core.log.logger import Logger
 from asset_browser_utilities.file.path import is_this_current_file
 import bpy
 
@@ -16,6 +17,7 @@ def load_preview(filepath, asset=None):
                 bpy.ops.ed.lib_id_load_custom_preview(filepath=str(filepath))
         else:
             bpy.ops.ed.lib_id_load_custom_preview({"id": asset}, filepath=str(filepath))
+    Logger.display(f"Loaded custom preview for {asset.name if asset is not None else 'active asset'}")
 
 
 def get_blend_library_name(asset):

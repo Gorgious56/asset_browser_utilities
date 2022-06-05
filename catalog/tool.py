@@ -1,5 +1,6 @@
 from pathlib import Path
 from uuid import uuid4
+from asset_browser_utilities.core.log.logger import Logger
 import bpy
 from asset_browser_utilities.catalog.prop import CatalogExportSettings
 from asset_browser_utilities.core.cache.tool import write_to_cache
@@ -35,16 +36,16 @@ class CatalogsHelper:
                     root_folder = Path(CatalogExportSettings.get_from_cache().path)
         elif library_source == LibraryType.UserLibrary.value:
             root_folder = Path(library_settings.library_user_path)
-            catalogs_filepath = root_folder / self.CATALOGS_FILENAME
-            if not catalogs_filepath.exists():
-                self.create_catalog_file(catalogs_filepath)
-            return catalogs_filepath
-        catalogs_filepath = root_folder / self.CATALOGS_FILENAME
-        while not catalogs_filepath.exists():
-            if catalogs_filepath.parent == catalogs_filepath.parent.parent:  # Root of the disk
+            catalog_filepath = root_folder / self.CATALOGS_FILENAME
+            if not catalog_filepath.exists():
+                self.create_catalog_file(catalog_filepath)
+            return catalog_filepath
+        catalog_filepath = root_folder / self.CATALOGS_FILENAME
+        while not catalog_filepath.exists():
+            if catalog_filepath.parent == catalog_filepath.parent.parent:  # Root of the disk
                 return None
-            catalogs_filepath = catalogs_filepath.parent.parent / self.CATALOGS_FILENAME
-        return catalogs_filepath
+            catalog_filepath = catalog_filepath.parent.parent / self.CATALOGS_FILENAME
+        return catalog_filepath
 
     @property
     def has_catalogs(self):
@@ -62,6 +63,8 @@ class CatalogsHelper:
             catalog_file.write("\n")
             catalog_file.write("VERSION 1\n")
             catalog_file.write("\n")
+        
+        Logger.display("Created catalog definition file at {filepath}")
 
     def add_catalog_to_catalog_file(self, catalog_uuid, catalog_tree, catalog_name):
         with open(self.catalog_filepath, "a") as catalog_file:
@@ -87,8 +90,10 @@ class CatalogsHelper:
             else:
                 uuid = str(uuid4())
                 catalog_name = tree.replace("/", "-")
-                catalog_file.write(f"{uuid}:{tree}:{catalog_name}")
+                catalog_line = f"{uuid}:{tree}:{catalog_name}"
+                catalog_file.write(catalog_line)
                 catalog_file.write("\n")
+                Logger.displat("Created catalog definition {catalog_line} in {self.catalog_filepath}")
         return uuid
 
     def is_catalog_in_catalog_file(self, uuid):

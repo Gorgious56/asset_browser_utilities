@@ -1,3 +1,4 @@
+from asset_browser_utilities.core.log.logger import Logger
 from bpy.types import Operator
 from bpy.props import PointerProperty
 
@@ -16,6 +17,7 @@ class BatchExecuteOverride(BatchExecute):
         asset_tags = asset_data.tags
         for tag in self.tags:
             asset_tags.new(tag, skip_if_exists=True)
+            Logger.display(f"Added tag {tag} to {asset.name}")
 
 
 class ASSET_OT_batch_add_tags(Operator, BatchFolderOperator):

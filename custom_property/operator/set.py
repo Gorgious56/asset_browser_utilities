@@ -1,3 +1,4 @@
+from asset_browser_utilities.core.log.logger import Logger
 from bpy.types import Operator, PropertyGroup
 from bpy.props import PointerProperty, StringProperty, FloatProperty, IntProperty, FloatVectorProperty, EnumProperty
 
@@ -21,6 +22,7 @@ class BatchExecuteOverride(BatchExecute):
             asset_data.id_properties_ensure()
             property_manager = asset_data.id_properties_ui(self.custom_prop_name)
             property_manager.update(subtype="COLOR")
+        Logger.display(f"Added custom property {self.custom_prop_name} to {asset.name}")
 
 
 class SetCustomPropertyOperatorProperties(PropertyGroup):

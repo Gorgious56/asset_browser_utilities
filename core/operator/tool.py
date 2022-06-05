@@ -1,4 +1,5 @@
 from pathlib import Path
+from asset_browser_utilities.core.log.logger import Logger
 
 from asset_browser_utilities.core.operator.operation import OperationSettings
 from asset_browser_utilities.core.preferences.tool import get_preferences
@@ -54,7 +55,7 @@ class BatchExecute:
             message_box(message="Work completed !")
             self.callback(context)
             return
-        print(f"{len(self.blends)} file{'s' if len(self.blends) > 1 else ''} left")
+        Logger.display(f"{len(self.blends)} file{'s' if len(self.blends) > 1 else ''} left")
 
         self.open_next_blend()
         if LibraryExportSettings.get_from_cache().source == LibraryType.FileCurrent.value:

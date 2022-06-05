@@ -1,3 +1,4 @@
+from asset_browser_utilities.core.log.logger import Logger
 from bpy.types import Operator, PropertyGroup
 from bpy.props import PointerProperty
 
@@ -16,6 +17,7 @@ class BatchExecuteOverride(BatchExecute):
     def do_on_asset(self, asset):
         super().do_on_asset(asset)
         apply_smart_tag(asset, self.smart_tags)
+        Logger.display(f"Added smart tag to {asset.name}")
 
 
 class OperatorProperties(PropertyGroup):

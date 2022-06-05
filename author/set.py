@@ -1,3 +1,4 @@
+from asset_browser_utilities.core.log.logger import Logger
 from bpy.types import Operator, PropertyGroup
 from bpy.props import PointerProperty, StringProperty
 
@@ -8,6 +9,7 @@ class BatchSetAuthor(BatchExecute):
     def execute_one_file_and_the_next_when_finished(self):
         for asset in self.assets:
             asset.asset_data.author = self.author
+            Logger.display(f"Set {asset.name}'s author to {self.author}")
         self.save_file()
         self.execute_next_blend()
 

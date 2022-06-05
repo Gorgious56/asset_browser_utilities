@@ -1,3 +1,4 @@
+from asset_browser_utilities.core.log.logger import Logger
 import bpy
 from bpy.types import Operator, PropertyGroup
 from bpy.props import PointerProperty, StringProperty
@@ -25,7 +26,7 @@ class BatchExecuteOverride(BatchExecute):
             img.filepath = str(self.folder / (img.name + ".png"))
             img.pixels.foreach_set(asset_preview.image_pixels_float)
             img.save()
-            print(f"Saved thumbnail from {asset.name} to {img.filepath}")
+            Logger.display(f"Saved thumbnail from {asset.name} to {img.filepath}")
         bpy.data.batch_remove(images)
         super().do_on_asset(asset)
 

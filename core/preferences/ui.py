@@ -11,14 +11,20 @@ class AssetBrowserUtilitiesAddonPreferences(AddonPreferences):
     defaults: PointerProperty(type=Cache)
     presets: CollectionProperty(type=Cache)
     show_custom_props: BoolProperty(
-        default=True,
+        default=False,
         name="Show Asset Custom Properties",
         description="Add a Panel in the Asset Browser interface to display asset custom properties",
+    )
+    verbose: BoolProperty(
+        name="Verbose Output",
+        description="Check this to get some information in the system console",
+        default=True,
     )
 
     def draw(self, context):
         layout = self.layout
-        layout.prop(self, "show_custom_props")
+        layout.prop(self, "verbose", icon="INFO")
+        layout.prop(self, "show_custom_props", icon="PROPERTIES")
 
         self.defaults.asset_filter_settings.filter_selection.allow = True
         self.defaults.asset_filter_settings.filter_catalog.allow = True

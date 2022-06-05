@@ -1,3 +1,4 @@
+from asset_browser_utilities.core.log.logger import Logger
 from bpy.types import Operator, PropertyGroup
 from bpy.props import PointerProperty, StringProperty, BoolProperty
 
@@ -14,9 +15,11 @@ class BatchRemoveFromCatalog(BatchExecute):
             for asset in self.assets:
                 if asset.asset_data.catalog_id == uuid:
                     asset.asset_data.catalog_id = ""
+                    Logger.display(f"{asset.name} unassigned from catalog {uuid}")
         else:
             for asset in self.assets:
                 asset.asset_data.catalog_id = ""
+                Logger.display(f"{asset.name} unassigned from catalog")
         self.save_file()
         self.execute_next_blend()
 

@@ -1,4 +1,5 @@
 
+from asset_browser_utilities.core.log.logger import Logger
 from bpy.types import Operator, PropertyGroup
 from bpy.props import PointerProperty, StringProperty, FloatProperty, IntProperty, FloatVectorProperty, EnumProperty
 
@@ -15,6 +16,7 @@ class BatchExecuteOverride(BatchExecute):
         asset_data = asset.asset_data
         try:
             del asset_data[self.custom_prop_name]
+            Logger.display(f"Removed {self.custom_prop_name} custom property from {asset.name}")
         except KeyError:
             pass
 

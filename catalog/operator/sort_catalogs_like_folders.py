@@ -1,7 +1,7 @@
 from pathlib import Path
 from asset_browser_utilities.catalog.tool import CatalogsHelper
+from asset_browser_utilities.core.log.logger import Logger
 from asset_browser_utilities.library.prop import LibraryExportSettings
-import bpy.app.timers
 from bpy.types import Operator, PropertyGroup
 from bpy.props import PointerProperty, PointerProperty, BoolProperty
 
@@ -35,12 +35,15 @@ class BatchExecuteOverride(BatchExecute):
         except KeyError:
             pass
         else:
+            changed_file = False
             for asset in self.assets:
-                print(f"{asset.name} has been moved to catalog {uuid}")
+                Logger.display(f"{asset.name} has been moved to catalog {uuid}")
                 asset_data = asset.asset_data
                 if asset_data.catalog_id != uuid:
                     asset_data.catalog_id = uuid
-            self.save_file()
+                    changed_file = True
+            if changed_file:
+                self.save_file()
         self.execute_next_blend()
 
 

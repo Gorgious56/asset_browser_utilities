@@ -1,3 +1,4 @@
+from asset_browser_utilities.core.log.logger import Logger
 from bpy.types import Operator
 from bpy.props import PointerProperty
 
@@ -16,6 +17,7 @@ class BatchExecuteOverride(BatchExecute):
         asset_data = asset.asset_data
         asset_tags = asset_data.tags
         self.execute_tags(asset_tags)
+        Logger.display(f"Removed tags from {asset.name}")
 
     def execute_tags(self, asset_tags):
         if self.remove_all:

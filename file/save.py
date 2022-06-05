@@ -1,3 +1,4 @@
+from asset_browser_utilities.core.log.logger import Logger
 import bpy
 import os
 
@@ -24,7 +25,7 @@ def has_backup(filepath):
 def remove_backup_file_if_it_exists(filepath):
     if has_backup(filepath):
         backup = get_backup_path(filepath)
-        print("Removing backup " + backup)
+        Logger.display("Removing backup " + backup)
         os.remove(backup)
 
 

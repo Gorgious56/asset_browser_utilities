@@ -1,3 +1,4 @@
+from asset_browser_utilities.core.log.logger import Logger
 from bpy.types import Operator, PropertyGroup
 from bpy.props import PointerProperty, StringProperty
 
@@ -13,6 +14,7 @@ class BatchMoveToCatalog(BatchExecute):
         helper.ensure_catalog_exists(uuid, tree, name)
         for asset in self.assets:
             asset.asset_data.catalog_id = uuid
+            Logger.display(f"{asset.name} moved to catalog {uuid}")
         self.save_file()
         self.execute_next_blend()
 
