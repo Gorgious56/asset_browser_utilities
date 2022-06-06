@@ -1,4 +1,6 @@
 from collections import defaultdict
+from asset_browser_utilities.asset.prop import SelectedAssetFiles
+from asset_browser_utilities.core.cache.tool import get_from_cache
 from asset_browser_utilities.filter.name import FilterName
 import bpy
 
@@ -47,7 +49,8 @@ class AssetContainer:
             return
         selected_ids = set()
         if filter_selection.asset_browser:
-            selected_ids.update(asset_file.local_id for asset_file in bpy.context.selected_asset_files)
+            selected_assets = get_from_cache(SelectedAssetFiles).assets
+            selected_ids.update(selected_assets)
         if filter_selection.view_3d:
             selected_ids.update(o for o in bpy.context.visible_objects if o.select_get())
         for items in self.assets.values():

@@ -6,22 +6,25 @@ from bpy.props import PointerProperty, BoolProperty
 from asset_browser_utilities.filter.main import AssetFilterSettings
 from asset_browser_utilities.library.prop import LibraryExportSettings
 from asset_browser_utilities.catalog.prop import CatalogExportSettings
-# from asset_browser_utilities.asset.import_.prop import CacheAssetPaths
 from asset_browser_utilities.tag.smart_tag import SmartTagPG
 
 from asset_browser_utilities.asset.operator.mark import OperatorProperties as MarkOperatorProperties
+from asset_browser_utilities.asset.export.operator import OperatorProperties as ExportOperatorProperties
+from asset_browser_utilities.asset.prop import SelectedAssetFiles
 
 
 class Cache(PropertyGroup):
     library_settings: PointerProperty(type=LibraryExportSettings)
     operation_settings: PointerProperty(type=OperationSettings)
     asset_filter_settings: PointerProperty(type=AssetFilterSettings)
-    # asset_paths: PointerProperty(type=CacheAssetPaths)
     catalog_settings: PointerProperty(type=CatalogExportSettings)
     smart_tag_settings: PointerProperty(type=SmartTagPG)
     
     current_op: PointerProperty(type=CurrentOperatorProperty)
     mark_op: PointerProperty(type=MarkOperatorProperties)
+    export_op: PointerProperty(type=ExportOperatorProperties)
+    
+    selected_assets: PointerProperty(type=SelectedAssetFiles)
 
     show: BoolProperty()
 
