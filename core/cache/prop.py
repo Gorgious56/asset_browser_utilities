@@ -11,6 +11,7 @@ from asset_browser_utilities.tag.smart_tag import SmartTagPG
 from asset_browser_utilities.asset.operator.mark import OperatorProperties as MarkOperatorProperties
 from asset_browser_utilities.asset.export.operator import OperatorProperties as ExportOperatorProperties
 from asset_browser_utilities.asset.operator.copy import OperatorProperties as CopyOperatorProperties
+from asset_browser_utilities.tag.operator.tool import AddOrRemoveTagsOperatorProperties
 from asset_browser_utilities.asset.prop import SelectedAssetFiles
 
 
@@ -25,6 +26,7 @@ class Cache(PropertyGroup):
     mark_op: PointerProperty(type=MarkOperatorProperties)
     copy_op: PointerProperty(type=CopyOperatorProperties)
     export_op: PointerProperty(type=ExportOperatorProperties)
+    add_or_remove_tag_op: PointerProperty(type=AddOrRemoveTagsOperatorProperties)
     
     selected_assets: PointerProperty(type=SelectedAssetFiles)
 

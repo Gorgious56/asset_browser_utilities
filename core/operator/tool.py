@@ -141,22 +141,10 @@ class BatchFolderOperator(ImportHelper):
         self.filter_assets = filter_assets
 
         update_preset(self, context)
-
-        get_from_cache(OperationSettings).init()
-
-        if hasattr(self, "operator_settings"):
-            get_from_cache(CurrentOperatorProperty).class_name = str(self.operator_settings.__class__)
-
-        library_settings = get_from_cache(LibraryExportSettings)
-        library_settings.init(remove_backup=remove_backup)
-        if self.source != "":
-            library_settings.source = self.source
-
-        selected_asset_files_prop = get_from_cache(SelectedAssetFiles)
-        selected_asset_files_prop.init()
-        selected_asset_files_prop.set_active(context.active_file.id_type, context.active_file.local_id)
-        for selected_asset_file in bpy.context.selected_asset_files:
-            selected_asset_files_prop.add(selected_asset_file.id_type, selected_asset_file.local_id)
+        self.init_operation_settings()
+        self.init_operator_settings()
+        self.init_selected_asset_files(context)
+        library_settings = self.init_library_settings(remove_backup)
 
         if library_settings.source in (LibraryType.FolderExternal.value, LibraryType.FileExternal.value):
             self.filter_glob = "*.blend" if library_settings.source == LibraryType.FileExternal.value else ""
@@ -168,6 +156,27 @@ class BatchFolderOperator(ImportHelper):
                 return {"RUNNING_MODAL"}
             else:
                 return context.window_manager.invoke_props_dialog(self)
+
+    def init_operation_settings(self):
+        get_from_cache(OperationSettings).init()
+
+    def init_operator_settings(self):
+        if hasattr(self, "operator_settings"):
+            get_from_cache(CurrentOperatorProperty).class_name = str(self.operator_settings.__class__)
+
+    def init_library_settings(self, remove_backup):
+        library_settings = get_from_cache(LibraryExportSettings)
+        library_settings.init(remove_backup=remove_backup)
+        if self.source != "":
+            library_settings.source = self.source
+        return library_settings
+
+    def init_selected_asset_files(self, context):
+        selected_asset_files_prop = get_from_cache(SelectedAssetFiles)
+        selected_asset_files_prop.init()
+        selected_asset_files_prop.set_active(context.active_file.id_type, context.active_file.local_id)
+        for selected_asset_file in bpy.context.selected_asset_files:
+            selected_asset_files_prop.add(selected_asset_file.id_type, selected_asset_file.local_id)
 
     def write_filepath_to_cache(self):
         library_settings = get_from_cache(LibraryExportSettings)
