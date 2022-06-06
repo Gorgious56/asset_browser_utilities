@@ -7,7 +7,7 @@ from asset_browser_utilities.core.operator.tool import BatchExecute, BatchFolder
 from asset_browser_utilities.core.cache.tool import get_current_operator_properties
 
 
-class BatchExecuteOverride(BatchExecute):
+class AssetMarkBatchExecute(BatchExecute):
     def execute_one_file_and_the_next_when_finished(self):
         if not self.assets:
             self.execute_next_blend()
@@ -15,10 +15,11 @@ class BatchExecuteOverride(BatchExecute):
         operator_properties = get_current_operator_properties()
         for asset in self.assets:
             if asset.asset_data and not operator_properties.overwrite:
+                Logger.display(f"Asset '{asset.name}' already marked")
                 continue
             asset.asset_mark()
             asset.asset_generate_preview()
-            Logger.display(f"Marked asset '{asset.name}'")
+            Logger.display(f"Asset '{asset.name}' marked")
 
         if operator_properties.generate_previews:
             bpy.app.timers.register(self.sleep_until_previews_are_done_and_execute_next_file)
@@ -52,7 +53,7 @@ class ABU_OT_batch_mark(Operator, BatchFolderOperator):
     bl_options = {"UNDO"}
 
     operator_settings: PointerProperty(type=AssetMarkOperatorProperties)
-    logic_class = BatchExecuteOverride
+    logic_class = AssetMarkBatchExecute
 
     def invoke(self, context, event):
         return self._invoke(context)
