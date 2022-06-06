@@ -5,12 +5,15 @@ def get_cache():
     return get_preferences().cache
 
 
-def write_to_cache(value):
-    get_cache().set(value)
+def get_from_cache(cls):
+    return get_cache().get(cls)
 
-
-def get_from_cache(_type):
-    return get_cache().get(_type)
+def get_current_operator_properties():
+    cache = get_cache()
+    for prop_name in cache.__annotations__:
+        prop = getattr(cache, prop_name)
+        if str(prop.__class__) == cache.current_op.class_name:
+            return prop
 
 
 def get_presets(op, context):

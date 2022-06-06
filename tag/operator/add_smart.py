@@ -4,7 +4,7 @@ from bpy.props import PointerProperty
 
 from asset_browser_utilities.core.operator.tool import BatchExecute, BatchFolderOperator
 from asset_browser_utilities.tag.smart_tag import SmartTagPG, apply_smart_tag
-from asset_browser_utilities.core.helper import copy_simple_property_group
+from asset_browser_utilities.core.tool import copy_simple_property_group
 
 
 class BatchExecuteOverride(BatchExecute):

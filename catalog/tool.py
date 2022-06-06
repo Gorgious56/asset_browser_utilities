@@ -3,7 +3,7 @@ from uuid import uuid4
 from asset_browser_utilities.core.log.logger import Logger
 import bpy
 from asset_browser_utilities.catalog.prop import CatalogExportSettings
-from asset_browser_utilities.core.cache.tool import write_to_cache
+from asset_browser_utilities.core.cache.tool import get_from_cache
 from asset_browser_utilities.library.prop import LibraryExportSettings, LibraryType
 from asset_browser_utilities.file.path import read_lines_sequentially
 
@@ -20,7 +20,7 @@ class CatalogsHelper:
 
     def get_catalog_filepath(self):
         context = bpy.context
-        library_settings = LibraryExportSettings.get_from_cache()
+        library_settings = get_from_cache(LibraryExportSettings)
         library_source = library_settings.source
         if library_source == LibraryType.FileCurrent.value:
             root_folder = Path(bpy.data.filepath).parent

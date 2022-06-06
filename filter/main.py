@@ -1,3 +1,4 @@
+from asset_browser_utilities.core.cache.tool import get_from_cache
 from asset_browser_utilities.library.prop import LibraryExportSettings, LibraryType
 
 from bpy.types import PropertyGroup
@@ -8,7 +9,7 @@ from asset_browser_utilities.filter.name import FilterName
 from asset_browser_utilities.filter.selection import FilterSelection
 from asset_browser_utilities.filter.container import AssetContainer
 from asset_browser_utilities.filter.catalog import FilterCatalog
-from asset_browser_utilities.core.helper import copy_simple_property_group
+from asset_browser_utilities.core.tool import copy_simple_property_group
 
 
 class AssetFilterSettings(PropertyGroup):
@@ -33,7 +34,7 @@ If unchecked, items that are not yet assets will be exported and marked as asset
         filter_selection_allow_asset_browser=True,
     ):
         self.filter_selection.init(
-            allow=filter_selection and LibraryExportSettings.get_from_cache().source == LibraryType.FileCurrent.value,
+            allow=filter_selection and get_from_cache(LibraryExportSettings).source == LibraryType.FileCurrent.value,
             allow_view_3d=filter_selection_allow_view_3d,
             allow_asset_browser=filter_selection_allow_asset_browser,
         )
@@ -71,7 +72,7 @@ If unchecked, items that are not yet assets will be exported and marked as asset
         if self.filter_catalog.allow:
             self.filter_catalog.draw(layout, context)
 
-    def copy(self, other):
+    def copy_from(self, other):
         # Other is the source, self is the target
         copy_simple_property_group(other, self)
         copy_simple_property_group(other.filter_types, self.filter_types)

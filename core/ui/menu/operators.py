@@ -20,4 +20,4 @@ class ABUOperatorsMenu:
     
     def setup_library_source(self, library_source):
         for op in self.ops:
-            op.library_settings.source = library_source
+            op.source = library_source

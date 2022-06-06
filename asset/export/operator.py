@@ -1,5 +1,7 @@
 from pathlib import Path
 import os
+from asset_browser_utilities.core.cache.tool import get_from_cache
+from asset_browser_utilities.library.prop import LibraryExportSettings
 
 import bpy
 from bpy.types import Operator, PropertyGroup
@@ -56,7 +58,7 @@ class ABU_OT_batch_export(Operator, BatchFolderOperator):
         caller.add_arg_value("source_file", bpy.data.filepath)
         caller.add_arg_value("filepath", self.filepath)
         caller.add_arg_value("folder", str(get_folder_from_path(self.filepath)))
-        caller.add_arg_value("remove_backup", self.library_settings.remove_backup)
+        caller.add_arg_value("remove_backup", get_from_cache(LibraryExportSettings).remove_backup)
         caller.add_arg_value("overwrite", self.operator_settings.overwrite)
         caller.add_arg_value("individual_files", self.operator_settings.individual_files)
         caller.call()

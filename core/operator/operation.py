@@ -8,7 +8,7 @@ from bpy.props import (
     IntProperty,
     StringProperty,
 )
-from asset_browser_utilities.core.helper import copy_simple_property_group
+from asset_browser_utilities.core.tool import copy_simple_property_group
 from asset_browser_utilities.core.cache.tool import CacheMapping
 from asset_browser_utilities.transform.operation import (
     ApplyTransformOperation,

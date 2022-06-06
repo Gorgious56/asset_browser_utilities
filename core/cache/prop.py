@@ -1,4 +1,5 @@
 from asset_browser_utilities.core.operator.operation import OperationSettings
+from asset_browser_utilities.core.operator.prop import CurrentOperatorProperty
 from bpy.types import PropertyGroup
 from bpy.props import PointerProperty, BoolProperty
 
@@ -8,6 +9,8 @@ from asset_browser_utilities.catalog.prop import CatalogExportSettings
 # from asset_browser_utilities.asset.import_.prop import CacheAssetPaths
 from asset_browser_utilities.tag.smart_tag import SmartTagPG
 
+from asset_browser_utilities.asset.operator.mark import OperatorProperties as MarkOperatorProperties
+
 
 class Cache(PropertyGroup):
     library_settings: PointerProperty(type=LibraryExportSettings)
@@ -16,14 +19,11 @@ class Cache(PropertyGroup):
     # asset_paths: PointerProperty(type=CacheAssetPaths)
     catalog_settings: PointerProperty(type=CatalogExportSettings)
     smart_tag_settings: PointerProperty(type=SmartTagPG)
+    
+    current_op: PointerProperty(type=CurrentOperatorProperty)
+    mark_op: PointerProperty(type=MarkOperatorProperties)
 
     show: BoolProperty()
-
-    def set(self, value):
-        for prop_name in self.__annotations__:
-            prop = getattr(self, prop_name)
-            if isinstance(value, type(prop)):
-                prop.copy(value)
 
     def get(self, _type):
         for prop_name in self.__annotations__:

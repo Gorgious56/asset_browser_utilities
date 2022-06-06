@@ -1,5 +1,6 @@
 from pathlib import Path
 from asset_browser_utilities.catalog.tool import CatalogsHelper
+from asset_browser_utilities.core.cache.tool import get_from_cache
 from asset_browser_utilities.core.log.logger import Logger
 from asset_browser_utilities.library.prop import LibraryExportSettings
 from bpy.types import Operator, PropertyGroup
@@ -12,7 +13,7 @@ class BatchExecuteOverride(BatchExecute):
     def __init__(self, operator, context):
         super().__init__(operator, context)
 
-        self.library_user_path = LibraryExportSettings.get_from_cache().library_user_path
+        self.library_user_path = get_from_cache(LibraryExportSettings).library_user_path
         self.catalog_map = {}
         cat_helper = CatalogsHelper()
         for filepath in self.blends:
