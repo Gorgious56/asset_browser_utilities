@@ -52,7 +52,7 @@ def get_object_types():
         ("CAMERA", "Camera", "Camera", "CAMERA_DATA", 2 ** 2),
         ("CURVE", "Curve", "Curve", "CURVE_DATA", 2 ** 3),
         ("EMPTY", "Empty", "Empty", "EMPTY_DATA", 2 ** 4),
-        ("GREASEPENCIL", "Grease Pencil", "Grease Pencil", "OUTLINER_DATA_GREASEPENCIL", 2 ** 5),
+        ("GPENCIL", "Grease Pencil", "Grease Pencil", "OUTLINER_DATA_GREASEPENCIL", 2 ** 5),
         ("LIGHT", "Light", "Light", "LIGHT", 2 ** 6),
         ("LIGHT_PROBE", "Light Probe", "Light Probe", "OUTLINER_DATA_LIGHTPROBE", 2 ** 7),
         ("LATTICE", "Lattice", "Lattice", "LATTICE_DATA", 2 ** 8),
