@@ -25,9 +25,8 @@ If unchecked, items that are not yet assets will be exported and marked as asset
     )
     filter_assets_allow: BoolProperty(default=False)
 
-    def init(
+    def init_asset_filter_settings(
         self,
-        context,
         filter_selection=False,
         filter_assets=False,
         filter_selection_allow_view_3d=True,

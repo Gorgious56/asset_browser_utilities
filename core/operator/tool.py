@@ -36,11 +36,11 @@ class BatchExecute:
         context = bpy.context
         if not self.blends:
             print("Work completed")
-            message_box(message="Work completed !")
-            self.callback(context)
+            if not bpy.app.background:
+                message_box(message="Work completed !")
+                self.callback(context)
             return
         Logger.display(f"{len(self.blends)} file{'s' if len(self.blends) > 1 else ''} left")
-
         self.open_next_blend()
         if get_from_cache(LibraryExportSettings).source == LibraryType.FileCurrent.value:
             self.assets = get_from_cache(AssetFilterSettings).get_objects_that_satisfy_filters()
@@ -90,17 +90,15 @@ class BatchExecute:
         pass
 
 
-def update_asset_filter_allow(self, context):
+def update_asset_filter_allow(filter_assets=False, allow_asset_browser_selection=True):
     filter_selection = not get_from_cache(LibraryExportSettings).source in (
         LibraryType.FolderExternal.value,
         LibraryType.FileExternal.value,
     )
-    filter_selection_asset_browser = self.bl_idname not in ("ABU_OT_previews_extract",)
-    get_from_cache(AssetFilterSettings).init(
-        context,
+    get_from_cache(AssetFilterSettings).init_asset_filter_settings(
         filter_selection=filter_selection,
-        filter_assets=self.filter_assets,
-        filter_selection_allow_asset_browser=filter_selection_asset_browser,
+        filter_assets=filter_assets,
+        filter_selection_allow_asset_browser=allow_asset_browser_selection,
     )
 
 
@@ -121,7 +119,7 @@ def update_preset(self, context):
             setting.copy_from(default_setting)
         else:
             copy_simple_property_group(default_setting, setting)
-    update_asset_filter_allow(self, context)
+    update_asset_filter_allow(self.filter_assets, self.bl_idname not in ("ABU_OT_previews_extract",))
 
 
 class BatchFolderOperator(ImportHelper):
@@ -179,17 +177,17 @@ class BatchFolderOperator(ImportHelper):
         for selected_asset_file in bpy.context.selected_asset_files:
             selected_asset_files_prop.add(selected_asset_file.id_type, selected_asset_file.local_id)
 
-    def write_filepath_to_cache(self):
-        library_settings = get_from_cache(LibraryExportSettings)
-        library_settings.files = self.files
-        library_settings.filepath = self.filepath
-
     def execute(self, context):
         self.write_filepath_to_cache()
         save_if_possible_and_necessary()
         logic = self.logic_class()
         logic.execute_next_blend()
         return {"FINISHED"}
+
+    def write_filepath_to_cache(self):
+        library_settings = get_from_cache(LibraryExportSettings)
+        library_settings.files = self.files
+        library_settings.filepath = self.filepath
 
     def draw(self, context):
         layout = self.layout
