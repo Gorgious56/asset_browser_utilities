@@ -12,6 +12,8 @@ from asset_browser_utilities.asset.export.operator import OperatorProperties as 
 from asset_browser_utilities.asset.operator.copy import OperatorProperties as CopyOperatorProperties
 from asset_browser_utilities.tag.operator.tool import AddOrRemoveTagsOperatorProperties
 from asset_browser_utilities.tag.operator.add_smart import OperatorProperties as AddSmartTagOperatorProperties
+from asset_browser_utilities.custom_property.operator.set import SetCustomPropertyOperatorProperties
+from asset_browser_utilities.custom_property.operator.remove import RemoveCustomPropertyOperatorProperties
 from asset_browser_utilities.asset.prop import SelectedAssetFiles
 
 
@@ -27,6 +29,8 @@ class Cache(PropertyGroup):
     export_op: PointerProperty(type=ExportOperatorProperties)
     smart_tag_op: PointerProperty(type=AddSmartTagOperatorProperties)
     add_or_remove_tag_op: PointerProperty(type=AddOrRemoveTagsOperatorProperties)
+    custom_prop_set_op: PointerProperty(type=SetCustomPropertyOperatorProperties)
+    custom_prop_remove_op: PointerProperty(type=RemoveCustomPropertyOperatorProperties)
     
     selected_assets: PointerProperty(type=SelectedAssetFiles)
 

@@ -1,3 +1,4 @@
+from asset_browser_utilities.core.cache.tool import get_current_operator_properties
 from asset_browser_utilities.core.log.logger import Logger
 from bpy.types import Operator, PropertyGroup
 from bpy.props import PointerProperty, StringProperty, FloatProperty, IntProperty, FloatVectorProperty, EnumProperty
@@ -6,23 +7,18 @@ from asset_browser_utilities.core.operator.tool import BatchExecute, BatchFolder
 
 
 class BatchExecuteOverride(BatchExecute):
-    def __init__(self, operator, context):
-        self.custom_prop_name = operator.operator_settings.name
-        if operator.operator_settings.type == "value_color":
-            self.custom_prop_value = [c for c in getattr(operator.operator_settings, operator.operator_settings.type)]
-        else:
-            self.custom_prop_value = getattr(operator.operator_settings, operator.operator_settings.type)
-        super().__init__(operator, context)
-
     def do_on_asset(self, asset):
-        super().do_on_asset(asset)
+        op_props = get_current_operator_properties()
+        prop_name = op_props.name
+        prop_value = op_props.value
         asset_data = asset.asset_data
-        asset_data[self.custom_prop_name] = self.custom_prop_value
-        if isinstance(self.custom_prop_value, list):  # Color
+        asset_data[prop_name] = prop_value
+        if isinstance(prop_value, list):  # Color
             asset_data.id_properties_ensure()
-            property_manager = asset_data.id_properties_ui(self.custom_prop_name)
+            property_manager = asset_data.id_properties_ui(prop_name)
             property_manager.update(subtype="COLOR")
-        Logger.display(f"Added custom property {self.custom_prop_name} to {asset.name}")
+        Logger.display(f"Added custom property '{prop_name=}', '{prop_value=}' to {asset.name}")
+        super().do_on_asset(asset)
 
 
 class SetCustomPropertyOperatorProperties(PropertyGroup):
@@ -40,6 +36,13 @@ class SetCustomPropertyOperatorProperties(PropertyGroup):
     value_float: FloatProperty()
     value_int: IntProperty()
     value_color: FloatVectorProperty(subtype="COLOR", min=0, max=1, default=(1, 1, 1, 1), size=4)
+    
+    @property
+    def value(self):
+        if self.type == "value_color":
+            return [c for c in getattr(self, self.type)]
+        else:
+            return getattr(self, self.type)
 
     def draw(self, layout):
         box = layout.box()
@@ -48,8 +51,8 @@ class SetCustomPropertyOperatorProperties(PropertyGroup):
         box.prop(self, self.type, text="Value")
 
 
-class ASSET_OT_batch_set_custom_property(Operator, BatchFolderOperator):
-    bl_idname = "asset.batch_set_custom_property"
+class ABU_OT_batch_set_custom_property(Operator, BatchFolderOperator):
+    bl_idname = "abu.batch_set_custom_property"
     bl_label = "Set Custom Property"
 
     operator_settings: PointerProperty(type=SetCustomPropertyOperatorProperties)
