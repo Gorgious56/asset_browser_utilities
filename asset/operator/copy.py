@@ -1,29 +1,32 @@
+from asset_browser_utilities.core.cache.tool import get_current_operator_properties, get_from_cache
 from asset_browser_utilities.preview.tool import can_preview_be_generated
 from bpy.types import Operator, PropertyGroup
 from bpy.props import PointerProperty, BoolProperty
 
 from asset_browser_utilities.core.operator.tool import BatchExecute, BatchFolderOperator
-from asset_browser_utilities.custom_property.tool import copy_prop, get_prop
+from asset_browser_utilities.custom_property.tool import copy_prop
+from asset_browser_utilities.asset.prop import SelectedAssetFiles
 
 
 class BatchExecuteOverride(BatchExecute):
-    def __init__(self, operator, context):
-        self.active_asset = context.active_file.local_id
-        super().__init__(operator, context)
+    def __init__(self):
+        self.active_asset = get_from_cache(SelectedAssetFiles).active_asset
+        super().__init__()
 
     def do_on_asset(self, asset):
+        operator_properties = get_current_operator_properties()
         if asset == self.active_asset:
             return
         asset_data_source = self.active_asset.asset_data
         asset_data_target = asset.asset_data
-        if self.tags:
+        if operator_properties.tags:
             tags_source = asset_data_target.tags
             for tag in asset_data_source.tags:
                 tags_source.new(name=tag.name, skip_if_exists=True)
-        if self.custom_properties:
+        if operator_properties.custom_properties:
             for prop_name in asset_data_source.keys():
                 copy_prop(asset_data_source, asset_data_target, prop_name)
-        if self.preview and can_preview_be_generated(asset):
+        if operator_properties.preview and can_preview_be_generated(asset):
             source_preview = self.active_asset.preview
             if source_preview is not None:
                 asset_preview = asset.preview
@@ -31,11 +34,11 @@ class BatchExecuteOverride(BatchExecute):
                     asset.asset_generate_preview()
                 if asset_preview is not None:
                     asset_preview.image_pixels.foreach_set(source_preview.image_pixels)
-        if self.catalog:
+        if operator_properties.catalog:
             asset_data_target.catalog_id = asset_data_source.catalog_id
-        if self.author:
+        if operator_properties.author:
             asset_data_target.author = asset_data_source.author
-        if self.description:
+        if operator_properties.description:
             asset_data_target.description = asset_data_source.description
 
         super().do_on_asset(asset)
