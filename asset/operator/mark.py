@@ -1,3 +1,4 @@
+from asset_browser_utilities.core.log.logger import Logger
 import bpy
 from bpy.types import Operator, PropertyGroup
 from bpy.props import PointerProperty, BoolProperty
@@ -17,6 +18,7 @@ class BatchExecuteOverride(BatchExecute):
                 continue
             asset.asset_mark()
             asset.asset_generate_preview()
+            Logger.display(f"Marked asset '{asset.name}'")
 
         if operator_properties.generate_previews:
             bpy.app.timers.register(self.sleep_until_previews_are_done_and_execute_next_file)

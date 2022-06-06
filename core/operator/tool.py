@@ -174,7 +174,8 @@ class BatchFolderOperator(ImportHelper):
     def init_selected_asset_files(self, context):
         selected_asset_files_prop = get_from_cache(SelectedAssetFiles)
         selected_asset_files_prop.init()
-        selected_asset_files_prop.set_active(context.active_file.id_type, context.active_file.local_id)
+        if context.active_file is not None:
+            selected_asset_files_prop.set_active(context.active_file.id_type, context.active_file.local_id)
         for selected_asset_file in bpy.context.selected_asset_files:
             selected_asset_files_prop.add(selected_asset_file.id_type, selected_asset_file.local_id)
 
