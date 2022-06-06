@@ -7,5 +7,5 @@ class ABU_MT_tags(Menu, ABUOperatorsMenu):
 
     def setup_ops(self, layout, context):
         self.add_op(layout, "abu.batch_add_tags", "Add", "ADD")
-        self.add_op(layout, "asset.batch_remove_tags", "Remove", "REMOVE")
+        self.add_op(layout, "abu.batch_remove_tags", "Remove", "REMOVE")
         self.add_op(layout, "asset.tags_add_smart", "Add Smart", "OUTLINER_OB_LIGHT")

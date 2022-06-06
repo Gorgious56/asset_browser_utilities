@@ -1,3 +1,4 @@
+from asset_browser_utilities.library.tool import sanitize_library_name
 import bpy
 from bpy.types import PropertyGroup
 from bpy.props import StringProperty, CollectionProperty, PointerProperty
@@ -19,13 +20,13 @@ class SelectedAssetFiles(PropertyGroup):
         if _id is None:
             return
         new = self.files_prop.add()
-        new.container = container.lower() + "s"
+        new.container = sanitize_library_name(container.lower() + "s")
         new.name = _id.name
 
     def set_active(self, container, _id):
         if _id is None:
             return
-        self.active_asset_prop.container = container.lower() + "s"
+        self.active_asset_prop.container = sanitize_library_name(container.lower() + "s")
         self.active_asset_prop.name = _id.name
 
     @property

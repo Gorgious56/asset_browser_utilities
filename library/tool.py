@@ -34,15 +34,20 @@ def get_blend_files_in_folder(folder, recursive):
         return [fp for fp in folder.glob("*.blend") if fp.is_file()]
 
 
+def sanitize_library_name(name):
+    if name == "geometrynodetrees" or name == "nodetrees":
+        name = "node_groups"
+    elif name == "brushs":
+        name = "brushes"
+    elif "texture" in name:
+        name = "textures"
+    return name
+
+
 def append_asset(filepath, directory, filename):
     if is_this_current_file(filepath):
         return
-    if directory == "geometrynodetrees":
-        directory = "node_groups"
-    elif directory == "brushs":
-        directory = "brushes"
-    elif "texture" in directory:
-        directory = "textures"
+    directory = sanitize_library_name(directory)
     # https://blender.stackexchange.com/a/33998/86891
     library = getattr(bpy.data, directory)
     with bpy.data.libraries.load(str(filepath)) as (data_from, data_to):
