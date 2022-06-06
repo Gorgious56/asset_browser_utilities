@@ -6,4 +6,4 @@ class ABU_MT_author(Menu, ABUOperatorsMenu):
     bl_label = "Author"
 
     def setup_ops(self, layout, context):
-        self.add_op(layout, "asset.batch_set_author", "Set", "ADD")
+        self.add_op(layout, "abu.author_set", "Set", "ADD")

@@ -1,3 +1,4 @@
+from asset_browser_utilities.core.cache.tool import get_current_operator_properties
 from asset_browser_utilities.core.log.logger import Logger
 from bpy.types import Operator, PropertyGroup
 from bpy.props import PointerProperty, StringProperty
@@ -7,27 +8,27 @@ from asset_browser_utilities.core.operator.tool import BatchExecute, BatchFolder
 
 class BatchSetAuthor(BatchExecute):
     def execute_one_file_and_the_next_when_finished(self):
+        author = get_current_operator_properties().author
         for asset in self.assets:
-            asset.asset_data.author = self.author
-            Logger.display(f"Set {asset.name}'s author to {self.author}")
+            asset.asset_data.author = author
+            Logger.display(f"Set {asset.name}'s author to '{author}'")
         self.save_file()
         self.execute_next_blend()
 
 
-class OperatorProperties(PropertyGroup):
+class AuthorSetOperatorProperties(PropertyGroup):
     author: StringProperty(name="Author")
 
     def draw(self, layout):
         layout.prop(self, "author", icon="USER")
 
 
-class ASSET_OT_batch_set_author(Operator, BatchFolderOperator):
-    """Batch Set Author Name. Leave Field Empty to remove author"""
-
-    bl_idname = "asset.batch_set_author"
+class ABU_OT_author_set(Operator, BatchFolderOperator):
+    bl_idname = "abu.author_set"
     bl_label = "Batch Set Author"
+    bl_description = "Batch Set Author Name. Leave Field Empty to remove author"
 
-    operator_settings: PointerProperty(type=OperatorProperties)
+    operator_settings: PointerProperty(type=AuthorSetOperatorProperties)
     logic_class = BatchSetAuthor
 
     def invoke(self, context, event):

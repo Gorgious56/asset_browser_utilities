@@ -1,3 +1,4 @@
+from asset_browser_utilities.author.set import AuthorSetOperatorProperties
 from asset_browser_utilities.catalog.operator.move_from_a_to_b import CatalogMoveFromAToBOperatorProperties
 from asset_browser_utilities.catalog.operator.move_to import CatalogMoveOperatorProperties
 from asset_browser_utilities.catalog.operator.remove_from import CatalogRemoveFromOperatorProperties
@@ -39,6 +40,7 @@ class Cache(PropertyGroup):
     catalog_move_from_a_to_b_op: PointerProperty(type=CatalogMoveFromAToBOperatorProperties)
     catalog_move_op: PointerProperty(type=CatalogMoveOperatorProperties)
     catalog_remove_op: PointerProperty(type=CatalogRemoveFromOperatorProperties)
+    author_set_op: PointerProperty(type=AuthorSetOperatorProperties)
     
     selected_assets: PointerProperty(type=SelectedAssetFiles)
 
