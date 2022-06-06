@@ -3,6 +3,7 @@ from bpy.types import Operator, PropertyGroup
 from bpy.props import PointerProperty, BoolProperty
 
 from asset_browser_utilities.core.operator.tool import BatchExecute, BatchFolderOperator
+from asset_browser_utilities.core.cache.tool import get_current_operator_properties
 
 
 class BatchExecuteOverride(BatchExecute):
@@ -10,14 +11,14 @@ class BatchExecuteOverride(BatchExecute):
         if not self.assets:
             self.execute_next_blend()
             return
-
+        operator_properties = get_current_operator_properties()
         for asset in self.assets:
-            if asset.asset_data and not self.overwrite:
+            if asset.asset_data and not operator_properties.overwrite:
                 continue
             asset.asset_mark()
             asset.asset_generate_preview()
 
-        if self.generate_previews:
+        if operator_properties.generate_previews:
             bpy.app.timers.register(self.sleep_until_previews_are_done_and_execute_next_file)
         else:
             self.save_file()
@@ -42,9 +43,9 @@ class OperatorProperties(PropertyGroup):
         row.prop(self, "generate_previews", icon="RESTRICT_RENDER_OFF")
 
 
-class ASSET_OT_batch_mark(Operator, BatchFolderOperator):
+class ABU_OT_batch_mark(Operator, BatchFolderOperator):
     "Batch Mark Assets"
-    bl_idname = "asset.batch_mark"
+    bl_idname = "abu.batch_mark"
     bl_label = "Batch Mark Assets"
     bl_options = {"UNDO"}
 
