@@ -4,6 +4,7 @@ from asset_browser_utilities.catalog.operator.move_to import CatalogMoveOperator
 from asset_browser_utilities.catalog.operator.remove_from import CatalogRemoveFromOperatorProperties
 from asset_browser_utilities.core.operator.operation import OperationSettings
 from asset_browser_utilities.core.operator.prop import CurrentOperatorProperty
+from asset_browser_utilities.description.set import DescriptionSetOperatorProperties
 from asset_browser_utilities.preview.operator.generate import PreviewGenerateOperatorProperties
 from bpy.types import PropertyGroup
 from bpy.props import PointerProperty, BoolProperty
@@ -41,6 +42,7 @@ class Cache(PropertyGroup):
     catalog_move_op: PointerProperty(type=CatalogMoveOperatorProperties)
     catalog_remove_op: PointerProperty(type=CatalogRemoveFromOperatorProperties)
     author_set_op: PointerProperty(type=AuthorSetOperatorProperties)
+    description_set_op: PointerProperty(type=DescriptionSetOperatorProperties)
     
     selected_assets: PointerProperty(type=SelectedAssetFiles)
 

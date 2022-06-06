@@ -1,3 +1,4 @@
+from asset_browser_utilities.core.cache.tool import get_current_operator_properties
 from asset_browser_utilities.core.log.logger import Logger
 from bpy_extras.io_utils import ImportHelper
 from bpy.types import Operator, PropertyGroup
@@ -9,27 +10,27 @@ from asset_browser_utilities.core.operator.tool import BatchFolderOperator
 
 class BatchSetDescription(BatchExecute):
     def execute_one_file_and_the_next_when_finished(self):
+        description = get_current_operator_properties().description
         for asset in self.assets:
-            asset.asset_data.description = self.description
-            Logger.display("Added descripton {self.description} to {asset.name}")
+            asset.asset_data.description = description
+            Logger.display(f"Set {asset.name}'s description to '{description}'")
         self.save_file()
         self.execute_next_blend()
 
 
-class OperatorProperties(PropertyGroup):
+class DescriptionSetOperatorProperties(PropertyGroup):
     description: StringProperty(name="Description")
 
     def draw(self, layout):
         layout.prop(self, "description", icon="FILE_TEXT")
 
 
-class ASSET_OT_batch_set_description(Operator, BatchFolderOperator):
-    """Batch Set Description. Leave Field Empty to remove description"""
-
-    bl_idname = "asset.batch_set_description"
+class ABU_OT_description_set(Operator, BatchFolderOperator):
+    bl_idname = "abu.description_set"
     bl_label = "Batch Set Description"
+    bl_description= "Batch Set Description. Leave Field Empty to remove description"
 
-    operator_settings: PointerProperty(type=OperatorProperties)
+    operator_settings: PointerProperty(type=DescriptionSetOperatorProperties)
     logic_class = BatchSetDescription
 
     def invoke(self, context, event):
