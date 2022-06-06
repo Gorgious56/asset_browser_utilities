@@ -135,6 +135,7 @@ class BatchFolderOperator(ImportHelper):
     source: StringProperty()
     # https://docs.blender.org/api/current/bpy.types.OperatorFileListElement.html
     files: CollectionProperty(type=OperatorFileListElement, options={"HIDDEN", "SKIP_SAVE"})
+    logic_class = BatchExecute
 
     def _invoke(self, context, remove_backup=True, filter_assets=False, enforce_filebrowser=False):
         self.filter_assets = filter_assets

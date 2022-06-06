@@ -1,3 +1,4 @@
+from asset_browser_utilities.core.log.logger import Logger
 import bpy  # Do not remove even if it seems unused !!
 from bpy.types import PropertyGroup
 from bpy.props import (
@@ -147,6 +148,7 @@ class OperationSettings(PropertyGroup, CacheMapping):
                 operation_cls.OPERATION(assets, *values)
             else:
                 operation_cls.OPERATION(assets)
+            Logger.display(f"Successfully applied '{operation_cls.LABEL}' to assets : {list(assets)}")
 
     def copy_from(self, source):
         copy_simple_property_group(source, self)

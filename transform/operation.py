@@ -4,8 +4,16 @@ import bpy
 
 
 def apply_transforms(assets, loc=False, rot=False, scale=False):
-    with bpy.context.temp_override(selected_editable_objects=[a for a in assets if hasattr(a, "matrix_world")]):
-        bpy.ops.object.transform_apply(location=loc, rotation=rot, scale=scale)
+    if bpy.app.version >= (3, 2, 0):
+        with bpy.context.temp_override(selected_editable_objects=[a for a in assets if hasattr(a, "matrix_world")]):
+            bpy.ops.object.transform_apply(location=loc, rotation=rot, scale=scale)
+    else:
+        bpy.ops.object.transform_apply(
+            {"selected_editable_objects": [a for a in assets if hasattr(a, "matrix_world")]},
+            location=loc,
+            rotation=rot,
+            scale=scale,
+        )
 
 
 class ApplyTransformOperation:

@@ -6,8 +6,13 @@ def decimate(obj, tris, apply):
     mod = obj.modifiers.new(type="DECIMATE", name=mod_name)
     mod.ratio = tris / len(obj.data.polygons)
     if apply:
-        with bpy.context.temp_override(object=obj, view_layer=bpy.context.view_layer, scene=bpy.context.scene):
-            bpy.ops.object.modifier_apply(modifier=mod.name)
+        if bpy.app.version >= (3, 2, 0):
+            with bpy.context.temp_override(object=obj, view_layer=bpy.context.view_layer, scene=bpy.context.scene):
+                bpy.ops.object.modifier_apply(modifier=mod.name)
+        else:
+            bpy.ops.object.modifier_apply(
+                {"object": obj, "view_layer": bpy.context.view_layer, "scene": bpy.context.scene}, modifier=mod.name
+            )
 
 
 class DecimateOperation:
