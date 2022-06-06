@@ -5,7 +5,7 @@ from asset_browser_utilities.tag.tag_collection import TagCollection
 from asset_browser_utilities.filter.name import FilterName
 
 
-class AddOrRemoveTagsOperatorProperties(PropertyGroup):
+class TagAddOrRemoveOperatorProperties(PropertyGroup):
     tag_collection: PointerProperty(type=TagCollection)
     MAX_TAGS = 10
     filter_name: PointerProperty(type=FilterName)

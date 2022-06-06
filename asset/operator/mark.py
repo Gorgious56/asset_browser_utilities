@@ -25,7 +25,7 @@ class BatchExecuteOverride(BatchExecute):
             self.execute_next_blend()
 
 
-class OperatorProperties(PropertyGroup):
+class AssetMarkOperatorProperties(PropertyGroup):
     overwrite: BoolProperty(
         name="Overwrite assets",
         description="Check to re-mark assets and re-generate preview if the item is already an asset",
@@ -49,7 +49,7 @@ class ABU_OT_batch_mark(Operator, BatchFolderOperator):
     bl_label = "Batch Mark Assets"
     bl_options = {"UNDO"}
 
-    operator_settings: PointerProperty(type=OperatorProperties)
+    operator_settings: PointerProperty(type=AssetMarkOperatorProperties)
     logic_class = BatchExecuteOverride
 
     def invoke(self, context, event):

@@ -16,7 +16,7 @@ from asset_browser_utilities.core.operator.tool import BatchExecute, BatchFolder
 from asset_browser_utilities.core.console.builder import CommandBuilder
 
 
-class OperatorProperties(PropertyGroup):
+class AssetExportOperatorProperties(PropertyGroup):
     individual_files: BoolProperty(
         name="Place Assets in Individual Files",
         description="If this is ON, each asset will be exported to an individual file in the target directory",
@@ -37,7 +37,7 @@ class ABU_OT_batch_export(Operator, BatchFolderOperator):
     bl_idname = "abu.batch_export"
     bl_label = "Export Assets"
 
-    operator_settings: PointerProperty(type=OperatorProperties)
+    operator_settings: PointerProperty(type=AssetExportOperatorProperties)
     logic_class = BatchExecute
 
     def invoke(self, context, event):

@@ -100,7 +100,8 @@ class LibraryExportSettings(PropertyGroup, CacheMapping):
         if self.source == LibraryType.FileCurrent.value:
             return [bpy.data.filepath]
         elif self.source == LibraryType.FileExternal.value:
-            return [self.folder / filepath for filepath in self.files]
+            folder = Path(self.folder)
+            return [folder / filepath for filepath in self.files]
         elif self.source == LibraryType.FolderExternal.value:
             return get_blend_files_in_folder(self.folder, recursive=self.recursive)
         else:  # User Library

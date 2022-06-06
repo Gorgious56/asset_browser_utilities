@@ -1,6 +1,5 @@
 from asset_browser_utilities.core.cache.tool import get_current_operator_properties
 from asset_browser_utilities.core.log.logger import Logger
-from bpy_extras.io_utils import ImportHelper
 from bpy.types import Operator, PropertyGroup
 from bpy.props import PointerProperty, StringProperty
 

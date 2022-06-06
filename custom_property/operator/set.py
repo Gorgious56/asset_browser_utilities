@@ -21,7 +21,7 @@ class BatchExecuteOverride(BatchExecute):
         super().do_on_asset(asset)
 
 
-class SetCustomPropertyOperatorProperties(PropertyGroup):
+class CustomPropertySetOperatorProperties(PropertyGroup):
     name: StringProperty(name="Name", default="prop")
     type: EnumProperty(
         name="Type",
@@ -55,7 +55,7 @@ class ABU_OT_batch_set_custom_property(Operator, BatchFolderOperator):
     bl_idname = "abu.batch_set_custom_property"
     bl_label = "Set Custom Property"
 
-    operator_settings: PointerProperty(type=SetCustomPropertyOperatorProperties)
+    operator_settings: PointerProperty(type=CustomPropertySetOperatorProperties)
     logic_class = BatchExecuteOverride
 
     def invoke(self, context, event):

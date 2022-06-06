@@ -4,7 +4,7 @@ from bpy.types import Operator
 from bpy.props import PointerProperty
 
 from asset_browser_utilities.core.operator.tool import BatchExecute, BatchFolderOperator
-from asset_browser_utilities.tag.operator.tool import AddOrRemoveTagsOperatorProperties
+from asset_browser_utilities.tag.operator.tool import TagAddOrRemoveOperatorProperties
 
 
 class BatchExecuteOverride(BatchExecute):
@@ -21,7 +21,7 @@ class ABU_OT_batch_add_tags(Operator, BatchFolderOperator):
     bl_idname = "abu.batch_add_tags"
     bl_label = "Add tags"
 
-    operator_settings: PointerProperty(type=AddOrRemoveTagsOperatorProperties)
+    operator_settings: PointerProperty(type=TagAddOrRemoveOperatorProperties)
     logic_class = BatchExecuteOverride
 
     def invoke(self, context, event):

@@ -44,7 +44,7 @@ class BatchExecuteOverride(BatchExecute):
         super().do_on_asset(asset)
 
 
-class OperatorProperties(PropertyGroup):
+class AssetCopyOperatorProperties(PropertyGroup):
     tags: BoolProperty(name="Tags")
     custom_properties: BoolProperty(name="Custom Properties")
     preview: BoolProperty(name="Preview")
@@ -67,7 +67,7 @@ class ASSET_OT_copy_from_active(Operator, BatchFolderOperator):
     bl_idname = "abu.copy_from_active"
     bl_label = "Copy From Active"
 
-    operator_settings: PointerProperty(type=OperatorProperties)
+    operator_settings: PointerProperty(type=AssetCopyOperatorProperties)
     logic_class = BatchExecuteOverride
 
     def invoke(self, context, event):

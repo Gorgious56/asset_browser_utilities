@@ -12,7 +12,7 @@ class BatchExecuteOverride(BatchExecute):
         super().do_on_asset(asset)
 
 
-class OperatorProperties(PropertyGroup):
+class TagAddSmartOperatorProperties(PropertyGroup):
     operation: EnumProperty(name="Operation", items=[(s_t.value,) * 3 for s_t in SmartTag])
     custom_property_name: StringProperty(name="Custom Property Name")
     increment: IntProperty(min=1, default=500, name="Increment")
@@ -33,7 +33,7 @@ class ABU_OT_tags_add_smart(Operator, BatchFolderOperator):
     bl_idname = "abu.tags_add_smart"
     bl_label = "Add Smart Tags"
 
-    operator_settings: PointerProperty(type=OperatorProperties)
+    operator_settings: PointerProperty(type=TagAddSmartOperatorProperties)
     logic_class = BatchExecuteOverride
 
     def invoke(self, context, event):
