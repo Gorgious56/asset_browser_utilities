@@ -163,7 +163,8 @@ class BatchFolderOperator(ImportHelper):
         library_settings.files = self.files
         library_settings.filepath = self.filepath
 
-        get_from_cache(CurrentOperatorProperty).class_name = str(self.operator_settings.__class__)
+        if hasattr(self, "operator_settings"):
+            get_from_cache(CurrentOperatorProperty).class_name = str(self.operator_settings.__class__)
 
         save_if_possible_and_necessary()
         logic = self.logic_class()
