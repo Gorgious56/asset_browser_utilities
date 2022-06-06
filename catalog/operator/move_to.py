@@ -1,3 +1,4 @@
+from asset_browser_utilities.core.cache.tool import get_current_operator_properties
 from asset_browser_utilities.core.log.logger import Logger
 from bpy.types import Operator, PropertyGroup
 from bpy.props import PointerProperty, StringProperty
@@ -9,19 +10,19 @@ from asset_browser_utilities.catalog.tool import CatalogsHelper
 
 class BatchMoveToCatalog(BatchExecute):
     def execute_one_file_and_the_next_when_finished(self):
+        op_props = get_current_operator_properties()
         helper = CatalogsHelper()
-        uuid, tree, name = helper.get_catalog_info_from_line(self.catalog_line)
+        uuid, tree, name = helper.catalog_info_from_uuid(op_props.catalog.catalog)
         helper.ensure_catalog_exists(uuid, tree, name)
         for asset in self.assets:
             asset.asset_data.catalog_id = uuid
-            Logger.display(f"{asset.name} moved to catalog {uuid}")
+            Logger.display(f"'{asset.name}' moved to catalog '{name}'")
         self.save_file()
         self.execute_next_blend()
 
 
-class OperatorProperties(PropertyGroup):
+class CatalogMoveOperatorProperties(PropertyGroup):
     catalog: PointerProperty(type=FilterCatalog)
-    catalog_line: StringProperty()
 
     def draw(self, layout):
         box = layout.box()
@@ -30,18 +31,12 @@ class OperatorProperties(PropertyGroup):
         self.catalog.draw_filepath(box)
 
 
-class ASSET_OT_batch_move_to_catalog(Operator, BatchFolderOperator):
-    "Batch Move Assets To Catalog"
-    bl_idname = "asset.batch_move_to_catalog"
+class ABU_OT_catalog_move(Operator, BatchFolderOperator):
+    bl_idname = "abu.catalog_move"
     bl_label = "Batch Move To Catalog"
 
-    operator_settings: PointerProperty(type=OperatorProperties)
+    operator_settings: PointerProperty(type=CatalogMoveOperatorProperties)
     logic_class = BatchMoveToCatalog
 
     def invoke(self, context, event):
         return self._invoke(context, filter_assets=True)
-
-    def execute(self, context):
-        helper = CatalogsHelper()
-        self.operator_settings.catalog_line = helper.get_catalog_line_from_uuid(self.operator_settings.catalog.catalog)
-        return super().execute(context)

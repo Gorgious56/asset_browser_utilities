@@ -15,7 +15,7 @@ class CatalogsHelper:
         self.catalog_filepath = self.get_catalog_filepath()
 
     @classmethod
-    def get_catalog_info_from_line(cls, catalog_line):
+    def catalog_info_from_line(cls, catalog_line):
         return catalog_line.split(":")
 
     def get_catalog_filepath(self):
@@ -63,7 +63,7 @@ class CatalogsHelper:
             catalog_file.write("\n")
             catalog_file.write("VERSION 1\n")
             catalog_file.write("\n")
-        
+
         Logger.display(f"Created catalog definition file at {filepath}")
 
     def add_catalog_to_catalog_file(self, catalog_uuid, catalog_tree, catalog_name):
@@ -97,11 +97,11 @@ class CatalogsHelper:
         return uuid
 
     def is_catalog_in_catalog_file(self, uuid):
-        return self.get_catalog_info_from_uuid(uuid) is not None
+        return self.catalog_info_from_uuid(uuid) is not None
 
-    def get_catalog_info_from_uuid(self, uuid):
+    def catalog_info_from_uuid(self, uuid):
         for line in self.iterate_over_catalogs():
-            this_uuid, tree, name = self.get_catalog_info_from_line(line)
+            this_uuid, tree, name = self.catalog_info_from_line(line)
             if this_uuid == uuid:
                 return this_uuid, tree, name
 
@@ -111,9 +111,9 @@ class CatalogsHelper:
                 continue
             yield line.split("\n")[0]
 
-    def get_catalog_line_from_uuid(self, uuid):
+    def catalog_line_from_uuid(self, uuid):
         for line in self.iterate_over_catalogs():
-            this_uuid, _, _ = self.get_catalog_info_from_line(line)
+            this_uuid, _, _ = self.catalog_info_from_line(line)
             if this_uuid == uuid:
                 return line
 
@@ -123,7 +123,7 @@ class CatalogsHelper:
         catalogs = []
         if helper.has_catalogs:
             for line in helper.iterate_over_catalogs():
-                uuid, tree, name = helper.get_catalog_info_from_line(line)
+                uuid, tree, name = helper.catalog_info_from_line(line)
                 catalogs.append((uuid, tree, name))
         else:
             catalogs = [("",) * 3]
