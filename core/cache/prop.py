@@ -6,12 +6,12 @@ from bpy.props import PointerProperty, BoolProperty
 from asset_browser_utilities.filter.main import AssetFilterSettings
 from asset_browser_utilities.library.prop import LibraryExportSettings
 from asset_browser_utilities.catalog.prop import CatalogExportSettings
-from asset_browser_utilities.tag.smart_tag import SmartTagPG
 
 from asset_browser_utilities.asset.operator.mark import OperatorProperties as MarkOperatorProperties
 from asset_browser_utilities.asset.export.operator import OperatorProperties as ExportOperatorProperties
 from asset_browser_utilities.asset.operator.copy import OperatorProperties as CopyOperatorProperties
 from asset_browser_utilities.tag.operator.tool import AddOrRemoveTagsOperatorProperties
+from asset_browser_utilities.tag.operator.add_smart import OperatorProperties as AddSmartTagOperatorProperties
 from asset_browser_utilities.asset.prop import SelectedAssetFiles
 
 
@@ -20,12 +20,12 @@ class Cache(PropertyGroup):
     operation_settings: PointerProperty(type=OperationSettings)
     asset_filter_settings: PointerProperty(type=AssetFilterSettings)
     catalog_settings: PointerProperty(type=CatalogExportSettings)
-    smart_tag_settings: PointerProperty(type=SmartTagPG)
     
     current_op: PointerProperty(type=CurrentOperatorProperty)
     mark_op: PointerProperty(type=MarkOperatorProperties)
     copy_op: PointerProperty(type=CopyOperatorProperties)
     export_op: PointerProperty(type=ExportOperatorProperties)
+    smart_tag_op: PointerProperty(type=AddSmartTagOperatorProperties)
     add_or_remove_tag_op: PointerProperty(type=AddOrRemoveTagsOperatorProperties)
     
     selected_assets: PointerProperty(type=SelectedAssetFiles)

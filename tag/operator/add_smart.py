@@ -1,34 +1,36 @@
-from asset_browser_utilities.core.log.logger import Logger
+from asset_browser_utilities.core.cache.tool import get_current_operator_properties
 from bpy.types import Operator, PropertyGroup
-from bpy.props import PointerProperty
+from bpy.props import PointerProperty, EnumProperty, StringProperty, IntProperty
 
 from asset_browser_utilities.core.operator.tool import BatchExecute, BatchFolderOperator
-from asset_browser_utilities.tag.smart_tag import SmartTagPG, apply_smart_tag
-from asset_browser_utilities.core.tool import copy_simple_property_group
+from asset_browser_utilities.tag.smart_tag import SmartTag, apply_smart_tag
 
 
 class BatchExecuteOverride(BatchExecute):
-    def __init__(self, operator, context):
-        smart_tags_cache = SmartTagPG.get_from_cache()
-        copy_simple_property_group(operator.operator_settings.smart_tag, SmartTagPG.get_from_cache())
-        self.smart_tags = smart_tags_cache
-        super().__init__(operator, context)
-
     def do_on_asset(self, asset):
+        apply_smart_tag(asset, get_current_operator_properties())
         super().do_on_asset(asset)
-        apply_smart_tag(asset, self.smart_tags)
-        Logger.display(f"Added smart tag to {asset.name}")
 
 
 class OperatorProperties(PropertyGroup):
-    smart_tag: PointerProperty(type=SmartTagPG)
+    operation: EnumProperty(name="Operation", items=[(s_t.value,) * 3 for s_t in SmartTag])
+    custom_property_name: StringProperty(name="Custom Property Name")
+    increment: IntProperty(min=1, default=500, name="Increment")
+    round_mode: EnumProperty(name="Round", items=(("Up",) * 3, ("Down",) * 3))
 
-    def draw(self, layout):
-        self.smart_tag.draw(layout)
+    def draw(self, layout, context=None):
+        box = layout.box()
+        box.label(text="Smart Tag")
+        box.prop(self, "operation", text="")
+        if self.operation == SmartTag.CustomProperty.value:
+            box.prop(self, "custom_property_name")
+        if self.operation in (SmartTag.TriangleCount.value, SmartTag.VertexCount.value):
+            box.prop(self, "increment")
+            box.prop(self, "round_mode")
 
 
-class ASSET_OT_tags_add_smart(Operator, BatchFolderOperator):
-    bl_idname = "asset.tags_add_smart"
+class ABU_OT_tags_add_smart(Operator, BatchFolderOperator):
+    bl_idname = "abu.tags_add_smart"
     bl_label = "Add Smart Tags"
 
     operator_settings: PointerProperty(type=OperatorProperties)

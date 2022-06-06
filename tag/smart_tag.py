@@ -1,6 +1,7 @@
 from enum import Enum
 from os.path import getsize
 import math
+from asset_browser_utilities.core.log.logger import Logger
 from asset_browser_utilities.library.path import get_asset_filepath
 
 import bpy
@@ -11,6 +12,8 @@ from asset_browser_utilities.core.cache.tool import CacheMapping
 
 
 def get_triangle_count(asset, smart_tag):
+    if not hasattr(asset, "data") or asset.data is None or not hasattr(asset.data, "vertices"):
+        return ""
     if smart_tag.round_mode == "Up":
         op = math.ceil
         prefix = "< "
@@ -30,6 +33,8 @@ def get_triangle_count(asset, smart_tag):
 
 
 def get_vertex_count(asset, smart_tag):
+    if not hasattr(asset, "data") or asset.data is None or not hasattr(asset.data, "vertices"):
+        return ""
     if smart_tag.round_mode == "Up":
         op = math.ceil
         prefix = "< "
@@ -44,6 +49,8 @@ def get_vertex_count(asset, smart_tag):
 
 
 def get_dimensions(asset, smart_tag):
+    if not hasattr(asset, "dimensions"):
+        return ""
     ret = "Dim. : "
     for i, axis in enumerate(("X", "Y", "Z")):
         ret += f"{round(asset.dimensions[i], 3)}m"
@@ -53,6 +60,8 @@ def get_dimensions(asset, smart_tag):
 
 
 def get_scale(asset, smart_tag):
+    if not hasattr(asset, "scale"):
+        return ""
     ret = "Scale : "
     for i, axis in enumerate(("X", "Y", "Z")):
         ret += f"{round(asset.scale[i], 3)}"
@@ -82,28 +91,10 @@ class SmartTag(Enum):
             return get_scale
 
 
-class SmartTagPG(PropertyGroup, CacheMapping):
-    CACHE_MAPPING = "smart_tag_settings"
-
-    operation: EnumProperty(name="Operation", items=[(s_t.value,) * 3 for s_t in SmartTag])
-    custom_property_name: StringProperty(name="Custom Property Name")
-    increment: IntProperty(min=1, default=500, name="Increment")
-    round_mode: EnumProperty(name="Round", items=(("Up",) * 3, ("Down",) * 3))
-
-    def draw(self, layout, context=None):
-        box = layout.box()
-        box.label(text="Smart Tag")
-        box.prop(self, "operation", text="")
-        if self.operation == SmartTag.CustomProperty.value:
-            box.prop(self, "custom_property_name")
-        if self.operation in (SmartTag.TriangleCount.value, SmartTag.VertexCount.value):
-            box.prop(self, "increment")
-            box.prop(self, "round_mode")
-
-
 def apply_smart_tag(asset, smart_tag):
     asset_data = asset.asset_data
     asset_tags = asset_data.tags
     tag = SmartTag.operation(smart_tag.operation)(asset, smart_tag)
-    if tag is not None:
+    if tag is not None and tag != "":
         asset_tags.new(str(tag), skip_if_exists=True)
+        Logger.display(f"Added smart tag '{tag}' to '{asset.name}'")
