@@ -1,6 +1,8 @@
 from pathlib import Path
 import os
-from asset_browser_utilities.core.cache.tool import get_from_cache
+from asset_browser_utilities.core.cache.tool import get_current_operator_properties, get_from_cache
+from asset_browser_utilities.file.save import save_if_possible_and_necessary
+from asset_browser_utilities.filter.main import AssetFilterSettings
 from asset_browser_utilities.library.prop import LibraryExportSettings
 
 import bpy
@@ -42,6 +44,8 @@ class ABU_OT_batch_export(Operator, BatchFolderOperator):
         return self._invoke(context, filter_assets=True, enforce_filebrowser=True)
     
     def execute(self, context):
+        self.write_filepath_to_cache()
+        save_if_possible_and_necessary()
         self.populate_asset_and_asset_names()
         if len(self.asset_names) > 0:
             self.execute_in_new_blender_instance()
@@ -50,6 +54,7 @@ class ABU_OT_batch_export(Operator, BatchFolderOperator):
         return {"FINISHED"}
     
     def execute_in_new_blender_instance(self):
+        current_operator_properties = get_current_operator_properties()
         caller = CommandBuilder(Path(os.path.realpath(__file__)))
         for name in self.asset_names:
             caller.add_arg_value("asset_names", name)
@@ -59,12 +64,12 @@ class ABU_OT_batch_export(Operator, BatchFolderOperator):
         caller.add_arg_value("filepath", self.filepath)
         caller.add_arg_value("folder", str(get_folder_from_path(self.filepath)))
         caller.add_arg_value("remove_backup", get_from_cache(LibraryExportSettings).remove_backup)
-        caller.add_arg_value("overwrite", self.operator_settings.overwrite)
-        caller.add_arg_value("individual_files", self.operator_settings.individual_files)
+        caller.add_arg_value("overwrite", current_operator_properties.overwrite)
+        caller.add_arg_value("individual_files", current_operator_properties.individual_files)
         caller.call()
     
     def populate_asset_and_asset_names(self):
-        assets = self.asset_filter_settings.get_objects_that_satisfy_filters()
+        assets = get_from_cache(AssetFilterSettings).get_objects_that_satisfy_filters()
         self.asset_names = [a.name for a in assets]
         self.asset_types = [get_blend_library_name(a) for a in assets]
 

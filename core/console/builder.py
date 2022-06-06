@@ -4,9 +4,11 @@ from collections import defaultdict
 
 
 class CommandBuilder:
-    def __init__(self, script_filepath) -> None:
+    def __init__(self, script_filepath, script_name=None) -> None:
+        if script_name is None:
+            script_name = "command"
         directory = script_filepath.parent
-        self.command_path = directory / "command.py"
+        self.command_path = directory / (script_name + ".py")
         self.expression = ""
         self.args = defaultdict(list)
 

@@ -1,3 +1,4 @@
+from pathlib import Path
 from asset_browser_utilities.core.log.logger import Logger
 from asset_browser_utilities.file.path import is_this_current_file
 import bpy
@@ -25,6 +26,8 @@ def get_blend_library_name(asset):
 
 
 def get_blend_files_in_folder(folder, recursive):
+    if isinstance(folder, str):
+        folder = Path(folder)
     if recursive:
         return [fp for fp in folder.glob("**/*.blend") if fp.is_file()]
     else:

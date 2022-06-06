@@ -1,4 +1,5 @@
-from asset_browser_utilities.core.operator.prop  import CurrentOperatorProperty
+from asset_browser_utilities.asset.prop import SelectedAssetFiles
+from asset_browser_utilities.core.operator.prop import CurrentOperatorProperty
 from asset_browser_utilities.core.log.logger import Logger
 
 from asset_browser_utilities.core.operator.operation import OperationSettings
@@ -137,13 +138,23 @@ class BatchFolderOperator(ImportHelper):
 
     def _invoke(self, context, remove_backup=True, filter_assets=False, enforce_filebrowser=False):
         self.filter_assets = filter_assets
+
         update_preset(self, context)
+
         get_from_cache(OperationSettings).init()
+
+        if hasattr(self, "operator_settings"):
+            get_from_cache(CurrentOperatorProperty).class_name = str(self.operator_settings.__class__)
 
         library_settings = get_from_cache(LibraryExportSettings)
         library_settings.init(remove_backup=remove_backup)
-        library_settings.source = self.source
+        if self.source != "":
+            library_settings.source = self.source
 
+        selected_asset_files_prop = get_from_cache(SelectedAssetFiles)
+        selected_asset_files_prop.init()
+        for selected_asset_file in bpy.context.selected_asset_files:
+            selected_asset_files_prop.add(selected_asset_file.id_type, selected_asset_file.local_id)
 
         if library_settings.source in (LibraryType.FolderExternal.value, LibraryType.FileExternal.value):
             self.filter_glob = "*.blend" if library_settings.source == LibraryType.FileExternal.value else ""
@@ -156,16 +167,13 @@ class BatchFolderOperator(ImportHelper):
             else:
                 return context.window_manager.invoke_props_dialog(self)
 
-    def execute(self, context):
-        # We write settings to cache in addon properties because this instance's properties are lost on new file load
-
+    def write_filepath_to_cache(self):
         library_settings = get_from_cache(LibraryExportSettings)
         library_settings.files = self.files
         library_settings.filepath = self.filepath
 
-        if hasattr(self, "operator_settings"):
-            get_from_cache(CurrentOperatorProperty).class_name = str(self.operator_settings.__class__)
-
+    def execute(self, context):
+        self.write_filepath_to_cache()
         save_if_possible_and_necessary()
         logic = self.logic_class()
         logic.execute_next_blend()
