@@ -3,6 +3,7 @@ from pathlib import Path
 from asset_browser_utilities.core.prop import StrProperty
 from asset_browser_utilities.core.tool import copy_simple_property_group
 from asset_browser_utilities.core.cache.tool import CacheMapping, get_from_cache
+from asset_browser_utilities.filter.name import FilterName
 from asset_browser_utilities.library.tool import get_blend_files_in_folder
 
 import bpy
@@ -48,6 +49,7 @@ class LibraryExportSettings(PropertyGroup, CacheMapping):
     files_prop: CollectionProperty(type=StrProperty)
     folder_prop: PointerProperty(type=StrProperty)
     filepath_prop: PointerProperty(type=StrProperty)
+    filter_files_names: PointerProperty(type=FilterName)
 
     @property
     def files(self):
@@ -71,7 +73,7 @@ class LibraryExportSettings(PropertyGroup, CacheMapping):
         if folder.is_file():
             folder = folder.parent
         self.folder_prop.name = str(folder)
-    
+
     @property
     def folder(self):
         return self.folder_prop.name
@@ -83,7 +85,9 @@ class LibraryExportSettings(PropertyGroup, CacheMapping):
     def draw(self, layout, context):
         if self.source == LibraryType.FileCurrent.value:
             return
-        elif self.source == LibraryType.FolderExternal.value:
+
+        self.filter_files_names.draw(layout, name_override="Selected Files")
+        if self.source == LibraryType.FolderExternal.value:
             layout.prop(self, "recursive", icon="FOLDER_REDIRECT")
         elif self.source == LibraryType.UserLibrary.value:
             box = layout.box()
@@ -97,16 +101,19 @@ class LibraryExportSettings(PropertyGroup, CacheMapping):
         copy_simple_property_group(other, self)
 
     def get_blend_files(self):
+        files = []
         if self.source == LibraryType.FileCurrent.value:
-            return [bpy.data.filepath]
+            files = [Path(bpy.data.filepath)]
         elif self.source == LibraryType.FileExternal.value:
             folder = Path(self.folder)
-            return [folder / filepath for filepath in self.files]
+            files = [folder / filepath for filepath in self.files]
         elif self.source == LibraryType.FolderExternal.value:
-            return get_blend_files_in_folder(self.folder, recursive=self.recursive)
+            files = get_blend_files_in_folder(self.folder, recursive=self.recursive)
         else:  # User Library
             self.folder = Path(self.library_user_path)
-            return get_blend_files_in_folder(self.folder, recursive=True)
+            files = get_blend_files_in_folder(self.folder, recursive=True)
+        files = [f for f in files if self.filter_files_names.filter(f.stem)]
+        return files
 
     def __str__(self) -> str:
         ret = "Files Cache \n"

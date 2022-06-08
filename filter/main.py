@@ -67,7 +67,7 @@ If unchecked, items that are not yet assets will be exported and marked as asset
     def draw(self, layout, context):
         self.filter_selection.draw(layout)
         self.filter_types.draw(layout)
-        self.filter_name.draw(layout)
+        self.filter_name.draw(layout, name_override="Assets")
         if self.filter_catalog.allow:
             self.filter_catalog.draw(layout, context)
 
