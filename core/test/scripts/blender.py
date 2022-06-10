@@ -1,18 +1,15 @@
-import bpy
-
 from asset_browser_utilities.core.console.parser import ArgumentsParser
 
-import asset_browser_utilities.module.asset.test.mark
+import asset_browser_utilities.module.asset.test.mark as mark
+import asset_browser_utilities.module.asset.test.unmark as unmark
 
+import bpy
 from inspect import getmembers, isfunction
 
-
-def purge():
-    bpy.data.batch_remove(bpy.data.objects)
-    bpy.data.batch_remove(bpy.data.meshes)
-
-
-_test_modules = (asset_browser_utilities.module.asset.test.mark,)
+_test_modules = (
+    mark,
+    unmark,
+)
 
 
 if __name__ == "__main__":

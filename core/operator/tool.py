@@ -40,7 +40,7 @@ class BatchExecute:
                     open_file_if_different_from_current(str(library_export_settings.filepath_start))
                 # Wait a little bit for context to initialize
                 bpy.app.timers.register(lambda: message_box(message="Work completed !"), first_interval=self.INTERVAL)
-                bpy.app.timers.register(self.callback, first_interval=self.INTERVAL)
+            bpy.app.timers.register(self.callback, first_interval=self.INTERVAL)
             return
         Logger.display(f"{len(self.blends)} file{'s' if len(self.blends) > 1 else ''} left")
         self.open_next_blend()
