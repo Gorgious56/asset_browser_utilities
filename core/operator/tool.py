@@ -21,46 +21,39 @@ from asset_browser_utilities.module.preview.tool import can_preview_be_generated
 
 
 class BatchExecute:
-    INTERVAL = 0.2
-    last_check = 10e100
+    INTERVAL = 0.01
+    INTERVAL_PREVIEW = 0.2
 
     def __init__(self):
         self.blends = get_from_cache(LibraryExportSettings).get_blend_files()
         self.blend = None
         self.assets = []
 
-    def callback(self, context):
-        [a.tag_redraw() for a in context.screen.areas if a.ui_type == "ASSETS" and hasattr(context, "screen")]
+    def callback(self):
+        [a.tag_redraw() for a in bpy.context.screen.areas if a.ui_type == "ASSETS" and hasattr(bpy.context, "screen")]
 
     def execute_next_blend(self):
-        context = bpy.context
+        library_export_settings = get_from_cache(LibraryExportSettings)
         if not self.blends:
-            print("Work completed")
             if not bpy.app.background:
-                message_box(message="Work completed !")
-                self.callback(context)
+                if library_export_settings.filepath_start != "":
+                    open_file_if_different_from_current(str(library_export_settings.filepath_start))
+                # Wait a little bit for context to initialize
+                bpy.app.timers.register(lambda: message_box(message="Work completed !"), first_interval=self.INTERVAL)
+                bpy.app.timers.register(self.callback, first_interval=self.INTERVAL)
             return
         Logger.display(f"{len(self.blends)} file{'s' if len(self.blends) > 1 else ''} left")
         self.open_next_blend()
-        if get_from_cache(LibraryExportSettings).source == LibraryType.FileCurrent.value:
+        if library_export_settings.source == LibraryType.FileCurrent.value:
             self.assets = get_from_cache(AssetFilterSettings).get_objects_that_satisfy_filters()
             get_from_cache(OperationSettings).execute(self.assets)
 
             self.execute_one_file_and_the_next_when_finished()
         else:
-            if hasattr(context, "temp_override"):
-                window = context.window_manager.windows[0]
-                with context.temp_override(window=window):
-                    self.assets = get_from_cache(AssetFilterSettings).get_objects_that_satisfy_filters()
-                    get_from_cache(OperationSettings).execute(self.assets)
-
-                    self.execute_one_file_and_the_next_when_finished()
-            else:  # For Blender < 3.2
-                self.assets = get_from_cache(AssetFilterSettings).get_objects_that_satisfy_filters()
-                get_from_cache(OperationSettings).execute(self.assets)
-
-                # Give slight delay otherwise stack overflow
-                bpy.app.timers.register(self.execute_one_file_and_the_next_when_finished, first_interval=self.INTERVAL)
+            self.assets = get_from_cache(AssetFilterSettings).get_objects_that_satisfy_filters()
+            get_from_cache(OperationSettings).execute(self.assets)
+            # Wait a little bit for context to initialize
+            bpy.app.timers.register(self.execute_one_file_and_the_next_when_finished, first_interval=self.INTERVAL)
 
     def save_file(self):
         save_file_as(str(self.blend), remove_backup=get_from_cache(LibraryExportSettings).remove_backup)
@@ -74,7 +67,7 @@ class BatchExecute:
             if not can_preview_be_generated(self.assets[0]) or is_preview_generated(self.assets[0]):
                 self.assets.pop(0)
             else:
-                return self.INTERVAL
+                return self.INTERVAL_PREVIEW
         self.save_file()
         self.execute_next_blend()
         return None
@@ -167,6 +160,7 @@ class BatchFolderOperator(ImportHelper):
         library_settings.init(remove_backup=remove_backup)
         if self.source != "":
             library_settings.source = self.source
+        library_settings.filepath_start = bpy.data.filepath
         return library_settings
 
     def init_selected_asset_files(self, context):

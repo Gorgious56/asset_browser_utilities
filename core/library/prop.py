@@ -8,7 +8,7 @@ from asset_browser_utilities.core.library.tool import get_blend_files_in_folder
 
 import bpy
 from bpy.types import PropertyGroup
-from bpy.props import BoolProperty, EnumProperty, PointerProperty, CollectionProperty
+from bpy.props import BoolProperty, EnumProperty, PointerProperty, CollectionProperty, StringProperty
 
 
 class LibraryType(Enum):
@@ -47,8 +47,9 @@ class LibraryExportSettings(PropertyGroup, CacheMapping):
     )
     remove_backup_allow: BoolProperty()
     files_prop: CollectionProperty(type=StrProperty)
-    folder_prop: PointerProperty(type=StrProperty)
-    filepath_prop: PointerProperty(type=StrProperty)
+    folder: StringProperty()
+    filepath_prop: StringProperty()
+    filepath_start: StringProperty()
     filter_files_names: PointerProperty(type=FilterName)
 
     @property
@@ -64,19 +65,15 @@ class LibraryExportSettings(PropertyGroup, CacheMapping):
 
     @property
     def filepath(self):
-        return self.filepath_prop.name
+        return str(self.filepath_prop)
 
     @filepath.setter
     def filepath(self, value):
-        self.filepath_prop.name = value
-        folder = Path(self.filepath_prop.name)
+        self.filepath_prop = value
+        folder = Path(self.filepath_prop)
         if folder.is_file():
             folder = folder.parent
-        self.folder_prop.name = str(folder)
-
-    @property
-    def folder(self):
-        return self.folder_prop.name
+        self.folder = str(folder)
 
     def init(self, remove_backup=False):
         self.remove_backup_allow = remove_backup

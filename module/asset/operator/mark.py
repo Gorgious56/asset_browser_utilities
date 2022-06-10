@@ -18,7 +18,8 @@ class AssetMarkBatchExecute(BatchExecute):
                 Logger.display(f"Asset '{asset.name}' already marked")
                 continue
             asset.asset_mark()
-            asset.asset_generate_preview()
+            if operator_properties.generate_previews:
+                asset.asset_generate_preview()
             Logger.display(f"Asset '{asset.name}' marked")
 
         if operator_properties.generate_previews:
