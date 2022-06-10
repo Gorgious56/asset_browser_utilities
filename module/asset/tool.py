@@ -10,4 +10,4 @@ def is_asset(obj):
 
 
 def all_assets():
-    return [o for o in bpy.data.objects if is_asset(o)]
+    return [o.name for o in bpy.data.objects if is_asset(o)]

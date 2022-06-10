@@ -68,14 +68,14 @@ def test_marking_different_asset_types_in_current_file(filepath):
             if "bpy_prop_collection" in str(type(container)):
                 if d == asset_type:
                     for asset in container:
-                        if asset in assets_start:
+                        if asset.name in assets_start:
                             continue
-                        assert is_asset(asset), f"'bpy.data.{asset_type}.{asset.name}' should be an asset."
+                        assert is_asset(asset), f"'bpy.data.{d}.{asset.name}' should be an asset."
                 else:
                     for asset in container:
-                        if asset in assets_start:
+                        if asset.name in assets_start:
                             continue
-                        assert not is_asset(asset), f"'bpy.data.{asset_type}.{asset.name}' should not be an asset."
+                        assert not is_asset(asset), f"'bpy.data.{d}.{asset.name}' should not be an asset."
 
 
 def test_marking_different_object_types_in_current_file(filepath):
@@ -100,7 +100,7 @@ def test_marking_different_object_types_in_current_file(filepath):
         execute_logic()
 
         for obj in bpy.data.objects:
-            if obj in assets_start:
+            if obj.name in assets_start:
                 continue
             if obj.type == object_type:
                 assert is_asset(obj)

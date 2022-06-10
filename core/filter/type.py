@@ -11,15 +11,13 @@ asset_types = [
     ("worlds", "Worlds", "Worlds", "WORLD", 2 ** next(flags_enum)),
 ]
 if bpy.app.version >= (3, 1, 0):
-    asset_types.extend(
-        (
-            ("node_groups", "Node Trees", "Node Trees", "NODETREE", 2 ** next(flags_enum)),
-            ("collections", "Collections", "Collections", "OUTLINER_COLLECTION", 2 ** next(flags_enum)),
-        )
-    )
+    asset_types.append(("node_groups", "Node Trees", "Node Trees", "NODETREE", 2 ** next(flags_enum)))
 if bpy.app.version >= (3, 2, 0):
+    asset_types.append(("collections", "Collections", "Collections", "OUTLINER_COLLECTION", 2 ** next(flags_enum)))
+if bpy.app.version >= (3, 3, 0):
     asset_types.extend(
         (
+            ("hair_curves", "Hairs", "Hairs", "CURVES_DATA", 2 ** next(flags_enum)),
             ("brushes", "Brushes", "Brushes", "BRUSH_DATA", 2 ** next(flags_enum)),
             ("cache_files", "Cache Files", "Cache Files", "FILE_CACHE", 2 ** next(flags_enum)),
             ("linestyles", "Freestyle Linestyles", "", "LINE_DATA", 2 ** next(flags_enum)),
@@ -37,8 +35,6 @@ if bpy.app.version >= (3, 2, 0):
             ("workspaces", "Workspaces", "Workspaces", "WORKSPACE", 2 ** next(flags_enum)),
         )
     )
-if bpy.app.version >= (3, 3, 0):
-    asset_types.extend((("hair_curves", "Hairs", "Hairs", "CURVES_DATA", 2 ** next(flags_enum)),))
 asset_types.sort(key=lambda t: t[0])
 
 
