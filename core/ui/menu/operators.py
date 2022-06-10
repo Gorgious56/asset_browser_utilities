@@ -1,4 +1,4 @@
-from asset_browser_utilities.library.prop import LibraryType
+from asset_browser_utilities.core.library.prop import LibraryType
 
 
 class ABUOperatorsMenu:

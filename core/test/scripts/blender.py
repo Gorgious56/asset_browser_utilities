@@ -2,7 +2,7 @@ import bpy
 
 from asset_browser_utilities.core.console.parser import ArgumentsParser
 
-import asset_browser_utilities.asset.test.mark
+import asset_browser_utilities.module.asset.test.mark
 
 from inspect import getmembers, isfunction
 
@@ -12,7 +12,7 @@ def purge():
     bpy.data.batch_remove(bpy.data.meshes)
 
 
-_test_modules = (asset_browser_utilities.asset.test.mark,)
+_test_modules = (asset_browser_utilities.module.asset.test.mark,)
 
 
 if __name__ == "__main__":

@@ -1,4 +1,4 @@
-from asset_browser_utilities.asset.prop import SelectedAssetFiles
+from asset_browser_utilities.module.asset.prop import SelectedAssetFiles
 from asset_browser_utilities.core.operator.prop import CurrentOperatorProperty
 from asset_browser_utilities.core.log.logger import Logger
 
@@ -13,11 +13,11 @@ from bpy_extras.io_utils import ImportHelper
 from asset_browser_utilities.core.tool import copy_simple_property_group
 from asset_browser_utilities.core.cache.tool import get_presets, get_from_cache
 from asset_browser_utilities.core.ui.message import message_box
-from asset_browser_utilities.file.path import open_file_if_different_from_current
-from asset_browser_utilities.file.save import save_if_possible_and_necessary, save_file_as
-from asset_browser_utilities.filter.main import AssetFilterSettings
-from asset_browser_utilities.library.prop import LibraryExportSettings, LibraryType
-from asset_browser_utilities.preview.tool import can_preview_be_generated, is_preview_generated
+from asset_browser_utilities.core.file.path import open_file_if_different_from_current
+from asset_browser_utilities.core.file.save import save_if_possible_and_necessary, save_file_as
+from asset_browser_utilities.core.filter.main import AssetFilterSettings
+from asset_browser_utilities.core.library.prop import LibraryExportSettings, LibraryType
+from asset_browser_utilities.module.preview.tool import can_preview_be_generated, is_preview_generated
 
 
 class BatchExecute:

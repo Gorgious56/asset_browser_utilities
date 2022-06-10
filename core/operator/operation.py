@@ -11,7 +11,7 @@ from bpy.props import (
 )
 from asset_browser_utilities.core.tool import copy_simple_property_group
 from asset_browser_utilities.core.cache.tool import CacheMapping
-from asset_browser_utilities.transform.operation import (
+from asset_browser_utilities.module.transform.operation import (
     ApplyTransformOperation,
     ApplyLocationOperation,
     ApplyScaleOperation,
@@ -20,8 +20,8 @@ from asset_browser_utilities.transform.operation import (
     ScaleOperation,
     RotateOperation,
 )
-from asset_browser_utilities.mesh.operation import DecimateOperation
-from asset_browser_utilities.asset.operation import RenameAssetOperation, RenameDataOperation, RenameMaterialOperation
+from asset_browser_utilities.module.mesh.operation import DecimateOperation
+from asset_browser_utilities.module.asset.operation import RenameAssetOperation, RenameDataOperation, RenameMaterialOperation
 
 
 class NONE_OPERATION:
