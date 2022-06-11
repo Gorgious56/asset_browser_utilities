@@ -1,4 +1,5 @@
 from asset_browser_utilities.core.log.logger import Logger
+from asset_browser_utilities.module.preview.tool import can_preview_be_generated
 import bpy
 from bpy.types import Operator, PropertyGroup
 from bpy.props import PointerProperty, BoolProperty
@@ -18,7 +19,7 @@ class AssetMarkBatchExecute(BatchExecute):
                 Logger.display(f"Asset '{asset.name}' already marked")
                 continue
             asset.asset_mark()
-            if operator_properties.generate_previews:
+            if operator_properties.generate_previews and can_preview_be_generated(asset):
                 asset.asset_generate_preview()
             Logger.display(f"Asset '{asset.name}' marked")
 

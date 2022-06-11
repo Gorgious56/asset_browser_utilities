@@ -7,8 +7,10 @@ from asset_browser_utilities.core.operator.tool import BatchExecute, BatchFolder
 class AssetUnmarkBatchExecute(BatchExecute):
     def do_on_asset(self, asset):
         super().do_on_asset(asset)
-        asset.asset_clear()
-        Logger.display(f"Unmarked asset '{asset.name}'")
+        if asset.asset_data:
+            asset.asset_clear()
+            Logger.display(f"{repr(asset)} Unmarked")
+
 
 class ASSET_OT_batch_unmark(Operator, BatchFolderOperator):
     bl_idname = "asset.batch_unmark"

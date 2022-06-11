@@ -1,4 +1,5 @@
 from asset_browser_utilities.core.cache.tool import get_current_operator_properties, get_from_cache
+from asset_browser_utilities.core.log.logger import Logger
 from asset_browser_utilities.module.preview.tool import can_preview_be_generated
 from bpy.types import Operator, PropertyGroup
 from bpy.props import PointerProperty, BoolProperty
@@ -8,38 +9,42 @@ from asset_browser_utilities.module.custom_property.tool import copy_prop
 from asset_browser_utilities.module.asset.prop import SelectedAssetFiles
 
 
-class BatchExecuteOverride(BatchExecute):
-    def __init__(self):
-        self.active_asset = get_from_cache(SelectedAssetFiles).active_asset
-        super().__init__()
-
+class AssetCopyExecuteOverride(BatchExecute):
     def do_on_asset(self, asset):
         operator_properties = get_current_operator_properties()
-        if asset == self.active_asset:
+        active_asset = get_from_cache(SelectedAssetFiles).active_asset
+        if asset == active_asset:
             return
-        asset_data_source = self.active_asset.asset_data
+        asset_data_source = active_asset.asset_data
         asset_data_target = asset.asset_data
+        log_data = []
         if operator_properties.tags:
             tags_source = asset_data_target.tags
             for tag in asset_data_source.tags:
                 tags_source.new(name=tag.name, skip_if_exists=True)
+            log_data.append("tags")
         if operator_properties.custom_properties:
             for prop_name in asset_data_source.keys():
                 copy_prop(asset_data_source, asset_data_target, prop_name)
-        if operator_properties.preview and can_preview_be_generated(asset):
-            source_preview = self.active_asset.preview
+            log_data.append("custom properties")
+        if operator_properties.preview:
+            source_preview = active_asset.preview
             if source_preview is not None:
                 asset_preview = asset.preview
-                if asset_preview is None:
-                    asset.asset_generate_preview()
-                if asset_preview is not None:
-                    asset_preview.image_pixels.foreach_set(source_preview.image_pixels)
+                asset_preview.image_size = source_preview.image_size
+                asset_preview.image_pixels.foreach_set(source_preview.image_pixels)
+                log_data.append("preview")
         if operator_properties.catalog:
             asset_data_target.catalog_id = asset_data_source.catalog_id
+            log_data.append("catalog")
         if operator_properties.author:
             asset_data_target.author = asset_data_source.author
+            log_data.append("author")
         if operator_properties.description:
             asset_data_target.description = asset_data_source.description
+            log_data.append("description")
+        props = ", ".join(log_data)
+        Logger.display(f"Copied {props} from '{repr(active_asset)}' to '{repr(asset)}'")
 
         super().do_on_asset(asset)
 
@@ -68,7 +73,7 @@ class ASSET_OT_copy_from_active(Operator, BatchFolderOperator):
     bl_label = "Copy From Active"
 
     operator_settings: PointerProperty(type=AssetCopyOperatorProperties)
-    logic_class = BatchExecuteOverride
+    logic_class = AssetCopyExecuteOverride
 
     def invoke(self, context, event):
         return self._invoke(context, filter_assets=True)
