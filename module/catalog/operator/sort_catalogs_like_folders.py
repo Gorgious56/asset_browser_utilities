@@ -9,7 +9,7 @@ from bpy.props import PointerProperty, PointerProperty, BoolProperty
 from asset_browser_utilities.core.operator.tool import BatchExecute, BatchFolderOperator
 
 
-class BatchExecuteOverride(BatchExecute):
+class CatalogSortLikeFoldersBatchExecute(BatchExecute):
     def __init__(self, operator, context):
         super().__init__(operator, context)
 
@@ -38,7 +38,7 @@ class BatchExecuteOverride(BatchExecute):
         else:
             changed_file = False
             for asset in self.assets:
-                Logger.display(f"{asset.name} has been moved to catalog {uuid}")
+                Logger.display(f"{repr(asset)} has been moved to catalog {uuid}")
                 asset_data = asset.asset_data
                 if asset_data.catalog_id != uuid:
                     asset_data.catalog_id = uuid
@@ -63,7 +63,7 @@ class ABU_OT_sort_catalogs_like_folders(Operator, BatchFolderOperator):
     bl_label = "Create Folder Structure"
 
     operator_settings: PointerProperty(type=OperatorProperties)
-    logic_class = BatchExecuteOverride
+    logic_class = CatalogSortLikeFoldersBatchExecute
 
     def invoke(self, context, event):
         return self._invoke(context, filter_assets=True)

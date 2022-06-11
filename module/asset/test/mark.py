@@ -15,7 +15,7 @@ from asset_browser_utilities.module.asset.operator.mark import AssetMarkBatchExe
 from asset_browser_utilities.module.asset.tool import all_assets_container_and_name
 
 
-def setup_current_operator_():
+def setup_and_get_current_operator_():
     return setup_and_get_current_operator("mark_op")
 
 
@@ -23,7 +23,7 @@ def test_marking_all_assets_in_current_file(filepath):
     bpy.ops.wm.open_mainfile(filepath=str(filepath))
 
     set_library_export_source(LibraryType.FileCurrent.value)
-    op_props = setup_current_operator_()
+    op_props = setup_and_get_current_operator_()
     op_props.generate_previews = False
 
     asset_filter_settings = get_asset_filter_settings()
@@ -52,7 +52,7 @@ def test_marking_different_asset_types_in_current_file(filepath):
 
         set_library_export_source(LibraryType.FileCurrent.value)
 
-        op_props = setup_current_operator_()
+        op_props = setup_and_get_current_operator_()
         op_props.generate_previews = False
 
         asset_filter_settings = get_asset_filter_settings()
@@ -86,7 +86,7 @@ def test_marking_different_object_types_in_current_file(filepath):
 
         set_library_export_source(LibraryType.FileCurrent.value)
 
-        op_props = setup_current_operator_()
+        op_props = setup_and_get_current_operator_()
         op_props.generate_previews = False
 
         asset_filter_settings = get_asset_filter_settings()

@@ -8,7 +8,7 @@ from asset_browser_utilities.core.filter.catalog import FilterCatalog
 from asset_browser_utilities.module.catalog.tool import CatalogsHelper
 
 
-class BatchMoveFromCatalogToCatalog(BatchExecute):
+class CatalogMoveFromAToBBatchExecute(BatchExecute):
     def execute_one_file_and_the_next_when_finished(self):
         op_props = get_current_operator_properties()
         helper = CatalogsHelper()
@@ -20,7 +20,7 @@ class BatchMoveFromCatalogToCatalog(BatchExecute):
                 asset_data = asset.asset_data
                 if asset_data.catalog_id == uuid_from:
                     asset_data.catalog_id = uuid_to
-                    Logger.display(f"'{asset.name}' moved from catalog '{name_from}' to catalog '{name_to}'")
+                    Logger.display(f"{repr(asset)} moved from catalog '{name_from}' to catalog '{name_to}'")
             self.save_file()
         self.execute_next_blend()
 
@@ -46,7 +46,7 @@ class ABU_OT_catalog_move_from_a_to_b(Operator, BatchFolderOperator):
     bl_label = "Batch Move Assets From One Catalog to Another One"
 
     operator_settings: PointerProperty(type=CatalogMoveFromAToBOperatorProperties)
-    logic_class = BatchMoveFromCatalogToCatalog
+    logic_class = CatalogMoveFromAToBBatchExecute
 
     def invoke(self, context, event):
         return self._invoke(context, filter_assets=True)

@@ -11,7 +11,7 @@ class AuthorSetBatchExecute(BatchExecute):
         author = get_current_operator_properties().author
         for asset in self.assets:
             asset.asset_data.author = author
-            Logger.display(f"Set {asset.name}'s author to '{author}'")
+            Logger.display(f"Set {repr(asset)}'s author to '{author}'")
         self.save_file()
         self.execute_next_blend()
 

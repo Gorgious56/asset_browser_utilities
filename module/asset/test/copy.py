@@ -15,7 +15,7 @@ from asset_browser_utilities.core.library.prop import LibraryType
 from asset_browser_utilities.module.asset.tool import is_asset
 
 
-def setup_current_operator_():
+def setup_and_get_current_operator_():
     return setup_and_get_current_operator("copy_op")
 
 
@@ -60,7 +60,7 @@ def test_copying_all_props_from_active_to_selected_in_current_file(filepath):
     bpy.ops.wm.open_mainfile(filepath=str(filepath))
 
     set_library_export_source(LibraryType.FileCurrent.value)
-    op_props = setup_current_operator_()
+    op_props = setup_and_get_current_operator_()
     op_props.tags = True
     op_props.custom_properties = True
     op_props.preview = True

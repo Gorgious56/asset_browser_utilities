@@ -1,14 +1,15 @@
+from bpy.types import Operator, PropertyGroup
+from bpy.props import PointerProperty
+
 from asset_browser_utilities.core.cache.tool import get_current_operator_properties
 from asset_browser_utilities.core.log.logger import Logger
-from bpy.types import Operator, PropertyGroup
-from bpy.props import PointerProperty, StringProperty
-
 from asset_browser_utilities.core.operator.tool import BatchExecute, BatchFolderOperator
 from asset_browser_utilities.core.filter.catalog import FilterCatalog
+
 from asset_browser_utilities.module.catalog.tool import CatalogsHelper
 
 
-class BatchMoveToCatalog(BatchExecute):
+class CatalogMovetoBatchExecute(BatchExecute):
     def execute_one_file_and_the_next_when_finished(self):
         op_props = get_current_operator_properties()
         helper = CatalogsHelper()
@@ -16,7 +17,7 @@ class BatchMoveToCatalog(BatchExecute):
         helper.ensure_catalog_exists(uuid, tree, name)
         for asset in self.assets:
             asset.asset_data.catalog_id = uuid
-            Logger.display(f"'{asset.name}' moved to catalog '{name}'")
+            Logger.display(f"{repr(asset)} moved to catalog '{name}'")
         self.save_file()
         self.execute_next_blend()
 
@@ -36,7 +37,7 @@ class ABU_OT_catalog_move(Operator, BatchFolderOperator):
     bl_label = "Batch Move To Catalog"
 
     operator_settings: PointerProperty(type=CatalogMoveOperatorProperties)
-    logic_class = BatchMoveToCatalog
+    logic_class = CatalogMovetoBatchExecute
 
     def invoke(self, context, event):
         return self._invoke(context, filter_assets=True)

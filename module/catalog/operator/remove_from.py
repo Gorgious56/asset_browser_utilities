@@ -8,7 +8,7 @@ from asset_browser_utilities.core.filter.catalog import FilterCatalog
 from asset_browser_utilities.module.catalog.tool import CatalogsHelper
 
 
-class BatchRemoveFromCatalog(BatchExecute):
+class CatalogRemoveFromBatchExecute(BatchExecute):
     def execute_one_file_and_the_next_when_finished(self):
         helper = CatalogsHelper()
         op_props = get_current_operator_properties()
@@ -17,11 +17,11 @@ class BatchRemoveFromCatalog(BatchExecute):
             for asset in self.assets:
                 if asset.asset_data.catalog_id == uuid:
                     asset.asset_data.catalog_id = ""
-                    Logger.display(f"'{asset.name}' unassigned from catalog '{name}'")
+                    Logger.display(f"{repr(asset)} unassigned from catalog '{name}'")
         else:
             for asset in self.assets:
                 asset.asset_data.catalog_id = ""
-                Logger.display(f"{asset.name} unassigned from its catalog")
+                Logger.display(f"{repr(asset)} unassigned from its catalog")
         self.save_file()
         self.execute_next_blend()
 
@@ -45,7 +45,7 @@ class ABU_OT_catalog_remove_from(Operator, BatchFolderOperator):
     bl_label = "Batch Remove From Catalog"
 
     operator_settings: PointerProperty(type=CatalogRemoveFromOperatorProperties)
-    logic_class = BatchRemoveFromCatalog
+    logic_class = CatalogRemoveFromBatchExecute
 
     def invoke(self, context, event):
         return self._invoke(context, filter_assets=True)

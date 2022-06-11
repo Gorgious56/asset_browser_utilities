@@ -8,16 +8,18 @@ from asset_browser_utilities.core.test.tool import (
 )
 
 from asset_browser_utilities.core.library.prop import LibraryType
-from asset_browser_utilities.module.author.set import AuthorSetBatchExecute
+from asset_browser_utilities.module.catalog.operator.move_to import CatalogMovetoBatchExecute
+
 
 from asset_browser_utilities.module.asset.tool import all_assets
+from asset_browser_utilities.module.catalog.test.tool import CATALOG_TO_UUID, assert_that_asset_is_in_catalog
 
 
 def setup_and_get_current_operator_():
-    return setup_and_get_current_operator("author_set_op")
+    return setup_and_get_current_operator("catalog_move_op")
 
 
-def test_setting_author_on_all_assets(filepath):
+def test_moving_all_assets_from_catalog_a_to_catalog_b(filepath):
     bpy.ops.wm.open_mainfile(filepath=str(filepath))
 
     set_library_export_source(LibraryType.FileCurrent.value)
@@ -27,12 +29,10 @@ def test_setting_author_on_all_assets(filepath):
     asset_filter_settings.filter_types.types_global_filter = False
 
     op_props = setup_and_get_current_operator_()
-    for author in ("test_author", ""):
-        op_props.author = author
+    op_props.catalog.allow = op_props.catalog.active = True
+    op_props.catalog.catalog = CATALOG_TO_UUID
 
-        execute_logic(AuthorSetBatchExecute)
+    execute_logic(CatalogMovetoBatchExecute)
 
-        for asset in all_assets():
-            assert (
-                asset.asset_data.author == author
-            ), f"{repr(asset)}'s author should be '{author}' instead of '{asset.asset_data.author}'"
+    for asset in all_assets():
+        assert_that_asset_is_in_catalog(asset, CATALOG_TO_UUID)
