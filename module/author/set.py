@@ -6,7 +6,7 @@ from bpy.props import PointerProperty, StringProperty
 from asset_browser_utilities.core.operator.tool import BatchExecute, BatchFolderOperator
 
 
-class BatchSetAuthor(BatchExecute):
+class AuthorSetBatchExecute(BatchExecute):
     def execute_one_file_and_the_next_when_finished(self):
         author = get_current_operator_properties().author
         for asset in self.assets:
@@ -29,7 +29,7 @@ class ABU_OT_author_set(Operator, BatchFolderOperator):
     bl_description = "Batch Set Author Name. Leave Field Empty to remove author"
 
     operator_settings: PointerProperty(type=AuthorSetOperatorProperties)
-    logic_class = BatchSetAuthor
+    logic_class = AuthorSetBatchExecute
 
     def invoke(self, context, event):
         return self._invoke(context, filter_assets=True)

@@ -16,12 +16,11 @@ class AssetMarkBatchExecute(BatchExecute):
         operator_properties = get_current_operator_properties()
         for asset in self.assets:
             if asset.asset_data and not operator_properties.overwrite:
-                Logger.display(f"Asset '{asset.name}' already marked")
                 continue
             asset.asset_mark()
             if operator_properties.generate_previews and can_preview_be_generated(asset):
                 asset.asset_generate_preview()
-            Logger.display(f"Asset '{asset.name}' marked")
+            Logger.display(f"{repr(asset)} marked")
 
         if operator_properties.generate_previews:
             bpy.app.timers.register(self.sleep_until_previews_are_done_and_execute_next_file)

@@ -12,10 +12,10 @@ from asset_browser_utilities.core.filter.type import get_object_types, get_types
 from asset_browser_utilities.core.library.prop import LibraryType
 from asset_browser_utilities.module.asset.operator.mark import AssetMarkBatchExecute
 
-from asset_browser_utilities.module.asset.tool import all_assets
+from asset_browser_utilities.module.asset.tool import all_assets_container_and_name
 
 
-def setup_current_operator_mark():
+def setup_current_operator_():
     return setup_and_get_current_operator("mark_op")
 
 
@@ -23,7 +23,7 @@ def test_marking_all_assets_in_current_file(filepath):
     bpy.ops.wm.open_mainfile(filepath=str(filepath))
 
     set_library_export_source(LibraryType.FileCurrent.value)
-    op_props = setup_current_operator_mark()
+    op_props = setup_current_operator_()
     op_props.generate_previews = False
 
     asset_filter_settings = get_asset_filter_settings()
@@ -48,11 +48,11 @@ def test_marking_different_asset_types_in_current_file(filepath):
     for asset_type_tuple in get_types():
         asset_type = asset_type_tuple[0]
         bpy.ops.wm.open_mainfile(filepath=str(filepath))
-        assets_start = all_assets()
+        assets_start = all_assets_container_and_name()
 
         set_library_export_source(LibraryType.FileCurrent.value)
 
-        op_props = setup_current_operator_mark()
+        op_props = setup_current_operator_()
         op_props.generate_previews = False
 
         asset_filter_settings = get_asset_filter_settings()
@@ -82,11 +82,11 @@ def test_marking_different_object_types_in_current_file(filepath):
     for object_type_tuple in get_object_types():
         object_type = object_type_tuple[0]
         bpy.ops.wm.open_mainfile(filepath=str(filepath))
-        assets_start = all_assets()
+        assets_start = all_assets_container_and_name()
 
         set_library_export_source(LibraryType.FileCurrent.value)
 
-        op_props = setup_current_operator_mark()
+        op_props = setup_current_operator_()
         op_props.generate_previews = False
 
         asset_filter_settings = get_asset_filter_settings()
