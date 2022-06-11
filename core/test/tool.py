@@ -17,10 +17,6 @@ def set_library_export_source(source):
     get_library_export_settings().source = source
 
 
-def get_selected_asset_files():
-    return get_from_cache(SelectedAssetFiles)
-
-
 def setup_and_get_current_operator(attr_name):
     prop = getattr(get_cache(), attr_name)
     get_from_cache(CurrentOperatorProperty).class_name = str(prop.__class__)

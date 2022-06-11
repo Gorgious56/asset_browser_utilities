@@ -1,7 +1,8 @@
 from asset_browser_utilities.core.console.parser import ArgumentsParser
 
 from asset_browser_utilities.module.asset.test import mark, unmark, copy
-from asset_browser_utilities.module.author.test import set
+from asset_browser_utilities.module.author.test import set as set_author
+from asset_browser_utilities.module.description.test import set as set_description
 from asset_browser_utilities.module.catalog.test import move_from_a_to_b, move_to, remove_from
 
 from inspect import getmembers, isfunction
@@ -10,7 +11,8 @@ _test_modules = (
     mark,
     unmark,
     copy,
-    set,
+    set_author,
+    set_description,
     move_from_a_to_b,
     move_to,
     remove_from,

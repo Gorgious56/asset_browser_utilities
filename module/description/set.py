@@ -7,7 +7,7 @@ from asset_browser_utilities.core.operator.tool import BatchExecute
 from asset_browser_utilities.core.operator.tool import BatchFolderOperator
 
 
-class BatchSetDescription(BatchExecute):
+class DescriptionSetBatchExecute(BatchExecute):
     def execute_one_file_and_the_next_when_finished(self):
         description = get_current_operator_properties().description
         for asset in self.assets:
@@ -27,10 +27,10 @@ class DescriptionSetOperatorProperties(PropertyGroup):
 class ABU_OT_description_set(Operator, BatchFolderOperator):
     bl_idname = "abu.description_set"
     bl_label = "Batch Set Description"
-    bl_description= "Batch Set Description. Leave Field Empty to remove description"
+    bl_description = "Batch Set Description. Leave Field Empty to remove description"
 
     operator_settings: PointerProperty(type=DescriptionSetOperatorProperties)
-    logic_class = BatchSetDescription
+    logic_class = DescriptionSetBatchExecute
 
     def invoke(self, context, event):
         return self._invoke(context, filter_assets=True)

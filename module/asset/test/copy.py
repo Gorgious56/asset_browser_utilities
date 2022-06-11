@@ -1,22 +1,11 @@
+from asset_browser_utilities.core.test.prop import TestOperator
 import bpy
 
-from asset_browser_utilities.core.test.tool import (
-    execute_logic,
-    get_asset_filter_settings,
-    get_selected_asset_files,
-    set_library_export_source,
-    setup_and_get_current_operator,
-)
-
+from asset_browser_utilities.module.asset.tool import get_selected_asset_files_cache
 from asset_browser_utilities.module.asset.operator.copy import AssetCopyExecuteOverride
 from asset_browser_utilities.core.filter.type import get_types
-from asset_browser_utilities.core.library.prop import LibraryType
 
 from asset_browser_utilities.module.asset.tool import is_asset
-
-
-def setup_and_get_current_operator_():
-    return setup_and_get_current_operator("copy_op")
 
 
 def assert_that_two_assets_data_share_the_same_property(a, b, prop_name):
@@ -57,23 +46,22 @@ def assert_that_a_has_at_as_least_the_same_custom_props_as_b(a, b):
 
 
 def test_copying_all_props_from_active_to_selected_in_current_file(filepath):
-    bpy.ops.wm.open_mainfile(filepath=str(filepath))
+    test_op = TestOperator(
+        filepath=filepath,
+        filter_assets=True,
+        op_name="copy_op",
+        logic_class=AssetCopyExecuteOverride,
+    )
 
-    set_library_export_source(LibraryType.FileCurrent.value)
-    op_props = setup_and_get_current_operator_()
-    op_props.tags = True
-    op_props.custom_properties = True
-    op_props.preview = True
-    op_props.catalog = True
-    op_props.author = True
-    op_props.description = True
-
-    asset_filter_settings = get_asset_filter_settings()
-    asset_filter_settings.filter_assets = True
-    asset_filter_settings.filter_types.types_global_filter = False
+    test_op.op_props.tags = True
+    test_op.op_props.custom_properties = True
+    test_op.op_props.preview = True
+    test_op.op_props.catalog = True
+    test_op.op_props.author = True
+    test_op.op_props.description = True
 
     asset_copy_from_name = "asset_copy_from"
-    selected_asset_files = get_selected_asset_files()
+    selected_asset_files = get_selected_asset_files_cache()
     selected_asset_files.set_active("object", bpy.data.objects[asset_copy_from_name])
 
     supported_asset_types = [a_t[0] for a_t in get_types()]
@@ -86,7 +74,8 @@ def test_copying_all_props_from_active_to_selected_in_current_file(filepath):
                         continue
                     else:
                         selected_asset_files.add(d, asset)
-    execute_logic(AssetCopyExecuteOverride)
+
+    test_op.execute()
 
     asset_from = bpy.data.objects[asset_copy_from_name]
     asset_data_from = asset_from.asset_data
