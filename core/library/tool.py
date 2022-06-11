@@ -41,6 +41,8 @@ def sanitize_library_name(name):
         name = "brushes"
     elif "texture" in name:
         name = "textures"
+    if name.endswith("ss"):
+        name = name[0:-1]
     return name
 
 
