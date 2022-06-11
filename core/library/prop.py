@@ -107,8 +107,8 @@ class LibraryExportSettings(PropertyGroup, CacheMapping):
         elif self.source == LibraryType.FolderExternal.value:
             files = get_blend_files_in_folder(self.folder, recursive=self.recursive)
         else:  # User Library
-            self.folder = Path(self.library_user_path)
-            files = get_blend_files_in_folder(self.folder, recursive=True)
+            folder = Path(self.library_user_path)
+            files = get_blend_files_in_folder(folder, recursive=True)
         files = [f for f in files if self.filter_files_names.filter(f.stem)]
         return files
 
