@@ -67,3 +67,11 @@ def append_asset(filepath, directory, filename):
             obj.use_fake_user = True
     if other_asset is not None:
         other_asset.name = filename
+
+
+def iterate_over_all_containers():
+    for d in dir(bpy.data):
+        container = getattr(bpy.data, d)
+        if "bpy_prop_collection" in str(type(container)):
+            for asset in container:
+                yield asset

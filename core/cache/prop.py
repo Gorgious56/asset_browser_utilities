@@ -21,6 +21,7 @@ from asset_browser_utilities.module.tag.operator.add_smart import TagAddSmartOpe
 from asset_browser_utilities.module.custom_property.operator.set import CustomPropertySetOperatorProperties
 from asset_browser_utilities.module.custom_property.operator.remove import RemoveCustomPropertyOperatorProperties
 from asset_browser_utilities.module.asset.prop import SelectedAssetFiles
+from asset_browser_utilities.module.material.operator.merge import MaterialMergeOperatorProperties
 
 
 class Cache(PropertyGroup):
@@ -43,6 +44,7 @@ class Cache(PropertyGroup):
     catalog_remove_op: PointerProperty(type=CatalogRemoveFromOperatorProperties)
     author_set_op: PointerProperty(type=AuthorSetOperatorProperties)
     description_set_op: PointerProperty(type=DescriptionSetOperatorProperties)
+    material_merge_op: PointerProperty(type=MaterialMergeOperatorProperties)
     
     selected_assets: PointerProperty(type=SelectedAssetFiles)
 

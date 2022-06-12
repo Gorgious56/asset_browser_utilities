@@ -13,6 +13,7 @@ from asset_browser_utilities.core.tool import copy_simple_property_group
 
 
 class AssetFilterSettings(PropertyGroup):
+    filter_types_allow: BoolProperty(default=True)
     filter_types: PointerProperty(type=FilterTypes)
     filter_name: PointerProperty(type=FilterName)
     filter_selection: PointerProperty(type=FilterSelection)
@@ -66,7 +67,8 @@ If unchecked, items that are not yet assets will be exported and marked as asset
 
     def draw(self, layout, context):
         self.filter_selection.draw(layout)
-        self.filter_types.draw(layout)
+        if self.filter_types_allow:
+            self.filter_types.draw(layout)
         self.filter_name.draw(layout, name_override="Assets")
         if self.filter_catalog.allow:
             self.filter_catalog.draw(layout, context)

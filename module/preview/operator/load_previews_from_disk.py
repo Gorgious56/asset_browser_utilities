@@ -1,8 +1,6 @@
 from pathlib import Path
 
-import bpy.app.timers
 from bpy.types import Operator
-from bpy.props import PointerProperty
 
 from asset_browser_utilities.core.log.logger import Logger
 from asset_browser_utilities.core.cache.tool import get_from_cache
