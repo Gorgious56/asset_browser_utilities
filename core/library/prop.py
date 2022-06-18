@@ -16,6 +16,7 @@ class LibraryType(Enum):
     FileExternal = "file_external"
     FolderExternal = "folder_external"
     UserLibrary = "user_library"
+    All = "ALL"
 
     @staticmethod
     def get_library_type_from_context(context):
@@ -42,7 +43,7 @@ class LibraryExportSettings(PropertyGroup, CacheMapping):
     )
     remove_backup: BoolProperty(
         name="Remove Backup",
-        description="Check to automatically delete the creation of backup files when 'Save Versions' is enabled in the preferences\nThis will prevent duplicating files when they are overwritten\nWarning : Backup files ending in .blend1 will be deleted permantently",
+        description="Check to automatically delete the creation of backup files when 'Save Versions' is enabled in the preferences\nThis will prevent duplicating files when they are overwritten\nWarning : Backup files ending in .blend1 will be deleted permanently",
         default=True,
     )
     remove_backup_allow: BoolProperty()

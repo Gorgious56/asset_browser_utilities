@@ -116,6 +116,8 @@ def update_preset(self, context):
 
 
 class BatchFolderOperator(ImportHelper):
+    bl_options: set[str] = {"UNDO"}
+    ui_library = LibraryType.All
     filter_glob: StringProperty(
         default="",
         options={"HIDDEN"},

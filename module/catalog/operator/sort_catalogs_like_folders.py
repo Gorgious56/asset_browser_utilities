@@ -59,6 +59,7 @@ class CatalogSortLikeFoldersOperatorProperties(PropertyGroup):
 
 
 class ABU_OT_sort_catalogs_like_folders(Operator, BatchFolderOperator):
+    ui_library = (LibraryType.UserLibrary.value, LibraryType.FolderExternal.value)
     bl_idname = "abu.sort_catalogs_like_folders"
     bl_label = "Create Folder Structure"
 

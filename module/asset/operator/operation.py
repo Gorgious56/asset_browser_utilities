@@ -4,8 +4,8 @@ from bpy.types import Operator
 from asset_browser_utilities.core.operator.tool import BatchFolderOperator
 
 
-class ASSET_OT_batch_operate(Operator, BatchFolderOperator):
-    bl_idname = "asset.batch_operate"
+class ABU_OT_batch_operate(Operator, BatchFolderOperator):
+    bl_idname = "abu.batch_operate"
     bl_label = "Batch Operate On Assets"
     bl_options = {"REGISTER", "UNDO"}
 

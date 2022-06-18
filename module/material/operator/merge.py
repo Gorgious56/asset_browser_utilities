@@ -66,6 +66,7 @@ class MaterialMergeOperatorProperties(PropertyGroup):
 class ABU_OT_material_merge(Operator, BatchFolderOperator):
     bl_idname = "abu.material_merge"
     bl_label = "Merge Materials"
+    bl_description = "Merge materials finishing with .001, .002 etc with base material"
 
     operator_settings: PointerProperty(type=MaterialMergeOperatorProperties)
     logic_class = MaterialMergeBatchExecute

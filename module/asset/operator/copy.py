@@ -1,4 +1,5 @@
 from asset_browser_utilities.core.cache.tool import get_current_operator_properties, get_from_cache
+from asset_browser_utilities.core.library.prop import LibraryType
 from asset_browser_utilities.core.log.logger import Logger
 from asset_browser_utilities.module.preview.tool import can_preview_be_generated
 from bpy.types import Operator, PropertyGroup
@@ -68,7 +69,8 @@ class AssetCopyOperatorProperties(PropertyGroup):
         box.prop(self, "description", icon="FILE_TEXT")
 
 
-class ASSET_OT_copy_from_active(Operator, BatchFolderOperator):
+class ABU_OT_copy_from_active(Operator, BatchFolderOperator):
+    ui_library = LibraryType.FileCurrent.value
     bl_idname = "abu.copy_from_active"
     bl_label = "Copy From Active"
 

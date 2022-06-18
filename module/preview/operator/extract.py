@@ -1,7 +1,7 @@
 from pathlib import Path
 from asset_browser_utilities.core.cache.tool import get_from_cache
 from asset_browser_utilities.core.log.logger import Logger
-from asset_browser_utilities.core.library.prop import LibraryExportSettings
+from asset_browser_utilities.core.library.prop import LibraryExportSettings, LibraryType
 import bpy
 from bpy.types import Operator, PropertyGroup
 from bpy.props import PointerProperty, StringProperty
@@ -20,7 +20,7 @@ class BatchExecuteOverride(BatchExecute):
             img = create_image(asset.name, asset_preview.image_size[0], asset_preview.image_size[1])
             images.append(img)
             img.file_format = "PNG"
-            for char in ("/", "\\", ":",  "|", '"', "!", "?", "<", ">", "*"):
+            for char in ("/", "\\", ":", "|", '"', "!", "?", "<", ">", "*"):
                 if char in img.name:
                     img.name = img.name.replace(char, "_")
             img.filepath = str(folder / (img.name + ".png"))
@@ -36,6 +36,7 @@ class BatchExecuteOverride(BatchExecute):
 
 
 class ABU_OT_preview_extract(Operator, BatchFolderOperator):
+    ui_library = LibraryType.FileCurrent.value
     bl_idname = "abu.preview_extract"
     bl_label = "Extract Previews to Disk"
 

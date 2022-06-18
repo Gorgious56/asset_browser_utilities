@@ -1,3 +1,4 @@
+from asset_browser_utilities.core.library.prop import LibraryType
 from asset_browser_utilities.core.log.logger import Logger
 from asset_browser_utilities.core.library.tool import append_asset, get_blend_library_name
 
@@ -45,10 +46,11 @@ class OperatorProperties(PropertyGroup):
     target_filepath: StringProperty()
 
 
-class ASSET_OT_batch_import(Operator, ExportHelper, BatchFolderOperator):
-    "Import Assets From External File or Library"
-    bl_idname = "asset.batch_import"
+class ABU_OT_batch_import(Operator, ExportHelper, BatchFolderOperator):
+    ui_library = LibraryType.FileExternal.value
+    bl_idname = "abu.batch_import"
     bl_label = "Import Assets"
+    bl_description: str = "Import Assets From External File or Library"
 
     filter_glob: StringProperty(
         default="*.blend",

@@ -47,11 +47,10 @@ class AssetMarkOperatorProperties(PropertyGroup):
         row.prop(self, "generate_previews", icon="RESTRICT_RENDER_OFF")
 
 
-class ABU_OT_batch_mark(Operator, BatchFolderOperator):
-    "Batch Mark Assets"
-    bl_idname = "abu.batch_mark"
-    bl_label = "Batch Mark Assets"
-    bl_options = {"UNDO"}
+class ABU_OT_mark(Operator, BatchFolderOperator):
+    bl_idname: str = "abu.mark"
+    bl_label: str = "Batch Mark Assets"
+    bl_description: str = "Batch Mark Assets"
 
     operator_settings: PointerProperty(type=AssetMarkOperatorProperties)
     logic_class = AssetMarkBatchExecute

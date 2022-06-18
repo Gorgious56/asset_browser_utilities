@@ -3,7 +3,7 @@ import os
 from asset_browser_utilities.core.cache.tool import get_current_operator_properties, get_from_cache
 from asset_browser_utilities.core.file.save import save_if_possible_and_necessary
 from asset_browser_utilities.core.filter.main import AssetFilterSettings
-from asset_browser_utilities.core.library.prop import LibraryExportSettings
+from asset_browser_utilities.core.library.prop import LibraryExportSettings, LibraryType
 
 import bpy
 from bpy.types import Operator, PropertyGroup
@@ -33,16 +33,17 @@ class AssetExportOperatorProperties(PropertyGroup):
 
 
 class ABU_OT_batch_export(Operator, BatchFolderOperator):
-    "Export Assets To External File(s)"
+    ui_library = LibraryType.FileCurrent.value
     bl_idname = "abu.batch_export"
     bl_label = "Export Assets"
+    bl_description: str = "Export Assets To External File(s)"
 
     operator_settings: PointerProperty(type=AssetExportOperatorProperties)
     logic_class = BatchExecute
 
     def invoke(self, context, event):
         return self._invoke(context, filter_assets=True, enforce_filebrowser=True)
-    
+
     def execute(self, context):
         self.write_filepath_to_cache()
         save_if_possible_and_necessary()
@@ -52,7 +53,7 @@ class ABU_OT_batch_export(Operator, BatchFolderOperator):
         else:
             Logger.display("No asset to export")
         return {"FINISHED"}
-    
+
     def execute_in_new_blender_instance(self):
         current_operator_properties = get_current_operator_properties()
         caller = CommandBuilder(Path(os.path.realpath(__file__)))
@@ -67,9 +68,8 @@ class ABU_OT_batch_export(Operator, BatchFolderOperator):
         caller.add_arg_value("overwrite", current_operator_properties.overwrite)
         caller.add_arg_value("individual_files", current_operator_properties.individual_files)
         caller.call()
-    
+
     def populate_asset_and_asset_names(self):
         assets = get_from_cache(AssetFilterSettings).get_objects_that_satisfy_filters()
         self.asset_names = [a.name for a in assets]
         self.asset_types = [get_blend_library_name(a) for a in assets]
-
