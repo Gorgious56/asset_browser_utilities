@@ -14,7 +14,7 @@ class BatchExecuteOverride(BatchExecute):
         asset_tags = asset_data.tags
         for tag in get_current_operator_properties().tags:
             asset_tags.new(tag, skip_if_exists=True)
-            Logger.display(f"Added tag {tag} to {asset.name}")
+            Logger.display(f"Added tag '{tag}' to {asset.name}")
 
 
 class ABU_OT_batch_add_tags(Operator, BatchFolderOperator):

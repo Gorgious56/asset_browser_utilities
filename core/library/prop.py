@@ -48,7 +48,6 @@ class LibraryExportSettings(PropertyGroup, CacheMapping):
     remove_backup_allow: BoolProperty()
     files_prop: CollectionProperty(type=StrProperty)
     folder: StringProperty()
-    filepath_prop: StringProperty()
     filepath_start: StringProperty()
     filter_files_names: PointerProperty(type=FilterName)
 
@@ -57,23 +56,18 @@ class LibraryExportSettings(PropertyGroup, CacheMapping):
         return [file.name for file in self.files_prop]
 
     @files.setter
-    def files(self, value):
+    def files(self, list_):
         self.files_prop.clear()
-        for file in value:
-            new = self.files_prop.add()
-            new.name = file.name
+        for file in list_:
+            self.add_file(file)
+
+    def add_file(self, filepath):
+        new = self.files_prop.add()
+        new.name = str(filepath)
 
     @property
     def filepath(self):
-        return str(self.filepath_prop)
-
-    @filepath.setter
-    def filepath(self, value):
-        self.filepath_prop = value
-        folder = Path(self.filepath_prop)
-        if folder.is_file():
-            folder = folder.parent
-        self.folder = str(folder)
+        return self.files[0]
 
     def init(self, remove_backup=False):
         self.remove_backup_allow = remove_backup
@@ -102,8 +96,7 @@ class LibraryExportSettings(PropertyGroup, CacheMapping):
         if self.source == LibraryType.FileCurrent.value:
             files = [Path(bpy.data.filepath)]
         elif self.source == LibraryType.FileExternal.value:
-            folder = Path(self.folder)
-            files = [folder / filepath for filepath in self.files]
+            files = [Path(f) for f in self.files]
         elif self.source == LibraryType.FolderExternal.value:
             files = get_blend_files_in_folder(self.folder, recursive=self.recursive)
         else:  # User Library

@@ -126,6 +126,7 @@ class BatchFolderOperator(ImportHelper):
     source: StringProperty()
     # https://docs.blender.org/api/current/bpy.types.OperatorFileListElement.html
     files: CollectionProperty(type=OperatorFileListElement, options={"HIDDEN", "SKIP_SAVE"})
+    directory: StringProperty()
     logic_class = BatchExecute
 
     def _invoke(self, context, remove_backup=True, filter_assets=False, enforce_filebrowser=False):
@@ -180,8 +181,8 @@ class BatchFolderOperator(ImportHelper):
 
     def write_filepath_to_cache(self):
         library_settings = get_from_cache(LibraryExportSettings)
-        library_settings.files = self.files
-        library_settings.filepath = self.filepath
+        library_settings.folder = self.directory
+        library_settings.files = [self.directory + f.name for f in self.files]
 
     def draw(self, context):
         layout = self.layout
