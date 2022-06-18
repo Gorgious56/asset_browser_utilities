@@ -1,8 +1,8 @@
 from pathlib import Path
 from asset_browser_utilities.module.catalog.tool import CatalogsHelper
-from asset_browser_utilities.core.cache.tool import get_from_cache
+from asset_browser_utilities.core.cache.tool import get_current_operator_properties, get_from_cache
 from asset_browser_utilities.core.log.logger import Logger
-from asset_browser_utilities.core.library.prop import LibraryExportSettings
+from asset_browser_utilities.core.library.prop import LibraryExportSettings, LibraryType
 from bpy.types import Operator, PropertyGroup
 from bpy.props import PointerProperty, PointerProperty, BoolProperty
 
@@ -10,8 +10,9 @@ from asset_browser_utilities.core.operator.tool import BatchExecute, BatchFolder
 
 
 class CatalogSortLikeFoldersBatchExecute(BatchExecute):
-    def __init__(self, operator, context):
-        super().__init__(operator, context)
+    def __init__(self):
+        super().__init__()
+        current_op = get_current_operator_properties()
 
         self.library_user_path = get_from_cache(LibraryExportSettings).library_user_path
         self.catalog_map = {}
@@ -19,7 +20,7 @@ class CatalogSortLikeFoldersBatchExecute(BatchExecute):
         for filepath in self.blends:
             try:
                 catalog_tree = Path(str(filepath).replace(self.library_user_path, "")).parents[
-                    1 if self.are_assets_in_subfolders else 0
+                    1 if current_op.are_assets_in_subfolders else 0
                 ]
             except IndexError:
                 continue
@@ -30,7 +31,6 @@ class CatalogSortLikeFoldersBatchExecute(BatchExecute):
                 self.catalog_map[filepath] = uuid
 
     def execute_one_file_and_the_next_when_finished(self):
-        cat_helper = CatalogsHelper()
         try:
             uuid = self.catalog_map[self.blend]
         except KeyError:
@@ -48,7 +48,7 @@ class CatalogSortLikeFoldersBatchExecute(BatchExecute):
         self.execute_next_blend()
 
 
-class OperatorProperties(PropertyGroup):
+class CatalogSortLikeFoldersOperatorProperties(PropertyGroup):
     are_assets_in_subfolders: BoolProperty(
         description="Check this if each asset is located in its own individual subfolder",
         default=False,
@@ -62,7 +62,7 @@ class ABU_OT_sort_catalogs_like_folders(Operator, BatchFolderOperator):
     bl_idname = "abu.sort_catalogs_like_folders"
     bl_label = "Create Folder Structure"
 
-    operator_settings: PointerProperty(type=OperatorProperties)
+    operator_settings: PointerProperty(type=CatalogSortLikeFoldersOperatorProperties)
     logic_class = CatalogSortLikeFoldersBatchExecute
 
     def invoke(self, context, event):

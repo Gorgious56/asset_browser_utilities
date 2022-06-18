@@ -22,6 +22,7 @@ from asset_browser_utilities.module.custom_property.operator.set import CustomPr
 from asset_browser_utilities.module.custom_property.operator.remove import RemoveCustomPropertyOperatorProperties
 from asset_browser_utilities.module.asset.prop import SelectedAssetFiles
 from asset_browser_utilities.module.material.operator.merge import MaterialMergeOperatorProperties
+from asset_browser_utilities.module.catalog.operator.sort_catalogs_like_folders import CatalogSortLikeFoldersOperatorProperties
 
 
 class Cache(PropertyGroup):
@@ -42,6 +43,7 @@ class Cache(PropertyGroup):
     catalog_move_from_a_to_b_op: PointerProperty(type=CatalogMoveFromAToBOperatorProperties)
     catalog_move_op: PointerProperty(type=CatalogMoveOperatorProperties)
     catalog_remove_op: PointerProperty(type=CatalogRemoveFromOperatorProperties)
+    catalog_sort_like_folders: PointerProperty(type=CatalogSortLikeFoldersOperatorProperties)
     author_set_op: PointerProperty(type=AuthorSetOperatorProperties)
     description_set_op: PointerProperty(type=DescriptionSetOperatorProperties)
     material_merge_op: PointerProperty(type=MaterialMergeOperatorProperties)
