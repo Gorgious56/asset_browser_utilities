@@ -12,7 +12,7 @@ def test_marking_all_assets_in_current_file(filepath):
     test_op = TestOperator(
         filepath=filepath,
         filter_assets=False,
-        op_name="mark_op",
+        op_name="op_mark",
         logic_class=AssetMarkBatchExecute,
     )
 
@@ -40,7 +40,7 @@ def test_marking_different_asset_types_in_current_file(filepath):
             filter_assets=False,
             filter_types={asset_type},
             filter_object_types=False,
-            op_name="mark_op",
+            op_name="op_mark",
             logic_class=AssetMarkBatchExecute,
         )
         assets_start = all_assets_container_and_name()
@@ -72,7 +72,7 @@ def test_marking_different_object_types_in_current_file(filepath):
             filter_assets=False,
             filter_types={"objects"},
             filter_object_types={object_type},
-            op_name="mark_op",
+            op_name="op_mark",
             logic_class=AssetMarkBatchExecute,
         )
         assets_start = all_assets_container_and_name()

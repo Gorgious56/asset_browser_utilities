@@ -2,7 +2,7 @@ from asset_browser_utilities.core.test.prop import TestOperator
 import bpy
 
 from asset_browser_utilities.module.asset.tool import get_selected_asset_files_cache
-from asset_browser_utilities.module.asset.operator.copy import AssetCopyExecuteOverride
+from asset_browser_utilities.module.asset.operator.copy import AssetCopyDataExecuteOverride
 from asset_browser_utilities.core.filter.type import get_types
 
 from asset_browser_utilities.module.asset.tool import is_asset
@@ -49,8 +49,8 @@ def test_copying_all_props_from_active_to_selected_in_current_file(filepath):
     test_op = TestOperator(
         filepath=filepath,
         filter_assets=True,
-        op_name="copy_op",
-        logic_class=AssetCopyExecuteOverride,
+        op_name="op_copy_data",
+        logic_class=AssetCopyDataExecuteOverride,
     )
 
     test_op.op_props.tags = True

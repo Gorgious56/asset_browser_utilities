@@ -10,7 +10,7 @@ from asset_browser_utilities.module.custom_property.tool import copy_prop
 from asset_browser_utilities.module.asset.prop import SelectedAssetFiles
 
 
-class AssetCopyExecuteOverride(BatchExecute):
+class AssetCopyDataExecuteOverride(BatchExecute):
     def do_on_asset(self, asset):
         operator_properties = get_current_operator_properties()
         active_asset = get_from_cache(SelectedAssetFiles).active_asset
@@ -50,7 +50,7 @@ class AssetCopyExecuteOverride(BatchExecute):
         super().do_on_asset(asset)
 
 
-class AssetCopyOperatorProperties(PropertyGroup):
+class AssetCopyDataOperatorProperties(PropertyGroup):
     tags: BoolProperty(name="Tags")
     custom_properties: BoolProperty(name="Custom Properties")
     preview: BoolProperty(name="Preview")
@@ -71,11 +71,11 @@ class AssetCopyOperatorProperties(PropertyGroup):
 
 class ABU_OT_copy_from_active(Operator, BatchFolderOperator):
     ui_library = LibraryType.FileCurrent.value
-    bl_idname = "abu.copy_from_active"
-    bl_label = "Copy From Active"
+    bl_idname = "abu.copy_data_from_active"
+    bl_label = "Copy Data From Active"
 
-    operator_settings: PointerProperty(type=AssetCopyOperatorProperties)
-    logic_class = AssetCopyExecuteOverride
+    operator_settings: PointerProperty(type=AssetCopyDataOperatorProperties)
+    logic_class = AssetCopyDataExecuteOverride
 
     def invoke(self, context, event):
         return self._invoke(context, filter_assets=True)

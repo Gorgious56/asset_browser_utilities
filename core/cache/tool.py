@@ -12,7 +12,7 @@ def get_current_operator_properties():
     cache = get_cache()
     for prop_name in cache.__annotations__:
         prop = getattr(cache, prop_name)
-        if str(prop.__class__) == cache.current_op.class_name:
+        if str(prop.__class__) == cache.op_current.class_name:
             return prop
 
 

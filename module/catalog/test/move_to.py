@@ -10,7 +10,7 @@ def test_moving_all_assets_from_catalog_a_to_catalog_b(filepath):
     test_op = TestOperator(
         filepath=filepath,
         filter_assets=True,
-        op_name="catalog_move_op",
+        op_name="op_catalog_move",
         logic_class=CatalogMovetoBatchExecute,
     )
 

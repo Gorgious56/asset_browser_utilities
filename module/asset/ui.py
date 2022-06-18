@@ -9,6 +9,6 @@ class ABU_MT_assets(Menu, ABUOperatorsMenu):
         ("abu.mark", "Mark", "SHADERFX"),
         ("abu.unmark", "Unmark", "TRASH"),
         ("abu.batch_export", "Export", "EXPORT"),
-        ("abu.copy_from_active", "Copy From Active", "COPYDOWN"),
+        ("abu.copy_data_from_active", "Copy From Active", "COPYDOWN"),
         ("abu.batch_operate", "Custom Operation", "MODIFIER"),
     ]
