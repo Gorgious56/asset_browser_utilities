@@ -26,7 +26,7 @@ if __name__ == "__main__":
     for module in _test_modules:
         for func_name, func in getmembers(module, isfunction):
             if str(func_name).startswith("test"):
-                print(f"~~~ {func.__name__} from {module.__name__} ~~~")
+                print(f"   ~~~ {func.__name__} from {module.__name__} ~~~")
                 func(source_filepath)
                 tests += 1
-    print(f"\n~~~ All {tests} tests have sucessfully completed ~~~")
+    print(f"\n   ~~~ All {tests} tests have sucessfully completed ~~~")
