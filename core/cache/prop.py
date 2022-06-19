@@ -1,3 +1,4 @@
+from asset_browser_utilities.module.node_tree.operator.merge import NodeTreeMergeOperatorProperties
 from bpy.types import PropertyGroup
 from bpy.props import PointerProperty, BoolProperty
 
@@ -53,6 +54,7 @@ class Cache(PropertyGroup):
     op_author_set: PointerProperty(type=AuthorSetOperatorProperties)
     op_description_set: PointerProperty(type=DescriptionSetOperatorProperties)
     op_material_merge: PointerProperty(type=MaterialMergeOperatorProperties)
+    op_node_tree_merge: PointerProperty(type=NodeTreeMergeOperatorProperties)
 
     selected_assets: PointerProperty(type=SelectedAssetFiles)
 
