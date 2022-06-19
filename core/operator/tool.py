@@ -112,7 +112,7 @@ def update_preset(self, context):
             setting.copy_from(default_setting)
         else:
             copy_simple_property_group(default_setting, setting)
-    update_asset_filter_allow(self.filter_assets, self.bl_idname not in ("ABU_OT_previews_extract",))
+    update_asset_filter_allow(self.filter_assets)
 
 
 class BatchFolderOperator(ImportHelper):

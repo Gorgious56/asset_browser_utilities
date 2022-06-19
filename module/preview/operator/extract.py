@@ -1,19 +1,24 @@
 from pathlib import Path
-from asset_browser_utilities.core.cache.tool import get_from_cache
-from asset_browser_utilities.core.log.logger import Logger
-from asset_browser_utilities.core.library.prop import LibraryExportSettings, LibraryType
 import bpy
 from bpy.types import Operator, PropertyGroup
-from bpy.props import PointerProperty, StringProperty
+from bpy.props import BoolProperty, PointerProperty
 
+from asset_browser_utilities.core.cache.tool import get_current_operator_properties, get_from_cache
+from asset_browser_utilities.core.log.logger import Logger
+from asset_browser_utilities.core.library.prop import LibraryExportSettings, LibraryType
 from asset_browser_utilities.core.operator.tool import BatchExecute, BatchFolderOperator
-from asset_browser_utilities.core.file.path import get_folder_from_path
+
 from asset_browser_utilities.module.preview.tool import create_image
 
 
-class BatchExecuteOverride(BatchExecute):
+class PreviewExtractBatchExecuteOverride(BatchExecute):
     def do_on_asset(self, asset):
-        folder = Path(get_from_cache(LibraryExportSettings).folder)
+
+        op_props = get_current_operator_properties()
+        if op_props.place_at_root:
+            folder = Path(get_from_cache(LibraryExportSettings).folder)
+        else:
+            folder = Path(bpy.data.filepath).parent
         asset_preview = asset.preview
         images = []
         if asset_preview is not None:
@@ -35,12 +40,24 @@ class BatchExecuteOverride(BatchExecute):
         super().do_on_asset(asset)
 
 
+class PreviewExtractOperatorProperties(PropertyGroup):
+    place_at_root: BoolProperty(
+        name="Place at Root",
+        description="Toggle ON to save the thumbnails at the root of the library.\nOtherwise each thumbnail will be placed alongside each blend file",
+        default=False,
+    )
+
+    def draw(self, layout):
+        if get_from_cache(LibraryExportSettings).source != LibraryType.FileCurrent.value:
+            layout.prop(self, "place_at_root", icon="FILEBROWSER")
+
+
 class ABU_OT_preview_extract(Operator, BatchFolderOperator):
-    ui_library = LibraryType.FileCurrent.value
     bl_idname = "abu.preview_extract"
     bl_label = "Extract Previews to Disk"
 
-    logic_class = BatchExecuteOverride
+    operator_settings: PointerProperty(type=PreviewExtractOperatorProperties)
+    logic_class = PreviewExtractBatchExecuteOverride
 
     def invoke(self, context, event):
         self.filter_glob = ""
