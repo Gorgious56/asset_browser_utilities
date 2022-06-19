@@ -63,6 +63,18 @@ Result after executing the sort operation
 
 ![image](https://user-images.githubusercontent.com/25156105/172049536-6260e781-a318-4a8e-b986-51ac652557ed.png)
 
+14. __Merge Materials__
+
+Before
+
+![image](https://user-images.githubusercontent.com/25156105/174472885-0c504c80-f015-4d68-a394-85ec024d2af4.png)
+
+After
+
+![image](https://user-images.githubusercontent.com/25156105/174473077-b5d387b2-bde0-4c56-af38-66605b6b7da5.png)
+
+
+
 Specifics :
 
 1. __Filters__
