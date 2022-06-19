@@ -7,7 +7,7 @@ bl_info = {
     "author": "Gorgious",
     "description": "Asset Browser QOL tools and batch operations",
     "blender": (3, 0, 0),
-    "version": (0, 2, 2),
+    "version": (0, 2, 3),
     "location": "",
     "warning": "",
     "category": "Import-Export",
