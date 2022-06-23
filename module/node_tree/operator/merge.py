@@ -1,5 +1,3 @@
-from calendar import c
-from lib2to3.pgen2.grammar import opmap_raw
 import bpy
 import re
 
