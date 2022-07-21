@@ -26,6 +26,7 @@ from asset_browser_utilities.module.description.set import DescriptionSetOperato
 from asset_browser_utilities.module.tag.operator.tool import TagAddOrRemoveOperatorProperties
 from asset_browser_utilities.module.tag.operator.add_smart import TagAddSmartOperatorProperties
 from asset_browser_utilities.module.material.operator.merge import MaterialMergeOperatorProperties
+from asset_browser_utilities.module.material.operator.replace import MaterialReplaceOperatorProperties
 from asset_browser_utilities.module.preview.operator.extract import PreviewExtractOperatorProperties
 from asset_browser_utilities.module.preview.operator.generate import PreviewGenerateOperatorProperties
 
@@ -56,6 +57,7 @@ class Cache(PropertyGroup):
     op_author_set: PointerProperty(type=AuthorSetOperatorProperties)
     op_description_set: PointerProperty(type=DescriptionSetOperatorProperties)
     op_material_merge: PointerProperty(type=MaterialMergeOperatorProperties)
+    op_material_replace: PointerProperty(type=MaterialReplaceOperatorProperties)
     op_node_tree_merge: PointerProperty(type=NodeTreeMergeOperatorProperties)
 
     selected_assets: PointerProperty(type=SelectedAssetFiles)

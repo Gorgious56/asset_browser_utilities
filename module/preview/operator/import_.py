@@ -11,7 +11,7 @@ from asset_browser_utilities.core.operator.tool import BatchExecute, BatchFolder
 from asset_browser_utilities.core.file.path import get_supported_images
 
 
-class PreviewImportBatchExecuteOverride(BatchExecute):
+class PreviewImportBatchExecute(BatchExecute):
     def __init__(self):
         folder = Path(get_from_cache(LibraryExportSettings).folder)
         self.images = list(get_supported_images(folder, recursive=True))
@@ -31,7 +31,7 @@ class ABU_OT_preview_import(Operator, BatchFolderOperator):
     bl_idname = "abu.preview_import"
     bl_label = "Load Previews From Disk"
 
-    logic_class = PreviewImportBatchExecuteOverride
+    logic_class = PreviewImportBatchExecute
 
     def invoke(self, context, event):
         return self._invoke(context, filter_assets=True, enforce_filebrowser=True)

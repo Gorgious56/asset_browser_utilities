@@ -30,7 +30,7 @@ class TestOperator:
             self.op_props = setup_and_get_current_operator(op_name)
 
         asset_filter_settings = get_asset_filter_settings()
-        asset_filter_settings.filter_assets = filter_assets
+        asset_filter_settings.filter_assets.active = filter_assets
 
         if bool(filter_types):
             asset_filter_settings.filter_types.types_global_filter = True

@@ -72,4 +72,4 @@ class ABU_OT_material_merge(Operator, BatchFolderOperator):
     logic_class = MaterialMergeBatchExecute
 
     def invoke(self, context, event):
-        return self._invoke(context, filter_assets=False)
+        return self._invoke(context, filter_assets_optional=True, filter_assets=True)

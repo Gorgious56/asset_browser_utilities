@@ -11,7 +11,7 @@ from asset_browser_utilities.core.operator.tool import BatchExecute, BatchFolder
 from asset_browser_utilities.module.preview.tool import create_image
 
 
-class PreviewExtractBatchExecuteOverride(BatchExecute):
+class PreviewExtractBatchExecute(BatchExecute):
     def do_on_asset(self, asset):
 
         op_props = get_current_operator_properties()
@@ -57,7 +57,7 @@ class ABU_OT_preview_extract(Operator, BatchFolderOperator):
     bl_label = "Extract Previews to Disk"
 
     operator_settings: PointerProperty(type=PreviewExtractOperatorProperties)
-    logic_class = PreviewExtractBatchExecuteOverride
+    logic_class = PreviewExtractBatchExecute
 
     def invoke(self, context, event):
         self.filter_glob = ""

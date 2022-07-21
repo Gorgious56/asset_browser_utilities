@@ -5,7 +5,7 @@ import re
 def get_all_materials_for_an_enum_selector(self, context):
     mats_enum = get_all_materials_for_an_enum_selector.mats_enum
     mats_enum.clear()
-    if self.mode == "Trailing Numbers":
+    if hasattr(self, "mode") and self.mode == "Trailing Numbers":
         mats_enum = get_all_materials_without_trailing_numbers()
         return mats_enum
     else:

@@ -1,6 +1,6 @@
 from pathlib import Path
 import os
-from asset_browser_utilities.module.preview.operator.import_ import PreviewImportBatchExecuteOverride
+from asset_browser_utilities.module.preview.operator.import_ import PreviewImportBatchExecute
 import bpy
 
 from asset_browser_utilities.core.cache.tool import get_from_cache
@@ -15,7 +15,7 @@ def test_importing_previews(filepath):
     test_op = TestOperator(
         filepath=filepath,
         filter_assets=True,
-        logic_class=PreviewImportBatchExecuteOverride,
+        logic_class=PreviewImportBatchExecute,
     )
     library_export_settings = get_from_cache(LibraryExportSettings)
     folder = Path(bpy.data.filepath).parent / "previews"
