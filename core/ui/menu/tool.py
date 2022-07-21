@@ -14,23 +14,3 @@ def set_layout_library_folder(layout):
 
 def set_layout_library_user(layout):
     layout.context_pointer_set(LibraryType.UserLibrary.value, None)
-
-
-def is_library_file_current(context):
-    return (
-        not hasattr(context, LibraryType.FileExternal.value)
-        and not hasattr(context, LibraryType.FolderExternal.value)
-        and not hasattr(context, LibraryType.UserLibrary.value)
-    )
-
-
-def is_library_file_external(context):
-    return hasattr(context, LibraryType.FileExternal.value)
-
-
-def is_library_folder(context):
-    return hasattr(context, LibraryType.FolderExternal.value) and not is_library_file_external(context)
-
-
-def is_library_user(context):
-    return hasattr(context, LibraryType.UserLibrary.value) and not is_library_folder(context) and not is_library_file_external(context)
