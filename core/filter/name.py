@@ -33,6 +33,7 @@ class FilterName(PropertyGroup):
 
     @staticmethod
     def filter_static(test, method, value, case_sensitive):
+        # Returns True when the input text matches the filter
         if not case_sensitive:
             test = test.lower()
             value = value.lower()

@@ -13,7 +13,7 @@ class ABUOperatorsMenu:
 
     def setup_ops(self, layout, context):
         for op in self.ops_cmd:
-            self.add_op(layout, context, op[0], op[1], op[2] if len(op) > 2 else None)
+            self.add_op(layout, context, *op)
 
     def add_op(self, layout, context, command, text="", icon=None):
         library_source = LibraryType.get_library_type_from_context(context)

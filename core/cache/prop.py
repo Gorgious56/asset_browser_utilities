@@ -19,6 +19,7 @@ from asset_browser_utilities.module.catalog.operator.sort_catalogs_like_folders 
 from asset_browser_utilities.module.catalog.operator.move_from_a_to_b import CatalogMoveFromAToBOperatorProperties
 from asset_browser_utilities.module.catalog.operator.move_to import CatalogMoveOperatorProperties
 from asset_browser_utilities.module.catalog.operator.remove_from import CatalogRemoveFromOperatorProperties
+from asset_browser_utilities.module.catalog.operator.remove_empty import CatalogRemoveEmptyOperatorProperties
 from asset_browser_utilities.module.custom_property.operator.set import CustomPropertySetOperatorProperties
 from asset_browser_utilities.module.custom_property.operator.remove import RemoveCustomPropertyOperatorProperties
 from asset_browser_utilities.module.description.set import DescriptionSetOperatorProperties
@@ -50,6 +51,7 @@ class Cache(PropertyGroup):
     op_catalog_move_from_a_to_b: PointerProperty(type=CatalogMoveFromAToBOperatorProperties)
     op_catalog_move: PointerProperty(type=CatalogMoveOperatorProperties)
     op_catalog_remove: PointerProperty(type=CatalogRemoveFromOperatorProperties)
+    op_catalog_remove_empty: PointerProperty(type=CatalogRemoveEmptyOperatorProperties)
     op_catalog_sort_like_folders: PointerProperty(type=CatalogSortLikeFoldersOperatorProperties)
     op_author_set: PointerProperty(type=AuthorSetOperatorProperties)
     op_description_set: PointerProperty(type=DescriptionSetOperatorProperties)

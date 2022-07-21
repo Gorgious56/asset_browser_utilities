@@ -9,5 +9,6 @@ class ABU_MT_catalogs(Menu, ABUOperatorsMenu):
         ("abu.catalog_move", "Move To Catalog", "ADD"),
         ("abu.catalog_remove_from", "Remove From Catalog", "REMOVE"),
         ("abu.catalog_move_from_a_to_b", "Move From A to B", "FOLDER_REDIRECT"),
+        ("abu.catalog_remove_empty", "Remove Empty", "BRUSH_DATA"),
         ("abu.sort_catalogs_like_folders", "Create From Folders", "FILE_FOLDER"),
     ]
