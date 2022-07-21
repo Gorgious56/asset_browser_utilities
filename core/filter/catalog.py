@@ -10,8 +10,8 @@ def update_uuid(self, context):
 
 
 class FilterCatalog(PropertyGroup):
-    allow: BoolProperty(default=False)
     active: BoolProperty(default=False, name="Filter By Catalog")
+    allow: BoolProperty(default=False)
     catalog: EnumProperty(items=CatalogsHelper.get_catalogs, name="Catalog", update=update_uuid)
     catalog_uuid: StringProperty()
     catalog_filepath: StringProperty()
