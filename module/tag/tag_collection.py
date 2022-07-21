@@ -46,8 +46,8 @@ class TagCollection(PropertyGroup):
         row = split.row(align=True)
         row.prop_enum(self, "tag_internal", value="+", icon="ADD", text="")
         row.prop_enum(self, "tag_internal", value="-", icon="REMOVE", text="")
-        row.enabled = not self.remove_all
         if not self.add:
+            row.enabled = not self.remove_all
             split.prop(self, "remove_all", toggle=True, icon="TRASH")
         if not self.remove_all:
             col = box.column(align=True)
