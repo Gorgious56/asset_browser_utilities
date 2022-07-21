@@ -1,25 +1,31 @@
 from asset_browser_utilities.core.console.parser import ArgumentsParser
 
-from asset_browser_utilities.module.asset.test import mark, unmark, copy
-from asset_browser_utilities.module.author.test import set as set_author
-from asset_browser_utilities.module.description.test import set as set_description
-from asset_browser_utilities.module.catalog.test import move_from_a_to_b, move_to, remove_from, remove_empty
-from asset_browser_utilities.module.preview.test import extract, import_
+import asset_browser_utilities.module.asset.test.mark
+import asset_browser_utilities.module.asset.test.unmark
+import asset_browser_utilities.module.asset.test.copy
+import asset_browser_utilities.module.author.test.set
+import asset_browser_utilities.module.description.test.set
+import asset_browser_utilities.module.catalog.test.move_from_a_to_b
+import asset_browser_utilities.module.catalog.test.move_to
+import asset_browser_utilities.module.catalog.test.remove_from
+import asset_browser_utilities.module.catalog.test.remove_empty
+import asset_browser_utilities.module.preview.test.extract
+import asset_browser_utilities.module.preview.test.import_
 
 from inspect import getmembers, isfunction
 
 _test_modules = (
-    mark,
-    unmark,
-    copy,
-    set_author,
-    set_description,
-    move_from_a_to_b,
-    move_to,
-    remove_from,
-    remove_empty,
-    extract, 
-    import_,
+    asset_browser_utilities.module.asset.test.mark,
+    asset_browser_utilities.module.asset.test.unmark,
+    asset_browser_utilities.module.asset.test.copy,
+    asset_browser_utilities.module.author.test.set,
+    asset_browser_utilities.module.description.test.set,
+    asset_browser_utilities.module.catalog.test.move_from_a_to_b,
+    asset_browser_utilities.module.catalog.test.move_to,
+    asset_browser_utilities.module.catalog.test.remove_from,
+    asset_browser_utilities.module.catalog.test.remove_empty,
+    asset_browser_utilities.module.preview.test.extract, 
+    asset_browser_utilities.module.preview.test.import_,
 )
 
 
