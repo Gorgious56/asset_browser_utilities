@@ -11,6 +11,7 @@ from bpy.props import PointerProperty, EnumProperty, BoolProperty
 from asset_browser_utilities.core.cache.tool import get_current_operator_properties
 from asset_browser_utilities.core.log.logger import Logger
 from asset_browser_utilities.core.operator.tool import BatchExecute, BatchFolderOperator
+from asset_browser_utilities.module.material.tool import get_all_materials_used_by_assets
 
 
 class NodeTreeMergeBatchExecute(BatchExecute):
@@ -36,17 +37,7 @@ class NodeTreeMergeBatchExecute(BatchExecute):
                     if search and node_tree_name[0 : search.start()] == node_tree_to.name:
                         node_trees_from.add(node_tree_name)
                     if op_props.tree_type == "SHADER":
-                        materials_to_process = set()
-                        for asset in self.assets:
-                            if isinstance(asset, bpy.types.Material):
-                                materials_to_process.add(asset)
-                            else:
-                                if not hasattr(asset, "material_slots"):
-                                    continue
-                                for m_s in asset.material_slots:
-                                    if m_s.material is None:
-                                        continue
-                                    materials_to_process.add(m_s.material)
+                        materials_to_process = set(get_all_materials_used_by_assets(self.assets))
                         for material in materials_to_process:
                             if not material.use_nodes:
                                 continue

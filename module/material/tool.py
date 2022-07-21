@@ -28,3 +28,16 @@ def get_all_materials_without_trailing_numbers():
                 duplicate_materials.add(material_name[0 : search.start()])
     duplicate_materials = sorted(list(duplicate_materials))
     return [(m,) * 3 for m in duplicate_materials]
+
+
+def get_all_materials_used_by_assets(assets):
+    for asset in assets:
+        if isinstance(asset, bpy.types.Material):
+            yield asset
+        else:
+            if not hasattr(asset, "material_slots"):
+                continue
+            for m_s in asset.material_slots:
+                if m_s.material is None:
+                    continue
+                yield m_s.material
