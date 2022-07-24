@@ -75,6 +75,8 @@ class Cache(PropertyGroup):
     show: BoolProperty()
 
     def get(self, _type):
+        if isinstance(_type, str):
+            return getattr(self, _type)
         for prop_name in self.__annotations__:
             prop = getattr(self, prop_name)
             if isinstance(prop, _type):
