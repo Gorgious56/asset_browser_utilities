@@ -23,18 +23,12 @@ class AssetFilterSettings(PropertyGroup):
         self,
         filter_selection=False,
         filter_assets=False,
-        filter_assets_optional=False,
-        filter_selection_allow_view_3d=True,
-        filter_selection_allow_asset_browser=True,
         filter_types=True,
     ):
         self.filter_selection.init(
-            allow=filter_selection and get_from_cache(LibraryExportSettings).source == LibraryType.FileCurrent.value,
-            allow_view_3d=filter_selection_allow_view_3d,
-            allow_asset_browser=filter_selection_allow_asset_browser,
+            allow=filter_selection and get_from_cache(LibraryExportSettings).source == LibraryType.FileCurrent.value
         )
-        self.filter_assets.allow = filter_assets
-        self.filter_assets.optional = filter_assets_optional
+        self.filter_assets.only_assets = filter_assets
         self.filter_catalog.allow = filter_assets
         self.filter_types.allow = filter_types
 
@@ -48,30 +42,29 @@ class AssetFilterSettings(PropertyGroup):
             else [t[0] for t in get_object_types()]
         )
         asset_container = AssetContainer(data_containers, object_types)
-        if self.filter_assets.active:
+        if self.filter_assets.only_assets:
             asset_container.filter_assets()
             if self.filter_catalog.active:
                 asset_container.filter_by_catalog(self.filter_catalog.catalog_uuid)
+        
         if self.filter_name.active:
             asset_container.filter_by_name(
                 self.filter_name.method,
                 self.filter_name.value,
                 self.filter_name.case_sensitive,
             )
-        asset_container.filter_by_selection(self.filter_selection)
+        if self.filter_selection.active:
+            asset_container.filter_by_selection(self.filter_selection)
         return list(asset_container.all_assets)
 
     def draw(self, layout, context):
         box = layout.box()
-        if self.filter_assets.allow:
-            self.filter_assets.draw(box)
-        if self.filter_assets.active:
-            self.filter_selection.draw(box)
-            if self.filter_types.allow:
-                self.filter_types.draw(box)
-            self.filter_name.draw(box, name_override="Assets")
-            if self.filter_catalog.allow:
-                self.filter_catalog.draw(box, context)
+        self.filter_selection.draw(box)
+        if self.filter_types.allow:
+            self.filter_types.draw(box)
+        self.filter_name.draw(box, name_override="Assets")
+        if self.filter_catalog.allow:
+            self.filter_catalog.draw(box, context)
 
     def copy_from(self, other):
         # Other is the source, self is the target

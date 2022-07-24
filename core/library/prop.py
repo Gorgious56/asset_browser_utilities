@@ -75,17 +75,15 @@ class LibraryExportSettings(PropertyGroup, CacheMapping):
         self.remove_backup = remove_backup
 
     def draw(self, layout, context):
-        if self.source == LibraryType.FileCurrent.value:
-            return
-
-        self.filter_files_names.draw(layout, name_override="Selected Files")
-        if self.source == LibraryType.FolderExternal.value:
-            layout.prop(self, "recursive", icon="FOLDER_REDIRECT")
-        elif self.source == LibraryType.UserLibrary.value:
-            box = layout.box()
-            library_pg = get_from_cache(LibraryExportSettings)
-            box.prop(library_pg, "library_user_path", icon="FOLDER_REDIRECT")
-            box.label(text=f"Path : {library_pg.library_user_path}")
+        if self.source != LibraryType.FileCurrent.value:
+            self.filter_files_names.draw(layout, name_override="Selected Files")
+            if self.source == LibraryType.FolderExternal.value:
+                layout.prop(self, "recursive", icon="FOLDER_REDIRECT")
+            elif self.source == LibraryType.UserLibrary.value:
+                box = layout.box()
+                library_pg = get_from_cache(LibraryExportSettings)
+                box.prop(library_pg, "library_user_path", icon="FOLDER_REDIRECT")
+                box.label(text=f"Path : {library_pg.library_user_path}")
         if self.remove_backup_allow:
             layout.prop(self, "remove_backup", icon="TRASH")
 

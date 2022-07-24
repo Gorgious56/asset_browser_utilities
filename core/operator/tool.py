@@ -124,14 +124,12 @@ class BatchFolderOperator(ImportHelper):
         context,
         remove_backup=True,
         filter_assets=False,
-        filter_assets_optional=False,
         filter_type=True,
         filter_selection=True,
         custom_operation=True,
         enforce_filebrowser=False,
     ):
         self.filter_assets = filter_assets
-        self.filter_assets_optional = filter_assets_optional
         self.filter_types = filter_type
         self.filter_selection = filter_selection
         self.custom_operation = custom_operation
@@ -211,7 +209,5 @@ class BatchFolderOperator(ImportHelper):
         get_from_cache(AssetFilterSettings).init_asset_filter_settings(
             filter_selection=filter_selection,
             filter_assets=self.filter_assets,
-            filter_assets_optional=self.filter_assets_optional,
-            filter_selection_allow_asset_browser=True,
             filter_types=self.filter_types,
         )
