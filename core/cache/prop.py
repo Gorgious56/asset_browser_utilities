@@ -35,6 +35,7 @@ from asset_browser_utilities.module.node_tree.operator.replace import NodeTreeRe
 
 from asset_browser_utilities.module.preview.operator.extract import PreviewExtractOperatorProperties
 from asset_browser_utilities.module.preview.operator.generate import PreviewGenerateOperatorProperties
+from asset_browser_utilities.module.preview.operator.import_ import PreviewImportOperatorProperties
 
 from asset_browser_utilities.module.tag.operator.tool import TagAddOrRemoveOperatorProperties
 from asset_browser_utilities.module.tag.operator.add_smart import TagAddSmartOperatorProperties
@@ -56,8 +57,11 @@ class Cache(PropertyGroup):
     op_tag_add_or_remove: PointerProperty(type=TagAddOrRemoveOperatorProperties)
     op_custom_prop_set: PointerProperty(type=CustomPropertySetOperatorProperties)
     op_custom_prop_remove: PointerProperty(type=RemoveCustomPropertyOperatorProperties)
+    
     op_preview_generate: PointerProperty(type=PreviewGenerateOperatorProperties)
     op_preview_extract: PointerProperty(type=PreviewExtractOperatorProperties)
+    op_preview_import: PointerProperty(type=PreviewImportOperatorProperties)
+    
     op_catalog_move_from_a_to_b: PointerProperty(type=CatalogMoveFromAToBOperatorProperties)
     op_catalog_move: PointerProperty(type=CatalogMoveOperatorProperties)
     op_catalog_remove: PointerProperty(type=CatalogRemoveFromOperatorProperties)
