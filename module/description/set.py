@@ -20,7 +20,7 @@ class DescriptionSetBatchExecute(BatchExecute):
 class DescriptionSetOperatorProperties(PropertyGroup):
     description: StringProperty(name="Description")
 
-    def draw(self, layout):
+    def draw(self, layout, context=None):
         layout.prop(self, "description", icon="FILE_TEXT")
 
 

@@ -25,7 +25,7 @@ class PreviewGenerateOperatorProperties(PropertyGroup):
         default=False,
     )
 
-    def draw(self, layout):
+    def draw(self, layout, context=None):
         layout.prop(self, "overwrite", icon="ASSET_MANAGER")
 
 

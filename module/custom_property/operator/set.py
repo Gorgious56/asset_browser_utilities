@@ -44,7 +44,7 @@ class CustomPropertySetOperatorProperties(PropertyGroup):
         else:
             return getattr(self, self.type)
 
-    def draw(self, layout):
+    def draw(self, layout, context=None):
         box = layout.box()
         box.prop(self, "name")
         box.prop(self, "type")

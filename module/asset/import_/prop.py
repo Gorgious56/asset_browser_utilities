@@ -11,7 +11,7 @@ class CacheAssetPath(PropertyGroup):
 # class CacheAssetPaths(PropertyGroup):
 #     items: CollectionProperty(type=CacheAssetPath)
 
-#     def draw(self, layout):
+#     def draw(self, layout, context=None):
 #         # Used for debugging purpose
 #         for item in self.items:
 #             for prop_name in item.__annotations__:
@@ -34,7 +34,7 @@ class ExportProperties(PropertyGroup):
         description="If checked, the file where the assets will be exported will be opened in a new blender instance",
     )
 
-    def draw(self, layout):
+    def draw(self, layout, context=None):
         layout.prop(self, "open_in_new_blender_instance", icon="WINDOW")
         layout.prop(self, "individual_files", icon="NEWFOLDER")
         layout.prop(self, "overwrite", icon="ASSET_MANAGER")

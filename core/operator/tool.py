@@ -11,7 +11,7 @@ from bpy.props import StringProperty, CollectionProperty, EnumProperty, BoolProp
 from bpy_extras.io_utils import ImportHelper
 
 from asset_browser_utilities.core.tool import copy_simple_property_group
-from asset_browser_utilities.core.cache.tool import get_presets, get_from_cache
+from asset_browser_utilities.core.cache.tool import get_current_operator_properties, get_presets, get_from_cache
 from asset_browser_utilities.core.ui.message import message_box
 from asset_browser_utilities.core.file.path import open_file_if_different_from_current
 from asset_browser_utilities.core.file.save import save_if_possible_and_necessary, save_file_as
@@ -89,13 +89,14 @@ def update_preset(self, context):
         preset = get_preferences().defaults
     else:
         preset = next(p for p in get_preferences().presets if p.name == preset_name)
+    current_op = get_current_operator_properties()
     for attr in preset.__annotations__:
         if attr == "library_settings":
             continue
-        if not hasattr(self, attr):
-            continue
         default_setting = getattr(preset, attr)
-        setting = getattr(self, attr)
+        if attr.startswith("op_") and not type(default_setting) == type(current_op):
+            continue
+        setting = get_from_cache(type(default_setting))
         if hasattr(setting, "copy_from"):  # Assume it's a "complicated" property group if copy_from is implemented
             setting.copy_from(default_setting)
         else:

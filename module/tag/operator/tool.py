@@ -14,7 +14,7 @@ class TagAddOrRemoveOperatorProperties(PropertyGroup):
         self.tag_collection.add = add
         self.tag_collection.init(tags=self.MAX_TAGS)
 
-    def draw(self, layout):
+    def draw(self, layout, context=None):
         box = layout.box()
         self.tag_collection.draw(box)
         if self.tag_collection.remove_all:

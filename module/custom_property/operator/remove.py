@@ -23,7 +23,7 @@ class BatchExecuteOverride(BatchExecute):
 class RemoveCustomPropertyOperatorProperties(PropertyGroup):
     name: StringProperty(name="Name", default="prop")
 
-    def draw(self, layout):
+    def draw(self, layout, context=None):
         layout.prop(self, "name", text="Custom Property Name")
 
 

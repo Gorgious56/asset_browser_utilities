@@ -27,7 +27,7 @@ class AssetExportOperatorProperties(PropertyGroup):
         default=True,
     )
 
-    def draw(self, layout):
+    def draw(self, layout, context=None):
         layout.prop(self, "individual_files", icon="NEWFOLDER")
         layout.prop(self, "overwrite", icon="ASSET_MANAGER")
 

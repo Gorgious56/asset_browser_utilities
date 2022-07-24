@@ -80,7 +80,7 @@ class FilterTypes(PropertyGroup):
         },
     )
 
-    def draw(self, layout):
+    def draw(self, layout, context=None):
         box = layout.box()
 
         row = box.row(align=True)

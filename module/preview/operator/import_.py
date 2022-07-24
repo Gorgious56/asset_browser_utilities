@@ -58,7 +58,7 @@ class PreviewImportOperatorProperties(PropertyGroup):
         default="",
     )
 
-    def draw(self, layout):
+    def draw(self, layout, context=None):
         layout.prop(self, "load_if_name_contains_image_name", icon="OUTLINER_OB_FONT")
         layout.prop(self, "look_only_in_folder_with_name", icon="FILTER")
 

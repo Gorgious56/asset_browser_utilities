@@ -29,7 +29,7 @@ class CatalogMoveFromAToBOperatorProperties(PropertyGroup):
     catalog_from: PointerProperty(type=FilterCatalog)
     catalog_to: PointerProperty(type=FilterCatalog)
 
-    def draw(self, layout):
+    def draw(self, layout, context=None):
         box = layout.box()
         box.label(text="Move Assets :")
         split = box.split(factor=0.35)

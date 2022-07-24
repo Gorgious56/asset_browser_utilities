@@ -41,7 +41,7 @@ class AssetMarkOperatorProperties(PropertyGroup):
         description="When marking assets, automatically generate a preview\nUncheck to mark assets really fast",
     )
 
-    def draw(self, layout):
+    def draw(self, layout, context=None):
         layout.prop(self, "overwrite", icon="ASSET_MANAGER")
         row = layout.row(align=True)
         row.prop(self, "generate_previews", icon="RESTRICT_RENDER_OFF")

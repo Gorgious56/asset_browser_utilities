@@ -86,7 +86,7 @@ class CatalogMoveOperatorProperties(PropertyGroup):
     catalog: PointerProperty(type=FilterCatalog)
     catalog_name: StringProperty(name="Name")
 
-    def draw(self, layout):
+    def draw(self, layout, context=None):
         box = layout.box()
         box.label(text="Move Assets to This Catalog")
         box.prop(self, "mode")

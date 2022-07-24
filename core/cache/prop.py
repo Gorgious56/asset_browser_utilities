@@ -57,11 +57,11 @@ class Cache(PropertyGroup):
     op_tag_add_or_remove: PointerProperty(type=TagAddOrRemoveOperatorProperties)
     op_custom_prop_set: PointerProperty(type=CustomPropertySetOperatorProperties)
     op_custom_prop_remove: PointerProperty(type=RemoveCustomPropertyOperatorProperties)
-    
+
     op_preview_generate: PointerProperty(type=PreviewGenerateOperatorProperties)
     op_preview_extract: PointerProperty(type=PreviewExtractOperatorProperties)
     op_preview_import: PointerProperty(type=PreviewImportOperatorProperties)
-    
+
     op_catalog_move_from_a_to_b: PointerProperty(type=CatalogMoveFromAToBOperatorProperties)
     op_catalog_move: PointerProperty(type=CatalogMoveOperatorProperties)
     op_catalog_remove: PointerProperty(type=CatalogRemoveFromOperatorProperties)
@@ -97,4 +97,9 @@ class Cache(PropertyGroup):
             for attr in self.__annotations__:
                 default_setting = getattr(self, attr)
                 if hasattr(default_setting, "draw"):
-                    default_setting.draw(layout, context)
+                    box = layout.box()
+                    name = default_setting.__class__.__name__
+                    # https://stackoverflow.com/a/45778633/7092409
+                    name = "".join(" " + char if char.isupper() else char.strip() for char in name).strip()
+                    box.label(text=name)
+                    default_setting.draw(box, context)

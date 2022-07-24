@@ -36,7 +36,7 @@ class MaterialReplaceOperatorProperties(PropertyGroup):
     material_to: EnumProperty(name="Replace", items=get_all_materials_for_an_enum_selector)
     material_from: EnumProperty(name="With", items=get_all_materials_for_an_enum_selector)
 
-    def draw(self, layout):
+    def draw(self, layout, context=None):
         box = layout.box()
         box.prop(self, "material_to")
         box.prop(self, "material_from")

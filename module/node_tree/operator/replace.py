@@ -57,7 +57,7 @@ class NodeTreeReplaceOperatorProperties(PropertyGroup):
     node_tree_old: EnumProperty(name="Replace", items=get_all_node_trees_for_an_enum_selector)
     node_tree_new: EnumProperty(name="With", items=get_all_node_trees_for_an_enum_selector)
 
-    def draw(self, layout):
+    def draw(self, layout, context=None):
         box = layout.box()
         box.prop(self, "tree_type")
         box.prop(self, "node_tree_old")

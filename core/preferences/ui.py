@@ -27,7 +27,7 @@ class AssetBrowserUtilitiesAddonPreferences(AddonPreferences):
         layout.prop(self, "show_custom_props", icon="PROPERTIES")
 
         self.defaults.asset_filter_settings.filter_selection.allow = True
-        self.defaults.asset_filter_settings.filter_catalog.allow = True
+        self.defaults.asset_filter_settings.filter_catalog.allow = False
 
         box = layout.box()
         self.defaults.draw(box, context, header="Set Defaults")
@@ -37,7 +37,7 @@ class AssetBrowserUtilitiesAddonPreferences(AddonPreferences):
         row.label(text="Presets")
         row.operator("abu.presets_add_or_remove", text="", icon="ADD").index = -1
         for i, preset in enumerate(self.presets):
-            lay = box if preset.show else box.row(align=True)
-            preset.draw(lay, context, header="Expand", rename=True)
+            layout = box if preset.show else box.row(align=True)
+            preset.draw(layout, context, header="Expand", rename=True)
             if not preset.show:
-                lay.operator("abu.presets_add_or_remove", text="", icon="REMOVE").index = i
+                layout.operator("abu.presets_add_or_remove", text="", icon="REMOVE").index = i

@@ -38,7 +38,7 @@ class TagCollection(PropertyGroup):
         while len(self.items) < tags:
             self.items.add()
 
-    def draw(self, layout):
+    def draw(self, layout, context=None):
         box = layout
         row = box.row()
         split = row.split(factor=0.2)

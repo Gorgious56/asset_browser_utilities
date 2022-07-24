@@ -19,7 +19,7 @@ class AuthorSetBatchExecute(BatchExecute):
 class AuthorSetOperatorProperties(PropertyGroup):
     author: StringProperty(name="Author")
 
-    def draw(self, layout):
+    def draw(self, layout, context=None):
         layout.prop(self, "author", icon="USER")
 
 

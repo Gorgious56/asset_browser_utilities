@@ -116,7 +116,7 @@ class NodeTreeMergeOperatorProperties(PropertyGroup):
     execute_all: BoolProperty(name="Merge all duplicate node trees", default=False)
     node_tree_name: EnumProperty(name="Base Node Tree", items=get_all_node_trees_for_an_enum_selector)
 
-    def draw(self, layout):
+    def draw(self, layout, context=None):
         box = layout.box()
         box.label(text="Merge Node Trees")
         box.prop(self, "tree_type")

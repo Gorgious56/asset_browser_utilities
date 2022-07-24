@@ -54,7 +54,7 @@ class CatalogSortLikeFoldersOperatorProperties(PropertyGroup):
         default=False,
     )
 
-    def draw(self, layout):
+    def draw(self, layout, context=None):
         layout.prop(self, "are_assets_in_subfolders", text="Assets are contained in individual folders")
 
 

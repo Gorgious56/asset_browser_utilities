@@ -58,7 +58,7 @@ class AssetCopyDataOperatorProperties(PropertyGroup):
     author: BoolProperty(name="Author")
     description: BoolProperty(name="Description")
 
-    def draw(self, layout):
+    def draw(self, layout, context=None):
         box = layout.box()
         box.label(text="Copy These Properties From Active Asset")
         box.prop(self, "tags", icon="BOOKMARKS")

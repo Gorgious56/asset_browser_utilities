@@ -30,7 +30,7 @@ class CatalogRemoveFromOperatorProperties(PropertyGroup):
     filter: BoolProperty(default=True, description="")
     catalog: PointerProperty(type=FilterCatalog)
 
-    def draw(self, layout):
+    def draw(self, layout, context=None):
         box = layout.box()
         row = box.row(align=True)
         row.label(text="Remove Assets From This Catalog" if self.filter else "Remove Assets From All Catalogs")
