@@ -46,6 +46,12 @@ OPERATION_MAPPING = {
 }
 
 
+def get_available_operations():
+    for operation in OPERATION_MAPPING.values():
+        if (hasattr(operation, "poll") and operation.poll()) or not hasattr(operation, "poll"):
+            yield operation
+
+
 def set_shown_operation(self, value):
     # This is extremely hacky but emulates dynamically adding or removing operations
     if value == 1:
@@ -67,7 +73,7 @@ def get_enum_items(self, context):
 class OperationSetting(PropertyGroup):
     type: EnumProperty(
         name="Operation",
-        items=[(op.MAPPING, op.LABEL, op.DESCRIPTION) for op in OPERATION_MAPPING.values()],
+        items=lambda self, context: [(op.MAPPING, op.LABEL, op.DESCRIPTION) for op in get_available_operations()],
     )
     vector_value: FloatVectorProperty(name="Value")
     int_value: IntProperty(name="Value")

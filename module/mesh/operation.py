@@ -1,4 +1,5 @@
 import bpy
+from asset_browser_utilities.core.operator.prop import ObjectMeshFilteredOperation
 
 
 def decimate(obj, tris, apply):
@@ -15,7 +16,7 @@ def decimate(obj, tris, apply):
             )
 
 
-class DecimateOperation:
+class DecimateOperation(ObjectMeshFilteredOperation):
     MAPPING = "DECIMATE"
     LABEL = "Decimate"
     DESCRIPTION = "Decimate the mesh (only applicable on mesh objects)"

@@ -1,5 +1,6 @@
 import re
 from pathlib import Path
+from asset_browser_utilities.core.operator.prop import ObjectFilteredOperation
 import bpy
 
 
@@ -59,10 +60,10 @@ class RenameAssetOperation:
             layout.prop(operation_pg, "string_value")
 
 
-class RenameDataOperation:
+class RenameDataOperation(ObjectFilteredOperation):
     MAPPING = "RENAME_DATA"
-    LABEL = "Rename Data"
-    DESCRIPTION = "Rename Data"
+    LABEL = "Rename Object's Data"
+    DESCRIPTION = "Rename Object's Data"
     OPERATION = lambda assets, mode, value, value_from, same_as_asset: [
         rename(
             a.data,
@@ -92,10 +93,10 @@ class RenameDataOperation:
                 layout.prop(operation_pg, "string_value")
 
 
-class RenameMaterialOperation:
+class RenameMaterialOperation(ObjectFilteredOperation):
     MAPPING = "RENAME_MATERIAL"
-    LABEL = "Rename Material"
-    DESCRIPTION = "Rename Material"
+    LABEL = "Rename Object's Material"
+    DESCRIPTION = "Rename Object's Material"
     OPERATION = lambda assets, mode, value, value_from, same_as_asset, slot: [
         rename(
             a.data.materials[slot],

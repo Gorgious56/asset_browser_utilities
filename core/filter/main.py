@@ -81,3 +81,15 @@ class AssetFilterSettings(PropertyGroup):
         copy_simple_property_group(other.filter_name, self.filter_name)
         copy_simple_property_group(other.filter_selection, self.filter_selection)
         copy_simple_property_group(other.filter_catalog, self.filter_catalog)
+
+    @staticmethod
+    def are_objects_filtered():
+        filter_types = get_from_cache(AssetFilterSettings).filter_types
+        return "objects" in filter_types.types or not filter_types.types_global_filter
+
+    @staticmethod
+    def are_mesh_objects_filtered():
+        filter_types = get_from_cache(AssetFilterSettings).filter_types
+        return ("objects" in filter_types.types or not filter_types.types_global_filter) and (
+            "MESH" in filter_types.types_object or not filter_types.types_object_filter
+        )

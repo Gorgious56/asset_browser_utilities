@@ -1,4 +1,5 @@
 from math import radians
+from asset_browser_utilities.core.operator.prop import ObjectFilteredOperation
 from mathutils import Vector, Euler
 import bpy
 
@@ -16,35 +17,35 @@ def apply_transforms(assets, loc=False, rot=False, scale=False):
         )
 
 
-class ApplyTransformOperation:
+class ApplyTransformOperation(ObjectFilteredOperation):
     MAPPING = "APPLY_TRANSFORMS"
     LABEL = "Apply Transforms"
     DESCRIPTION = "Apply Location, Rotation, Scale"
     OPERATION = lambda assets: apply_transforms(assets, loc=True, rot=True, scale=True)
 
 
-class ApplyLocationOperation:
+class ApplyLocationOperation(ObjectFilteredOperation):
     MAPPING = "APPLY_LOCATION"
     LABEL = "Apply Location"
     DESCRIPTION = "Apply Location"
     OPERATION = lambda assets: apply_transforms(assets, loc=True)
 
 
-class ApplyRotationOperation:
+class ApplyRotationOperation(ObjectFilteredOperation):
     MAPPING = "APPLY_ROTATION"
     LABEL = "Apply Rotation"
     DESCRIPTION = "Apply Rotation"
     OPERATION = lambda assets: apply_transforms(assets, rot=True)
 
 
-class ApplyScaleOperation:
+class ApplyScaleOperation(ObjectFilteredOperation):
     MAPPING = "APPLY_SCALE"
     LABEL = "Apply Scale"
     DESCRIPTION = "Apply Scale"
     OPERATION = lambda assets: apply_transforms(assets, scale=True)
 
 
-class TranslateOperation:
+class TranslateOperation(ObjectFilteredOperation):
     MAPPING = "TRANSLATE"
     LABEL = "Translate"
     DESCRIPTION = "Translate"
@@ -54,7 +55,7 @@ class TranslateOperation:
     ATTRIBUTE = "vector_value"
 
 
-class ScaleOperation:
+class ScaleOperation(ObjectFilteredOperation):
     MAPPING = "SCALE"
     LABEL = "Scale"
     DESCRIPTION = "Scale"
@@ -71,7 +72,7 @@ def rotate_euler(obj, vector):
     obj.rotation_euler = obj_euler
 
 
-class RotateOperation:
+class RotateOperation(ObjectFilteredOperation):
     MAPPING = "ROTATE"
     LABEL = "Rotate"
     DESCRIPTION = "Rotate Euler Values as degrees in global coordinates"
