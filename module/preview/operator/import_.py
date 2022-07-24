@@ -23,7 +23,7 @@ class PreviewImportBatchExecute(BatchExecute):
             if asset.name in self.images_names:
                 image_filepath = str(self.images[self.images_names.index(asset.name)])
                 load_preview(image_filepath, asset)
-                Logger.display(f"Loaded custom preview from '{image_filepath}' for asset '{asset.name}'")
+        self.save_file()
         self.execute_next_blend()
 
 

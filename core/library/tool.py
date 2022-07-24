@@ -18,7 +18,7 @@ def load_preview(filepath, asset=None):
                 bpy.ops.ed.lib_id_load_custom_preview(filepath=str(filepath))
         else:
             bpy.ops.ed.lib_id_load_custom_preview({"id": asset}, filepath=str(filepath))
-    Logger.display(f"Loaded custom preview for {asset.name if asset is not None else 'active asset'}")
+    Logger.display(f"Loaded custom preview from '{filepath}' for asset '{asset.name or 'active asset'}'")
 
 
 def get_blend_library_name(asset):
