@@ -1,4 +1,6 @@
 import re
+from pathlib import Path
+import bpy
 
 
 def remove_trailing_numbers(obj, prop_name):
@@ -20,10 +22,18 @@ def rename(obj, mode, value, value_from, remove_trailing):
         obj.name = obj.name + value
     elif mode == "Replace":
         obj.name = obj.name.replace(value_from, value)
+    elif mode == "Blend Name":
+        obj.name = Path(bpy.data.filepath).stem
 
 
 def get_enum_items():
-    return (("Set",) * 3, ("Prefix",) * 3, ("Replace",) * 3, ("Suffix",) * 3)
+    return (
+        ("Set",) * 3,
+        ("Prefix",) * 3,
+        ("Replace",) * 3,
+        ("Suffix",) * 3,
+        ("Blend Name",) * 3,
+    )
 
 
 class RenameAssetOperation:
@@ -40,11 +50,14 @@ class RenameAssetOperation:
     @staticmethod
     def draw(layout, operation_pg):
         layout.prop(operation_pg, "enum_value", text="Mode")
-        if operation_pg.enum_value == "Replace":
+        if operation_pg.enum_value == "Blend Name":
+            return
+        elif operation_pg.enum_value == "Replace":
             layout.prop(operation_pg, "string_value_2", text="Replace")
             layout.prop(operation_pg, "string_value", text="With")
         else:
             layout.prop(operation_pg, "string_value")
+
 
 class RenameDataOperation:
     MAPPING = "RENAME_DATA"
