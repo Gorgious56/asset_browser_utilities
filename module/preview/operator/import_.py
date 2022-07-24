@@ -19,11 +19,14 @@ class PreviewImportBatchExecute(BatchExecute):
         super().__init__()
 
     def execute_one_file_and_the_next_when_finished(self):
+        imported_preview = False
         for asset in self.assets:
             if asset.name in self.images_names:
                 image_filepath = str(self.images[self.images_names.index(asset.name)])
                 load_preview(image_filepath, asset)
-        self.save_file()
+                imported_preview = True
+        if imported_preview:
+            self.save_file()
         self.execute_next_blend()
 
 
