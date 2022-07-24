@@ -9,10 +9,16 @@ class ABU_MT_submenu(Menu):
     bl_label = ""
 
     def draw(self, context):
-        if hasattr(context, LibraryType.UserLibrary.value) and not context.preferences.filepaths.asset_libraries:
+        if (
+            LibraryType.get_library_type_from_context(context) == LibraryType.UserLibrary.value
+            and not context.preferences.filepaths.asset_libraries
+        ):
             self.layout.label(text="Add User Library in Edit > Preferences > File Paths", icon="QUESTION")
-        elif hasattr(context, LibraryType.FileCurrent.value) and not bpy.data.is_saved:
-            self.layout.label(text="Save this file to disk to enable operations", icon="QUESTION")
+        elif (
+            LibraryType.get_library_type_from_context(context) == LibraryType.FileCurrent.value
+            and not bpy.data.is_saved
+        ):
+            self.layout.label(text="Save File to disk to enable operations", icon="QUESTION")
         else:
             self.draw_shared_menus(context)
 

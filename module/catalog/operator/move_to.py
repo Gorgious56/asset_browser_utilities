@@ -51,6 +51,10 @@ class CatalogMovetoBatchExecute(BatchExecute):
                 and asset.users_collection[0] is not None
             ):
                 uuid = helper.ensure_or_create_catalog_definition(asset.users_collection[0].name or "Catalog")
+            elif isinstance(asset, bpy.types.Collection):
+                parent = next((c for c in bpy.data.collections if c.user_of_id(asset)), None)
+                if parent:
+                    uuid = helper.ensure_or_create_catalog_definition(parent.name or "Catalog")
         elif op_props.mode == "Material name":
             if (
                 hasattr(asset, "material_slots")

@@ -83,18 +83,6 @@ class BatchExecute:
         pass
 
 
-def update_asset_filter_allow(filter_assets=False, allow_asset_browser_selection=True):
-    filter_selection = not get_from_cache(LibraryExportSettings).source in (
-        LibraryType.FolderExternal.value,
-        LibraryType.FileExternal.value,
-    )
-    get_from_cache(AssetFilterSettings).init_asset_filter_settings(
-        filter_selection=filter_selection,
-        filter_assets=filter_assets,
-        filter_selection_allow_asset_browser=allow_asset_browser_selection,
-    )
-
-
 def update_preset(self, context):
     preset_name = self.preset
     if preset_name == "ABU_DEFAULT":
@@ -112,7 +100,7 @@ def update_preset(self, context):
             setting.copy_from(default_setting)
         else:
             copy_simple_property_group(default_setting, setting)
-    update_asset_filter_allow(self.filter_assets)
+    self.update_asset_filter_allow()
 
 
 class BatchFolderOperator(ImportHelper):
@@ -131,8 +119,22 @@ class BatchFolderOperator(ImportHelper):
     directory: StringProperty()
     logic_class = BatchExecute
 
-    def _invoke(self, context, remove_backup=True, filter_assets=False, enforce_filebrowser=False):
+    def _invoke(
+        self,
+        context,
+        remove_backup=True,
+        filter_assets=False,
+        filter_assets_optional=False,
+        filter_type=True,
+        filter_selection=True,
+        custom_operation=True,
+        enforce_filebrowser=False,
+    ):
         self.filter_assets = filter_assets
+        self.filter_assets_optional = filter_assets_optional
+        self.filter_types = filter_type
+        self.filter_selection = filter_selection
+        self.custom_operation = custom_operation
 
         update_preset(self, context)
         self.init_operation_settings()
@@ -194,4 +196,22 @@ class BatchFolderOperator(ImportHelper):
         if hasattr(self, "operator_settings") and self.operator_settings and hasattr(self.operator_settings, "draw"):
             get_from_cache(self.operator_settings.__class__).draw(layout)
         get_from_cache(AssetFilterSettings).draw(layout, context)
-        get_from_cache(OperationSettings).draw(layout, context)
+        if self.custom_operation:
+            get_from_cache(OperationSettings).draw(layout, context)
+
+    def update_asset_filter_allow(self):
+        filter_selection = (
+            not get_from_cache(LibraryExportSettings).source
+            in (
+                LibraryType.FolderExternal.value,
+                LibraryType.FileExternal.value,
+            )
+            and self.filter_selection
+        )
+        get_from_cache(AssetFilterSettings).init_asset_filter_settings(
+            filter_selection=filter_selection,
+            filter_assets=self.filter_assets,
+            filter_assets_optional=self.filter_assets_optional,
+            filter_selection_allow_asset_browser=True,
+            filter_types=self.filter_types,
+        )

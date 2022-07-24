@@ -1,4 +1,3 @@
-from asset_browser_utilities.module.node_tree.operator.merge import NodeTreeMergeOperatorProperties
 from bpy.types import PropertyGroup
 from bpy.props import PointerProperty, BoolProperty
 
@@ -11,22 +10,34 @@ from asset_browser_utilities.module.asset.prop import SelectedAssetFiles
 
 from asset_browser_utilities.module.asset.operator.mark import AssetMarkOperatorProperties
 from asset_browser_utilities.module.asset.export.operator import AssetExportOperatorProperties
-from asset_browser_utilities.module.author.set import AuthorSetOperatorProperties
 from asset_browser_utilities.module.asset.operator.copy import AssetCopyDataOperatorProperties
+
+from asset_browser_utilities.module.author.set import AuthorSetOperatorProperties
+
 from asset_browser_utilities.module.catalog.operator.sort_catalogs_like_folders import (
     CatalogSortLikeFoldersOperatorProperties,
 )
 from asset_browser_utilities.module.catalog.operator.move_from_a_to_b import CatalogMoveFromAToBOperatorProperties
 from asset_browser_utilities.module.catalog.operator.move_to import CatalogMoveOperatorProperties
 from asset_browser_utilities.module.catalog.operator.remove_from import CatalogRemoveFromOperatorProperties
+from asset_browser_utilities.module.catalog.operator.remove_empty import CatalogRemoveEmptyOperatorProperties
+
 from asset_browser_utilities.module.custom_property.operator.set import CustomPropertySetOperatorProperties
 from asset_browser_utilities.module.custom_property.operator.remove import RemoveCustomPropertyOperatorProperties
+
 from asset_browser_utilities.module.description.set import DescriptionSetOperatorProperties
-from asset_browser_utilities.module.tag.operator.tool import TagAddOrRemoveOperatorProperties
-from asset_browser_utilities.module.tag.operator.add_smart import TagAddSmartOperatorProperties
+
 from asset_browser_utilities.module.material.operator.merge import MaterialMergeOperatorProperties
+from asset_browser_utilities.module.material.operator.replace import MaterialReplaceOperatorProperties
+
+from asset_browser_utilities.module.node_tree.operator.merge import NodeTreeMergeOperatorProperties
+from asset_browser_utilities.module.node_tree.operator.replace import NodeTreeReplaceOperatorProperties
+
 from asset_browser_utilities.module.preview.operator.extract import PreviewExtractOperatorProperties
 from asset_browser_utilities.module.preview.operator.generate import PreviewGenerateOperatorProperties
+
+from asset_browser_utilities.module.tag.operator.tool import TagAddOrRemoveOperatorProperties
+from asset_browser_utilities.module.tag.operator.add_smart import TagAddSmartOperatorProperties
 
 
 class Cache(PropertyGroup):
@@ -50,11 +61,14 @@ class Cache(PropertyGroup):
     op_catalog_move_from_a_to_b: PointerProperty(type=CatalogMoveFromAToBOperatorProperties)
     op_catalog_move: PointerProperty(type=CatalogMoveOperatorProperties)
     op_catalog_remove: PointerProperty(type=CatalogRemoveFromOperatorProperties)
+    op_catalog_remove_empty: PointerProperty(type=CatalogRemoveEmptyOperatorProperties)
     op_catalog_sort_like_folders: PointerProperty(type=CatalogSortLikeFoldersOperatorProperties)
     op_author_set: PointerProperty(type=AuthorSetOperatorProperties)
     op_description_set: PointerProperty(type=DescriptionSetOperatorProperties)
     op_material_merge: PointerProperty(type=MaterialMergeOperatorProperties)
+    op_material_replace: PointerProperty(type=MaterialReplaceOperatorProperties)
     op_node_tree_merge: PointerProperty(type=NodeTreeMergeOperatorProperties)
+    op_node_tree_replace: PointerProperty(type=NodeTreeReplaceOperatorProperties)
 
     selected_assets: PointerProperty(type=SelectedAssetFiles)
 

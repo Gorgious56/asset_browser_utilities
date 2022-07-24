@@ -10,7 +10,7 @@ from asset_browser_utilities.module.custom_property.tool import copy_prop
 from asset_browser_utilities.module.asset.prop import SelectedAssetFiles
 
 
-class AssetCopyDataExecuteOverride(BatchExecute):
+class AssetCopyDataExecute(BatchExecute):
     def do_on_asset(self, asset):
         operator_properties = get_current_operator_properties()
         active_asset = get_from_cache(SelectedAssetFiles).active_asset
@@ -75,7 +75,7 @@ class ABU_OT_copy_from_active(Operator, BatchFolderOperator):
     bl_label = "Copy Data From Active"
 
     operator_settings: PointerProperty(type=AssetCopyDataOperatorProperties)
-    logic_class = AssetCopyDataExecuteOverride
+    logic_class = AssetCopyDataExecute
 
     def invoke(self, context, event):
         return self._invoke(context, filter_assets=True)

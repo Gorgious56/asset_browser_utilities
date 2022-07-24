@@ -5,7 +5,7 @@ import bpy
 from asset_browser_utilities.core.cache.tool import get_from_cache
 from asset_browser_utilities.core.test.prop import TestOperator
 
-from asset_browser_utilities.module.preview.operator.extract import PreviewExtractBatchExecuteOverride
+from asset_browser_utilities.module.preview.operator.extract import PreviewExtractBatchExecute
 from asset_browser_utilities.core.filter.main import AssetFilterSettings
 
 
@@ -14,7 +14,7 @@ def test_extracting_previews(filepath):
         filepath=filepath,
         filter_assets=True,
         op_name="op_preview_extract",
-        logic_class=PreviewExtractBatchExecuteOverride,
+        logic_class=PreviewExtractBatchExecute,
     )
     asset_filter_settings = get_from_cache(AssetFilterSettings)
     asset_filter_settings.types_global_filter = False

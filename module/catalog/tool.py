@@ -8,6 +8,10 @@ from asset_browser_utilities.core.library.prop import LibraryExportSettings, Lib
 from asset_browser_utilities.core.file.path import read_lines_sequentially
 
 
+def all_catalogs():
+    return CatalogsHelper().get_catalogs(None, None)
+
+
 class CatalogsHelper:
     CATALOGS_FILENAME = "blender_assets.cats.txt"
 
@@ -117,8 +121,16 @@ class CatalogsHelper:
             if this_uuid == uuid:
                 return line
 
+    def remove_catalog_by_uuid(self, uuid):
+        lines = list(read_lines_sequentially(self.catalog_filepath))
+        with open(self.catalog_filepath, "w") as catalog_file:
+            for line in lines:
+                if line.startswith(str(uuid)):
+                    continue
+                catalog_file.write(line)
+
     @staticmethod
-    def get_catalogs(filter_catalog, context):  # Keep both arguments even if not used. It's a callback !
+    def get_catalogs(filter_catalog=None, context=None):  # Keep both arguments even if not used. It's a callback !
         helper = CatalogsHelper()
         catalogs = []
         if helper.has_catalogs:

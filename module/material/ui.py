@@ -6,4 +6,5 @@ class ABU_MT_material(Menu, ABUOperatorsMenu):
     bl_label = "Materials"
     ops_cmd = [
         ("abu.material_merge", "Merge", "AUTOMERGE_ON"),
+        ("abu.material_replace", "Replace", "COMMUNITY"),
     ]

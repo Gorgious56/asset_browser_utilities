@@ -63,6 +63,7 @@ def get_object_types():
 
 
 class FilterTypes(PropertyGroup):
+    allow: BoolProperty(default=True)
     types_global_filter: BoolProperty(default=True, name="Filter By Type")
     types: EnumProperty(
         options={"ENUM_FLAG"},

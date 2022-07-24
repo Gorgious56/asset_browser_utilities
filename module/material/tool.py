@@ -5,7 +5,7 @@ import re
 def get_all_materials_for_an_enum_selector(self, context):
     mats_enum = get_all_materials_for_an_enum_selector.mats_enum
     mats_enum.clear()
-    if self.mode == "Trailing Numbers":
+    if hasattr(self, "mode") and self.mode == "Trailing Numbers":
         mats_enum = get_all_materials_without_trailing_numbers()
         return mats_enum
     else:
@@ -28,3 +28,16 @@ def get_all_materials_without_trailing_numbers():
                 duplicate_materials.add(material_name[0 : search.start()])
     duplicate_materials = sorted(list(duplicate_materials))
     return [(m,) * 3 for m in duplicate_materials]
+
+
+def get_all_materials_used_by_assets(assets):
+    for asset in assets:
+        if isinstance(asset, bpy.types.Material):
+            yield asset
+        else:
+            if not hasattr(asset, "material_slots"):
+                continue
+            for m_s in asset.material_slots:
+                if m_s.material is None:
+                    continue
+                yield m_s.material

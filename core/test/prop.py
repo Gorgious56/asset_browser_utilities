@@ -16,6 +16,9 @@ class TestOperator:
         filter_assets=False,
         filter_types=False,
         filter_object_types=False,
+        filter_selection=False,
+        filter_name=False,
+        filter_catalog=False,
         op_name="",
         logic_class=None,
     ):
@@ -27,17 +30,34 @@ class TestOperator:
             self.op_props = setup_and_get_current_operator(op_name)
 
         asset_filter_settings = get_asset_filter_settings()
-        asset_filter_settings.filter_assets = filter_assets
+        asset_filter_settings.filter_assets.active = filter_assets
+
         if bool(filter_types):
             asset_filter_settings.filter_types.types_global_filter = True
             asset_filter_settings.filter_types.types = filter_types
         else:
             asset_filter_settings.filter_types.types_global_filter = False
+
         if bool(filter_object_types):
             asset_filter_settings.filter_types.types_object_filter = True
             asset_filter_settings.filter_types.types_object = filter_object_types
         else:
             asset_filter_settings.filter_types.types_object_filter = False
+
+        if bool(filter_selection):
+            asset_filter_settings.filter_selection.active = True
+        else:
+            asset_filter_settings.filter_selection.active = False
+        
+        if bool(filter_name):
+            asset_filter_settings.filter_name.active = True
+        else:
+            asset_filter_settings.filter_name.active = False
+        
+        if bool(filter_catalog):
+            asset_filter_settings.filter_catalog.active = True
+        else:
+            asset_filter_settings.filter_catalog.active = False
 
         self.logic_class = logic_class
 
