@@ -86,6 +86,8 @@ class RenameDataOperation(ObjectFilteredOperation):
         layout.prop(operation_pg, "bool_value", text="Same as Asset ?")
         if not operation_pg.bool_value:
             layout.prop(operation_pg, "enum_value", text="Mode")
+            if operation_pg.enum_value == "Blend Name":
+                return
             if operation_pg.enum_value == "Replace":
                 layout.prop(operation_pg, "string_value_2", text="Replace")
                 layout.prop(operation_pg, "string_value", text="With")
