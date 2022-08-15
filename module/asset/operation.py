@@ -67,9 +67,9 @@ class RenameDataOperation(ObjectFilteredOperation):
     OPERATION = lambda assets, mode, value, value_from, same_as_asset: [
         rename(
             a.data,
-            "Replace" if same_as_asset else mode,
-            value_from,
+            "Set" if same_as_asset else mode,
             a.name if same_as_asset else value,
+            value_from,
             False,
         )
         for a in assets
