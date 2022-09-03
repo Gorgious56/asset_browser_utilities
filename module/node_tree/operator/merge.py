@@ -18,83 +18,27 @@ class NodeTreeMergeBatchExecute(BatchExecute):
     def execute_one_file_and_the_next_when_finished(self):
         op_props = get_current_operator_properties()
         if op_props.execute_all:
-            node_trees_to = [
+            node_trees_to_keep = [
                 bpy.data.node_groups.get(mat_name[0])
                 for mat_name in get_all_node_trees_for_an_enum_selector(op_props, None)
             ]
         else:
-            node_trees_to = [bpy.data.node_groups.get(op_props.node_tree_name)]
-        node_trees_to_name = [m.name for m in node_trees_to]
+            node_trees_to_keep = [bpy.data.node_groups.get(op_props.node_tree_name)]
+        node_trees_to_name = [m.name for m in node_trees_to_keep]
 
         if op_props.mode == "Trailing Numbers":
-            for node_tree_to in node_trees_to:
-                node_trees_from = set()
+            for node_tree_to_keep in node_trees_to_keep:
+                node_trees_to_override = set()
                 for node_tree in get_all_node_trees_by_type(op_props.tree_type):
                     node_tree_name = node_tree.name
                     if node_tree_name in node_trees_to_name:
                         continue
                     search = re.search("\.[0-9]+$", node_tree_name)
-                    if search and node_tree_name[0 : search.start()] == node_tree_to.name:
-                        node_trees_from.add(node_tree_name)
-                    if op_props.tree_type == "SHADER":
-                        materials_to_process = set(get_all_materials_used_by_assets(self.assets))
-                        for material in materials_to_process:
-                            if not material.use_nodes:
-                                continue
-                            for node in material.node_tree.nodes:
-                                if not node.type == "GROUP":
-                                    continue
-                                if node.node_tree.name in node_trees_from:
-                                    node_tree_from = node.node_tree
-                                    if len(node_tree_from.nodes) != len(node.node_tree.nodes):
-                                        continue
-                                    node.node_tree = node_tree_to
-                                    Logger.display(
-                                        f"{repr(node_tree_from)} replaced by '{repr(node_tree_to)}' in {repr(material)}"
-                                    )
-                    elif op_props.tree_type == "COMPOSITING":
-                        for scene in bpy.data.scenes:
-                            if not scene.use_nodes:
-                                continue
-                            for node in scene.node_tree.nodes:
-                                if not node.type == "GROUP":
-                                    continue
-                                node_tree_from = node.node_tree
-                                if len(node_tree_from.nodes) != len(node.node_tree.nodes):
-                                    continue
-                                node.node_tree = node_tree_to
-                                Logger.display(
-                                    f"{repr(node_tree_from)} replaced by '{repr(node_tree_to)}' in {repr(scene.node_tree)}"
-                                )
-                    elif op_props.tree_type == "GEOMETRY":
-                        for asset in self.assets:
-                            if isinstance(asset, bpy.types.GeometryNodeTree):
-                                for node in asset.nodes:
-                                    if not node.type == "GROUP":
-                                        continue
-                                    if node.node_tree.name in node_trees_from:
-                                        node_tree_from = node.node_tree
-                                        if len(node_tree_from.nodes) != len(node.node_tree.nodes):
-                                            continue
-                                        node.node_tree = node_tree_to
-                                        Logger.display(
-                                            f"{repr(node_tree_from)} replaced by '{repr(node_tree_to)}' in {repr(asset)}"
-                                        )
-                            else:
-                                if not hasattr(asset, "modifiers"):
-                                    continue
-                                for mod in asset.modifiers:
-                                    if mod.type != "NODES":
-                                        continue
-                                    if mod.node_group.name in node_trees_from:
-                                        node_tree_from = mod.node_group
-                                        if len(node_tree_from.nodes) != len(mod.node_group.nodes):
-                                            continue
-                                        mod.node_group = node_tree_to
-                                        Logger.display(
-                                            f"{repr(node_tree_from)} replaced by '{repr(node_tree_to)}' in {repr(mod)}"
-                                        )
-
+                    if search and node_tree_name[0 : search.start()] == node_tree_to_keep.name:
+                        node_trees_to_override.add(node_tree)
+                for node_tree_to_override in node_trees_to_override:
+                    node_tree_to_override.user_remap(node_tree_to_keep)
+                    Logger.display(f"Replaced {repr(node_tree_to_override)} with {repr(node_tree_to_keep)}")
         self.save_file()
         self.execute_next_blend()
 

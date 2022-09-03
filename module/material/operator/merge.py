@@ -31,17 +31,10 @@ class MaterialMergeBatchExecute(BatchExecute):
                         continue
                     search = re.search("\.[0-9]+$", material_name)
                     if search and material_name[0 : search.start()] == material_to.name:
-                        materials_from.add(material_name)
-                    for asset in self.assets:
-                        if not hasattr(asset, "material_slots"):
-                            continue
-                        for m_s in asset.material_slots:
-                            if m_s.material is None:
-                                continue
-                            if m_s.material.name in materials_from:
-                                mat_from = m_s.material
-                                m_s.material = bpy.data.materials.get(material_to.name)
-                                Logger.display(f"{repr(mat_from)} replaced by '{repr(material_to)}' in {repr(asset)}")
+                        materials_from.add(material)
+                for material in materials_from:
+                    material.user_remap(material_to)
+                    Logger.display(f"Replaced {repr(material)} by {repr(material_to)}")
 
         self.save_file()
         self.execute_next_blend()
@@ -72,4 +65,4 @@ class ABU_OT_material_merge(Operator, BatchFolderOperator):
     logic_class = MaterialMergeBatchExecute
 
     def invoke(self, context, event):
-        return self._invoke(context, filter_assets_optional=True, filter_assets=True)
+        return self._invoke(context, filter_assets=True)

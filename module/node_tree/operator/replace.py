@@ -17,27 +17,10 @@ from asset_browser_utilities.module.node_tree.tool import (
 class NodeTreeReplaceBatchExecute(BatchExecute):
     def execute_one_file_and_the_next_when_finished(self):
         op_props = get_current_operator_properties()
-        node_trees_old_names = [op_props.node_tree_old]
+        node_tree_old = bpy.data.node_groups[op_props.node_tree_old]
         node_tree_new = bpy.data.node_groups[op_props.node_tree_new]
-
-        if op_props.tree_type in ("SHADER", "COMPOSITING", "GEOMETRY"):
-            node_trees = get_compatible_node_trees(op_props.tree_type, self.assets)
-            for node_tree in node_trees:
-                replace_node_group_in_node_tree(node_tree, node_trees_old_names, node_tree_new)
-        if op_props.tree_type == "GEOMETRY":
-            for asset in self.assets:
-                if not isinstance(asset, bpy.types.GeometryNodeTree):
-                    if not hasattr(asset, "modifiers"):
-                        continue
-                    for mod in asset.modifiers:
-                        if mod.type != "NODES":
-                            continue
-                        if mod.node_group.name in node_trees_old_names:
-                            old_name = mod.node_group.name
-                            mod.node_group = node_tree_new
-                            Logger.display(
-                                f"'{repr(bpy.data.node_groups[old_name])}' replaced by '{repr(node_tree_new)}' in '{repr(mod)}'"
-                            )
+        node_tree_old.user_remap(node_tree_new)
+        Logger.display(f"Replaced {repr(node_tree_old)} with {repr(node_tree_new)}")
 
         self.save_file()
         self.execute_next_blend()

@@ -13,33 +13,23 @@ from asset_browser_utilities.module.material.tool import get_all_materials_for_a
 class MaterialReplaceBatchExecute(BatchExecute):
     def execute_one_file_and_the_next_when_finished(self):
         op_props = get_current_operator_properties()
-        materials_to = [op_props.material_to]
-        material_from = bpy.data.materials.get(op_props.material_from)
-
-        for material_to in materials_to:
-            for asset in self.assets:
-                if not hasattr(asset, "material_slots"):
-                    continue
-                for m_s in asset.material_slots:
-                    if m_s.material is None:
-                        continue
-                    if m_s.material.name in materials_to:
-                        material_to = m_s.material
-                        m_s.material = material_from
-                        Logger.display(f"{repr(material_to)} replaced by '{repr(material_from)}' in {repr(asset)}")
+        material_to_override = bpy.data.materials.get(op_props.material_to_override)
+        material_to_keep = bpy.data.materials.get(op_props.material_to_keep)
+        material_to_override.user_remap(material_to_keep)
+        Logger.display(f"Replaced {repr(material_to_override)} with {repr(material_to_keep)}")
 
         self.save_file()
         self.execute_next_blend()
 
 
 class MaterialReplaceOperatorProperties(PropertyGroup):
-    material_to: EnumProperty(name="Replace", items=get_all_materials_for_an_enum_selector)
-    material_from: EnumProperty(name="With", items=get_all_materials_for_an_enum_selector)
+    material_to_override: EnumProperty(name="Replace", items=get_all_materials_for_an_enum_selector)
+    material_to_keep: EnumProperty(name="With", items=get_all_materials_for_an_enum_selector)
 
     def draw(self, layout, context=None):
         box = layout.box()
-        box.prop(self, "material_to")
-        box.prop(self, "material_from")
+        box.prop(self, "material_to_override")
+        box.prop(self, "material_to_keep")
 
 
 class ABU_OT_material_replace(Operator, BatchFolderOperator):
@@ -51,4 +41,4 @@ class ABU_OT_material_replace(Operator, BatchFolderOperator):
     logic_class = MaterialReplaceBatchExecute
 
     def invoke(self, context, event):
-        return self._invoke(context, filter_assets_optional=True, filter_assets=True)
+        return self._invoke(context, filter_assets=True)
