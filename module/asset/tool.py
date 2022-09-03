@@ -1,3 +1,5 @@
+from pathlib import Path
+import typing
 import bpy
 from asset_browser_utilities.core.cache.tool import get_from_cache
 from asset_browser_utilities.module.asset.prop import SelectedAssetFiles
@@ -33,3 +35,25 @@ def all_assets_container_and_name():
 
 def get_selected_asset_files_cache():
     return get_from_cache(SelectedAssetFiles)
+
+
+def get_selected_assets_fullpaths(context=None) -> typing.Iterable[Path]:
+    # https://blender.stackexchange.com/a/261321/86891
+    if context is None:
+        context = bpy.context
+    current_library_name = context.area.spaces.active.params.asset_library_ref
+
+    if current_library_name == "LOCAL":  # Current file
+        library_path = Path(bpy.data.filepath)
+        for asset_file in context.selected_asset_files:
+            yield library_path / asset_file.relative_path / asset_file.local_id.name
+    else:
+        library_path = Path(context.preferences.filepaths.asset_libraries.get(current_library_name).path)
+        for asset_file in context.selected_asset_files:
+            yield library_path / asset_file.relative_path
+
+
+def get_selected_assets_folderpaths(context=None) -> typing.Iterable[Path]:
+    if context is None:
+        context = bpy.context
+    return set(p.parents[2] for p in get_selected_assets_fullpaths(context))
