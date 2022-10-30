@@ -12,7 +12,6 @@ from asset_browser_utilities.module.catalog.prop import CatalogExportSettings
 from asset_browser_utilities.module.asset.prop import SelectedAssetFiles
 
 
-
 def get_group_sections(self, context):
     if not get_group_sections.items:
         get_group_sections.items = [
@@ -37,18 +36,7 @@ class Cache(PropertyGroup):
 
     # UI settings
 
-    _GROUPS = {
-        "Asset": [],
-        "Author": [],
-        "Catalog": [],
-        "CustomProperty": [],
-        "Description": [],
-        "Material": [],
-        "NodeTree": [],
-        "OperationCustom": [],
-        "Preview": [],
-        "Tag": [],
-    }
+    _GROUPS = {}
     show: BoolProperty()
     group_section: EnumProperty(items=get_group_sections)
 
@@ -71,7 +59,11 @@ class Cache(PropertyGroup):
     @staticmethod
     def PrettifyClassName(name):
         # https://stackoverflow.com/a/45778633/7092409
-        return "".join(" " + char if char.isupper() else char.strip() for char in name).strip()
+        return (
+            "".join(" " + char if char.isupper() else char.strip() for char in name)
+            .strip()
+            .replace("Operator Properties", "")
+        )
 
     def draw(self, layout, context, header=None, rename=False):
         if header is None:
@@ -102,16 +94,25 @@ class Cache(PropertyGroup):
             name = name.replace("OperatorProperties", "")
             name = "op" + "".join("_" + char.lower() if char.isupper() else char.strip() for char in name).strip()
             return name
-        
+
         bpy.utils.unregister_class(Cache)
         for module_name, module in sys.modules.items():
             if not module_name.startswith("asset_browser_utilities.module"):
                 continue
+            module_name_split = module_name.split(".")
+            if len(module_name_split) > 2:
+                tag = module_name_split[2].title().replace("_", " ")
+                if tag not in Cache._GROUPS.keys():
+                    Cache._GROUPS[tag] = []
             for class_name, cls in getmembers(module, isclass):
                 if class_name.endswith("OperatorProperties"):
                     Cache.__annotations__[class_name_to_attribute_name(class_name)] = PointerProperty(type=cls)
-                    for tag in Cache._GROUPS.keys():
-                        if class_name.startswith(tag):
-                            Cache._GROUPS[tag].append(cls)
-                            break
+                    Cache._GROUPS[tag].append(cls)
+                    break
+        empty_tags = []
+        for tag, classes in Cache._GROUPS.items():
+            if not classes:
+                empty_tags.append(tag)
+        for tag in empty_tags:
+            del Cache._GROUPS[tag]
         bpy.utils.register_class(Cache)
