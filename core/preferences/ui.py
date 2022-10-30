@@ -30,7 +30,7 @@ class AssetBrowserUtilitiesAddonPreferences(AddonPreferences):
         self.defaults.asset_filter_settings.filter_catalog.allow = False
 
         box = layout.box()
-        self.defaults.draw(box, context, header="Set Defaults")
+        self.defaults.draw(box, context, header="Expand Defaults Settings")
 
         box = layout.box()
         row = box.row(align=True)
