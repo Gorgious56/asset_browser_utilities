@@ -25,6 +25,4 @@ class ABU_OT_batch_add_tags(Operator, BatchFolderOperator):
     logic_class = BatchExecuteOverride
 
     def invoke(self, context, event):
-        self.init_operator_settings()
-        get_current_operator_properties().init(add=True)
-        return self._invoke(context, filter_assets=True)
+        return self._invoke(context, filter_assets=True, init_operator_settings_arguments={"add": True})
