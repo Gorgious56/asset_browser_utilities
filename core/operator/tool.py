@@ -61,11 +61,11 @@ class BatchExecute:
 
     def sleep_until_previews_are_done_and_execute_next_file(self):
         while self.assets:
-            if hasattr(bpy.app, "is_job_running"):
+            if hasattr(bpy.app, "is_job_running"):  # Blender 3.3+
                 if bpy.app.is_job_running("RENDER_PREVIEW"):
                     return self.INTERVAL_PREVIEW
                 break
-            else:
+            else:  # Blender <= 3.2
                 if not can_preview_be_generated(self.assets[0]) or is_preview_generated(self.assets[0]):
                     self.assets.pop(0)
                 else:
