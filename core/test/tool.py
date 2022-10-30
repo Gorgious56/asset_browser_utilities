@@ -18,7 +18,9 @@ def set_library_export_source(source):
 
 
 def setup_and_get_current_operator(attr_name):
-    prop = getattr(get_cache(), attr_name)
+    prop = getattr(get_cache(), attr_name, None)
+    if prop is None:
+        return None
     get_from_cache(CurrentOperatorProperty).class_name = str(prop.__class__)
     return get_current_operator_properties()
 

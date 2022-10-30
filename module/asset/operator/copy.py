@@ -68,7 +68,7 @@ class AssetDataCopyOperatorProperties(PropertyGroup):
         box.prop(self, "description", icon="FILE_TEXT")
 
 
-class ABU_OT_copy_from_active(Operator, BatchFolderOperator):
+class ABU_OT_asset_data_copy(Operator, BatchFolderOperator):
     ui_library = LibraryType.FileCurrent.value
     bl_idname = "abu.asset_data_copy"
     bl_label = "Copy Data From Active"

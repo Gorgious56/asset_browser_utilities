@@ -25,6 +25,10 @@ class FilterCatalog(PropertyGroup):
     def catalog(self):
         return getattr(self, self.catalog_attribute)
 
+    @catalog.setter
+    def catalog(self, value):
+        setattr(self, self.catalog_attribute, value)
+
     @property
     def catalog_attribute(self):
         return "catalog_from_current_file" if self.from_current_file else "catalog_from_definition"

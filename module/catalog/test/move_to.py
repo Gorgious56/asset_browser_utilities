@@ -65,4 +65,4 @@ def test_moving_all_assets_to_an_already_existing_catalog(filepath):
                     uuid = helper.ensure_or_create_catalog_definition(id_owner.data.name or "Catalog")
                 else:
                     continue
-            assert_that_asset_is_in_catalog(id_owner, uuid)
+            assert_that_asset_is_in_catalog(asset, uuid)

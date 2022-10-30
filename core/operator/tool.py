@@ -86,19 +86,18 @@ def update_preset(self, context):
         preset = get_preferences().defaults
     else:
         preset = next(p for p in get_preferences().presets if p.name == preset_name)
-    current_op = get_current_operator_properties()
+    current_op_properties = get_current_operator_properties()
     for attr in preset.__annotations__:
         if attr == "library_settings":
             continue
-        default_setting = getattr(preset, attr)
-        if attr.startswith("op_") and not type(default_setting) == type(current_op):
+        default_properties = getattr(preset, attr)
+        if attr.startswith("op_") and not type(default_properties) == type(current_op_properties):
             continue
-        setting = get_from_cache(type(default_setting))
+        setting = get_from_cache(type(default_properties))
         if hasattr(setting, "copy_from"):  # Assume it's a "complicated" property group if copy_from is implemented
-            setting.copy_from(default_setting)
+            setting.copy_from(default_properties)
         else:
-            copy_simple_property_group(default_setting, setting)
-    self.update_asset_filter_allow()
+            copy_simple_property_group(default_properties, setting)
 
 
 class BatchFolderOperator(ImportHelper):
@@ -131,7 +130,8 @@ class BatchFolderOperator(ImportHelper):
         self.filter_types = filter_type
         self.filter_selection = filter_selection
 
-        update_preset(self, context)        
+        update_preset(self, context)
+        self.update_asset_filter_allow()
         self.init_operator_settings(init_operator_settings_arguments)
         self.init_selected_asset_files(context)
         library_settings = self.init_library_settings(remove_backup)
@@ -204,6 +204,7 @@ class BatchFolderOperator(ImportHelper):
             )
             and self.filter_selection
         )
+        print(self.filter_assets)
         get_from_cache(AssetFilterSettings).init_asset_filter_settings(
             filter_selection=filter_selection,
             filter_assets=self.filter_assets,

@@ -30,5 +30,5 @@ def test_moving_all_assets_from_catalog_a_to_catalog_b(filepath):
     test_op.execute()
 
     for container, name in all_assets_in_from_catalog:
-        asset = getattr(bpy.data, container)[name]
+        asset = getattr(bpy.data, container)[name].asset_data
         assert_that_asset_is_in_catalog(asset, CATALOG_TO_UUID)
