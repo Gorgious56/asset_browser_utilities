@@ -8,8 +8,6 @@ import bpy
 from bpy.types import PropertyGroup
 from bpy.props import EnumProperty, StringProperty, IntProperty
 
-from asset_browser_utilities.core.cache.tool import CacheMapping
-
 
 def get_triangle_count(asset, smart_tag):
     if not hasattr(asset, "data") or asset.data is None or not hasattr(asset.data, "vertices"):

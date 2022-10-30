@@ -22,11 +22,3 @@ def get_presets(op, context):
     for preset in get_preferences().presets:
         enum.append((preset.name,) * 3)
     return enum
-
-
-class CacheMapping:
-    CACHE_MAPPING = ""
-
-    @classmethod
-    def get_from_cache(cls):
-        return getattr(get_cache(), cls.CACHE_MAPPING)

@@ -2,7 +2,7 @@ from enum import Enum
 from pathlib import Path
 from asset_browser_utilities.core.prop import StrProperty
 from asset_browser_utilities.core.tool import copy_simple_property_group
-from asset_browser_utilities.core.cache.tool import CacheMapping, get_from_cache
+from asset_browser_utilities.core.cache.tool import get_from_cache
 from asset_browser_utilities.core.filter.name import FilterName
 from asset_browser_utilities.core.library.tool import get_blend_files_in_folder
 
@@ -30,7 +30,7 @@ class LibraryType(Enum):
             return LibraryType.FileCurrent.value
 
 
-class LibraryExportSettings(PropertyGroup, CacheMapping):
+class LibraryExportSettings(PropertyGroup):
     source: EnumProperty(items=[(l_t.value,) * 3 for l_t in LibraryType])
     library_user_path: EnumProperty(
         name="User Library",
