@@ -1,6 +1,7 @@
 from pathlib import Path
 from uuid import uuid4
 from asset_browser_utilities.core.log.logger import Logger
+from asset_browser_utilities.module.asset.tool import all_assets
 import bpy
 from asset_browser_utilities.module.catalog.prop import CatalogExportSettings
 from asset_browser_utilities.core.cache.tool import get_from_cache
@@ -30,20 +31,22 @@ class CatalogsHelper:
             root_folder = Path(bpy.data.filepath).parent
         elif library_source in (LibraryType.FileExternal.value, LibraryType.FolderExternal.value):
             if context.area is None or context.area.type != "FILE_BROWSER":
-                root_folder = Path(CatalogExportSettings.get_from_cache().path)
+                root_folder = Path(get_from_cache(CatalogExportSettings).path)
             else:
                 file_browser_directory = context.area.spaces.active.params.directory  # Byte string
                 root_folder = Path(file_browser_directory.decode("UTF-8"))
                 if root_folder and str(root_folder) != ".":
-                    CatalogExportSettings.get_from_cache().path = str(root_folder)
+                    get_from_cache(CatalogExportSettings).path = str(root_folder)
                 else:
-                    root_folder = Path(CatalogExportSettings.get_from_cache().path)
+                    root_folder = Path(get_from_cache(CatalogExportSettings).path)
         elif library_source == LibraryType.UserLibrary.value:
             root_folder = Path(library_settings.library_user_path)
             catalog_filepath = root_folder / self.CATALOGS_FILENAME
             if not catalog_filepath.exists():
                 self.create_catalog_file(catalog_filepath)
             return catalog_filepath
+        else:
+            raise Exception("The Library source is not correct")
         catalog_filepath = root_folder / self.CATALOGS_FILENAME
         while not catalog_filepath.exists():
             if catalog_filepath.parent == catalog_filepath.parent.parent:  # Root of the disk
@@ -140,3 +143,12 @@ class CatalogsHelper:
         else:
             catalogs = [("",) * 3]
         return catalogs
+
+    @staticmethod
+    def get_catalogs_from_assets_in_current_file(filter_catalog=None, context=None) -> list[str]:
+        catalogs_from_assets_in_current_file = set()
+        for asset in all_assets():
+            if not asset.catalog_simple_name:
+                continue
+            catalogs_from_assets_in_current_file.add((asset.catalog_id, asset.catalog_simple_name))
+        return [(uuid, name, "") for (uuid, name) in catalogs_from_assets_in_current_file]

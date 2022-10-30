@@ -18,5 +18,5 @@ def test_setting_author_on_all_assets(filepath):
 
         for asset in all_assets():
             assert (
-                asset.asset_data.author == author
+                asset.author == author
             ), f"{repr(asset)}'s author should be '{author}' instead of '{asset.asset_data.author}'"

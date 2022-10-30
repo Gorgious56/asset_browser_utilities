@@ -34,6 +34,7 @@ def test_moving_all_assets_to_an_already_existing_catalog(filepath):
 
         helper = CatalogsHelper()
         for asset in all_assets():
+            id_owner = asset.id_data
             if mode == "Existing":
                 uuid = CATALOG_TO_UUID
             elif mode == "New":
@@ -41,28 +42,28 @@ def test_moving_all_assets_to_an_already_existing_catalog(filepath):
             elif mode == "File name":
                 uuid = helper.ensure_or_create_catalog_definition(Path(bpy.data.filepath).stem)
             elif mode == "Asset name":
-                uuid = helper.ensure_or_create_catalog_definition(asset.name)
+                uuid = helper.ensure_or_create_catalog_definition(id_owner.name)
             elif mode == "Collection name":
                 if (
-                    hasattr(asset, "users_collection")
-                    and len(asset.users_collection) > 0
-                    and asset.users_collection[0] is not None
+                    hasattr(id_owner, "users_collection")
+                    and len(id_owner.users_collection) > 0
+                    and id_owner.users_collection[0] is not None
                 ):
-                    uuid = helper.ensure_or_create_catalog_definition(asset.users_collection[0].name)
+                    uuid = helper.ensure_or_create_catalog_definition(id_owner.users_collection[0].name)
                 else:
                     continue
             elif mode == "Material name":
                 if (
-                    hasattr(asset, "material_slots")
-                    and len(asset.material_slots) > 0
-                    and asset.material_slots[0].material is not None
+                    hasattr(id_owner, "material_slots")
+                    and len(id_owner.material_slots) > 0
+                    and id_owner.material_slots[0].material is not None
                 ):
-                    uuid = helper.ensure_or_create_catalog_definition(asset.material_slots[0].material.name)
+                    uuid = helper.ensure_or_create_catalog_definition(id_owner.material_slots[0].material.name)
                 else:
                     continue
             elif mode == "Asset data name":
-                if hasattr(asset, "data") and asset.data is not None:
-                    uuid = helper.ensure_or_create_catalog_definition(asset.data.name or "Catalog")
+                if hasattr(id_owner, "data") and id_owner.data is not None:
+                    uuid = helper.ensure_or_create_catalog_definition(id_owner.data.name or "Catalog")
                 else:
                     continue
-            assert_that_asset_is_in_catalog(asset, uuid)
+            assert_that_asset_is_in_catalog(id_owner, uuid)

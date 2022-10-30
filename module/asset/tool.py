@@ -19,7 +19,7 @@ def all_assets():
         if "bpy_prop_collection" in str(type(container)):
             for asset in container:
                 if is_asset(asset):
-                    yield asset
+                    yield asset.asset_data
 
 
 def all_assets_container_and_name():

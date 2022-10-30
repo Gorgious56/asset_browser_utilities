@@ -1,4 +1,5 @@
-from asset_browser_utilities.core.cache.tool import get_current_operator_properties
+from asset_browser_utilities.core.cache.tool import get_current_operator_properties, get_from_cache
+from asset_browser_utilities.core.library.prop import LibraryExportSettings, LibraryType
 from asset_browser_utilities.core.log.logger import Logger
 from bpy.types import Operator, PropertyGroup
 from bpy.props import PointerProperty, StringProperty, BoolProperty
@@ -30,14 +31,18 @@ class CatalogRemoveFromOperatorProperties(PropertyGroup):
     filter: BoolProperty(default=True, description="")
     catalog: PointerProperty(type=FilterCatalog)
 
+    def init(self, from_current_file=False):
+        self.catalog.active = True
+        self.catalog.from_current_file = from_current_file
+        self.catalog.catalog_filepath = str(CatalogsHelper().catalog_filepath)
+
     def draw(self, layout, context=None):
         box = layout.box()
         row = box.row(align=True)
         row.label(text="Remove Assets From This Catalog" if self.filter else "Remove Assets From All Catalogs")
         row.prop(self, "filter", icon="FILTER", text="")
         if self.filter:
-            box.prop(self.catalog, "catalog", icon="ASSET_MANAGER")
-        self.catalog.draw_filepath(box)
+            self.catalog.draw(box, context, draw_filter=False)
 
 
 class ABU_OT_catalog_remove_from(Operator, BatchFolderOperator):
@@ -48,4 +53,8 @@ class ABU_OT_catalog_remove_from(Operator, BatchFolderOperator):
     logic_class = CatalogRemoveFromBatchExecute
 
     def invoke(self, context, event):
-        return self._invoke(context, filter_assets=True)
+        return self._invoke(
+            context,
+            filter_assets=True,
+            init_operator_settings_arguments={"from_current_file": LibraryType.is_file_current(context)},
+        )

@@ -11,7 +11,7 @@ from asset_browser_utilities.module.catalog.tool import CatalogsHelper
 
 class CatalogRemoveEmptyBatchExecute(BatchExecute):
     def execute_one_file_and_the_next_when_finished(self):
-        asset_uuids = set(asset.asset_data.catalog_id for asset in all_assets())
+        asset_uuids = set(asset.catalog_id for asset in all_assets())
         helper = CatalogsHelper()
 
         asset_filter_settings = get_from_cache(AssetFilterSettings)

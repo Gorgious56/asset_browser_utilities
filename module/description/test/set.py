@@ -7,8 +7,8 @@ from asset_browser_utilities.module.asset.tool import all_assets
 
 def assert_that_an_asset_description_matches(asset, description):
     assert (
-        asset.asset_data.description == description
-    ), f"{repr(asset)}'s description should be '{description}' instead of '{asset.asset_data.description}'"
+        asset.description == description
+    ), f"{repr(asset)}'s description should be '{description}' instead of '{asset.description}'"
 
 
 def test_setting_author_on_all_assets(filepath):

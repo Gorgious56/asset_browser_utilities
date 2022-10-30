@@ -19,5 +19,5 @@ def all_assets_in_specific_catalog_container_and_name(uuid):
 
 def assert_that_asset_is_in_catalog(asset, uuid):
     assert (
-        asset.asset_data.catalog_id == uuid
-    ), f"{repr(asset)}'s catalog should be '{uuid}' instead of '{asset.asset_data.catalog_id}'"
+        asset.catalog_id == uuid
+    ), f"{repr(asset)}'s catalog should be '{uuid}' instead of '{asset.catalog_id}'"

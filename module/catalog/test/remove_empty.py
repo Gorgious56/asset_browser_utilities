@@ -17,7 +17,7 @@ def test_removing_all_empty_catalogs(filepath):
 
     catalogs_uuids = set(cat[0] for cat in all_catalogs())
     # /!\ Assets with no catalog have a catalog uuid of '00000000-0000-0000-0000-000000000000'
-    catalogs_uuids_assets = set(asset.asset_data.catalog_id for asset in all_assets())
+    catalogs_uuids_assets = set(asset.catalog_id for asset in all_assets())
     assert len(catalogs_uuids) + 1 > len(catalogs_uuids_assets)
 
     test_op.execute()

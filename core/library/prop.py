@@ -29,6 +29,10 @@ class LibraryType(Enum):
         else:
             return LibraryType.FileCurrent.value
 
+    @staticmethod
+    def is_file_current(context):
+        return LibraryType.get_library_type_from_context(context) == LibraryType.FileCurrent.value
+
 
 class LibraryExportSettings(PropertyGroup):
     source: EnumProperty(items=[(l_t.value,) * 3 for l_t in LibraryType])
