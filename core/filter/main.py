@@ -41,8 +41,7 @@ class AssetFilterSettings(PropertyGroup):
             if (self.filter_types.types_object_filter and self.filter_types.types_global_filter)
             else [t[0] for t in get_object_types()]
         )
-        asset_container = AssetContainer(data_containers, object_types)
-        print(f"{self.filter_assets.only_assets=}")
+        asset_container = AssetContainer(data_containers, object_types)        
         if self.filter_assets.only_assets:
             asset_container.filter_assets()
             if self.filter_catalog.active:

@@ -15,6 +15,11 @@ class AssetBrowserUtilitiesAddonPreferences(AddonPreferences):
         name="Show Asset Custom Properties",
         description="Add a Panel in the Asset Browser interface to display asset custom properties",
     )
+    save_compress: BoolProperty(
+        default=True,
+        name="Compress Files On Save",
+        description="Automatically compress the file on save. This will reduce the file size on disk at the cost of extra computation",
+    )
     verbose: BoolProperty(
         name="Verbose Output",
         description="Check this to get some information in the system console",
@@ -25,6 +30,7 @@ class AssetBrowserUtilitiesAddonPreferences(AddonPreferences):
         layout = self.layout
         layout.prop(self, "verbose", icon="INFO")
         layout.prop(self, "show_custom_props", icon="PROPERTIES")
+        layout.prop(self, "save_compress", icon="FILE_BLEND")
 
         self.defaults.asset_filter_settings.filter_selection.allow = True
         self.defaults.asset_filter_settings.filter_catalog.allow = False

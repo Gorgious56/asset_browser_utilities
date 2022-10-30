@@ -1,4 +1,5 @@
 from asset_browser_utilities.core.log.logger import Logger
+from asset_browser_utilities.core.preferences.tool import get_preferences
 import bpy
 import os
 
@@ -30,20 +31,21 @@ def remove_backup_file_if_it_exists(filepath):
 
 
 def save_file(remove_backup=False):
+    filepath = bpy.data.filepath
     try:
-        bpy.ops.wm.save_mainfile()
+        bpy.ops.wm.save_mainfile(compress=get_preferences().save_compress)
     except RuntimeError as e:
         print(e)
-        print(f"Skipping file {bpy.data.filepath}. Please make sure linked libraries are valid in this file.")
-    else:        
-        if remove_backup and has_backup(bpy.data.filepath):
-            remove_backup_file_if_it_exists(bpy.data.filepath)
+        print(f"Skipping file {filepath}. Please make sure linked libraries are valid in this file.")
+    else:
+        if remove_backup and has_backup(filepath):
+            remove_backup_file_if_it_exists(filepath)
 
 
 def save_file_as(filepath: str, remove_backup=False):
     if not filepath:
         return
     had_backup = has_backup(filepath)
-    bpy.ops.wm.save_as_mainfile(filepath=str(filepath))
+    bpy.ops.wm.save_as_mainfile(filepath=str(filepath), compress=get_preferences().save_compress)
     if remove_backup and not had_backup:
         remove_backup_file_if_it_exists(filepath)
