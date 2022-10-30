@@ -21,7 +21,7 @@ from asset_browser_utilities.module.preview.tool import can_preview_be_generated
 
 class BatchExecute:
     INTERVAL = 0.01
-    INTERVAL_PREVIEW = 0.2
+    INTERVAL_PREVIEW = 0.05
 
     def __init__(self):
         self.blends = get_from_cache(LibraryExportSettings).get_blend_files()
@@ -61,10 +61,15 @@ class BatchExecute:
 
     def sleep_until_previews_are_done_and_execute_next_file(self):
         while self.assets:
-            if not can_preview_be_generated(self.assets[0]) or is_preview_generated(self.assets[0]):
-                self.assets.pop(0)
+            if hasattr(bpy.app, "is_job_running"):
+                if bpy.app.is_job_running("RENDER_PREVIEW"):
+                    return self.INTERVAL_PREVIEW
+                break
             else:
-                return self.INTERVAL_PREVIEW
+                if not can_preview_be_generated(self.assets[0]) or is_preview_generated(self.assets[0]):
+                    self.assets.pop(0)
+                else:
+                    return self.INTERVAL_PREVIEW
         self.save_file()
         self.execute_next_blend()
         return None
@@ -204,7 +209,6 @@ class BatchFolderOperator(ImportHelper):
             )
             and self.filter_selection
         )
-        print(self.filter_assets)
         get_from_cache(AssetFilterSettings).init_asset_filter_settings(
             filter_selection=filter_selection,
             filter_assets=self.filter_assets,
