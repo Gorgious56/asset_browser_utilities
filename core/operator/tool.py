@@ -2,7 +2,6 @@ from asset_browser_utilities.module.asset.prop import SelectedAssetFiles
 from asset_browser_utilities.core.operator.prop import CurrentOperatorProperty
 from asset_browser_utilities.core.log.logger import Logger
 
-from asset_browser_utilities.core.operator.operation import OperationSettings
 from asset_browser_utilities.core.preferences.tool import get_preferences
 
 import bpy.app.timers
@@ -46,12 +45,10 @@ class BatchExecute:
         self.open_next_blend()
         if library_export_settings.source == LibraryType.FileCurrent.value:
             self.assets = get_from_cache(AssetFilterSettings).get_objects_that_satisfy_filters()
-            get_from_cache(OperationSettings).execute(self.assets)
 
             self.execute_one_file_and_the_next_when_finished()
         else:
             self.assets = get_from_cache(AssetFilterSettings).get_objects_that_satisfy_filters()
-            get_from_cache(OperationSettings).execute(self.assets)
             # Wait a little bit for context to initialize
             bpy.app.timers.register(self.execute_one_file_and_the_next_when_finished, first_interval=self.INTERVAL)
 
@@ -127,17 +124,15 @@ class BatchFolderOperator(ImportHelper):
         filter_assets=False,
         filter_type=True,
         filter_selection=True,
-        custom_operation=True,
         enforce_filebrowser=False,
+        init_operator_settings_arguments:dict=None
     ):
         self.filter_assets = filter_assets
         self.filter_types = filter_type
         self.filter_selection = filter_selection
-        self.custom_operation = custom_operation
 
-        update_preset(self, context)
-        self.init_operation_settings()
-        self.init_operator_settings()
+        update_preset(self, context)        
+        self.init_operator_settings(init_operator_settings_arguments)
         self.init_selected_asset_files(context)
         library_settings = self.init_library_settings(remove_backup)
 
@@ -152,12 +147,16 @@ class BatchFolderOperator(ImportHelper):
             else:
                 return context.window_manager.invoke_props_dialog(self)
 
-    def init_operation_settings(self):
-        get_from_cache(OperationSettings).init()
-
-    def init_operator_settings(self):
+    def init_operator_settings(self, init_args):
         if hasattr(self, "operator_settings"):
             get_from_cache(CurrentOperatorProperty).class_name = str(self.operator_settings.__class__)
+        current_operator_settings = get_current_operator_properties()
+        if hasattr(current_operator_settings, "init"):
+            if init_args is not None:
+                current_operator_settings.init(**init_args)
+            else:
+                current_operator_settings.init()
+            
 
     def init_library_settings(self, remove_backup):
         library_settings = get_from_cache(LibraryExportSettings)
@@ -195,8 +194,6 @@ class BatchFolderOperator(ImportHelper):
         if hasattr(self, "operator_settings") and self.operator_settings and hasattr(self.operator_settings, "draw"):
             get_from_cache(self.operator_settings.__class__).draw(layout)
         get_from_cache(AssetFilterSettings).draw(layout, context)
-        if self.custom_operation:
-            get_from_cache(OperationSettings).draw(layout, context)
 
     def update_asset_filter_allow(self):
         filter_selection = (

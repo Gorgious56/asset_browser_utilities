@@ -20,7 +20,7 @@ class BatchExecuteOverride(BatchExecute):
         super().do_on_asset(asset)
 
 
-class RemoveCustomPropertyOperatorProperties(PropertyGroup):
+class CustomPropertyRemoveOperatorProperties(PropertyGroup):
     name: StringProperty(name="Name", default="prop")
 
     def draw(self, layout, context=None):
@@ -31,7 +31,7 @@ class ABU_OT_batch_remove_custom_property(Operator, BatchFolderOperator):
     bl_idname = "abu.batch_remove_custom_property"
     bl_label = "Remove Custom Property"
 
-    operator_settings: PointerProperty(type=RemoveCustomPropertyOperatorProperties)
+    operator_settings: PointerProperty(type=CustomPropertyRemoveOperatorProperties)
     logic_class = BatchExecuteOverride
 
     def invoke(self, context, event):

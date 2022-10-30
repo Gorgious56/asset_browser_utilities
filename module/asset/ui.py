@@ -10,5 +10,5 @@ class ABU_MT_assets(Menu, ABUOperatorsMenu):
         ("abu.unmark", "Unmark", "TRASH"),
         ("abu.batch_export", "Export", "EXPORT"),
         ("abu.copy_data_from_active", "Copy From Active", "COPYDOWN"),
-        ("abu.batch_operate", "Custom Operation", "MODIFIER"),
+        ("abu.operation_custom", "Custom Operation(s)", "MODIFIER"),
     ]

@@ -1,4 +1,3 @@
-from asset_browser_utilities.core.log.logger import Logger
 import bpy  # Do not remove even if it seems unused !!
 from bpy.types import PropertyGroup
 from bpy.props import (
@@ -10,64 +9,9 @@ from bpy.props import (
     StringProperty,
 )
 from asset_browser_utilities.core.tool import copy_simple_property_group
-from asset_browser_utilities.core.cache.tool import CacheMapping
-from asset_browser_utilities.module.transform.operation import (
-    ApplyTransformOperation,
-    ApplyLocationOperation,
-    ApplyScaleOperation,
-    ApplyRotationOperation,
-    TranslateOperation,
-    ScaleOperation,
-    RotateOperation,
-)
-from asset_browser_utilities.module.mesh.operation import DecimateOperation
-from asset_browser_utilities.module.asset.operation import RenameAssetOperation, RenameDataOperation, RenameMaterialOperation
-
-
-class NONE_OPERATION:
-    MAPPING = "NONE"
-    LABEL = "None"
-    DESCRIPTION = "No Operation"
-
-
-OPERATION_MAPPING = {
-    NONE_OPERATION.MAPPING: NONE_OPERATION,
-    ApplyTransformOperation.MAPPING: ApplyTransformOperation,
-    ApplyLocationOperation.MAPPING: ApplyLocationOperation,
-    ApplyRotationOperation.MAPPING: ApplyRotationOperation,
-    ApplyScaleOperation.MAPPING: ApplyScaleOperation,
-    TranslateOperation.MAPPING: TranslateOperation,
-    ScaleOperation.MAPPING: ScaleOperation,
-    RotateOperation.MAPPING: RotateOperation,
-    DecimateOperation.MAPPING: DecimateOperation,
-    RenameAssetOperation.MAPPING: RenameAssetOperation,
-    RenameDataOperation.MAPPING: RenameDataOperation,
-    RenameMaterialOperation.MAPPING: RenameMaterialOperation,
-}
-
-
-def get_available_operations():
-    for operation in OPERATION_MAPPING.values():
-        if (hasattr(operation, "poll") and operation.poll()) or not hasattr(operation, "poll"):
-            yield operation
-
-
-def set_shown_operation(self, value):
-    # This is extremely hacky but emulates dynamically adding or removing operations
-    if value == 1:
-        self.shown_ops += 1
-        if self.shown_ops >= len(self.operations):
-            self.shown_ops = len(self.operations)
-    if value == 2:
-        self.shown_ops -= 1
-
-
-def get_enum_items(self, context):
-    operation_cls = OPERATION_MAPPING.get(self.type)
-    if hasattr(operation_cls, "get_enum_items"):
-        return operation_cls.get_enum_items()
-    else:
-        return [("NONE",) * 3]
+from asset_browser_utilities.core.log.logger import Logger
+from .tool import get_available_operations, get_enum_items, set_shown_operation
+from .static import OPERATION_MAPPING, NONE_OPERATION
 
 
 class OperationSetting(PropertyGroup):
@@ -83,10 +27,7 @@ class OperationSetting(PropertyGroup):
     string_value_2: StringProperty(name="Value")
 
 
-class OperationSettings(PropertyGroup, CacheMapping):
-    CACHE_MAPPING = "operation_settings"
-
-    MAX_OPS = 15
+class OperationSettings(PropertyGroup):
     operation_internal: EnumProperty(
         items=(
             ("NONE",) * 3,
@@ -99,10 +40,6 @@ class OperationSettings(PropertyGroup, CacheMapping):
 
     active: BoolProperty(default=False)
     operations: CollectionProperty(type=OperationSetting)
-
-    def init(self):
-        for _ in range(self.MAX_OPS):
-            self.operations.add()
 
     def draw(self, layout, context):
         box = layout.box()

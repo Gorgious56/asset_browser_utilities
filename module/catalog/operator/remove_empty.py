@@ -43,5 +43,5 @@ class ABU_OT_catalog_remove_empty(Operator, BatchFolderOperator):
 
     def invoke(self, context, event):
         return self._invoke(
-            context, filter_assets=False, filter_type=False, filter_selection=False, custom_operation=False
+            context, filter_assets=False, filter_type=False, filter_selection=False
         )
