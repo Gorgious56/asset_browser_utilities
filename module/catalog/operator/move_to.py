@@ -1,4 +1,5 @@
 from pathlib import Path
+from asset_browser_utilities.core.library.prop import LibraryType
 import bpy
 from bpy.types import Operator, PropertyGroup
 from bpy.props import PointerProperty, EnumProperty, StringProperty
@@ -86,13 +87,17 @@ class CatalogMoveOperatorProperties(PropertyGroup):
     catalog: PointerProperty(type=FilterCatalog)
     catalog_name: StringProperty(name="Name")
 
+    def init(self, from_current_file=False):
+        self.catalog.active = True
+        self.catalog.from_current_file = from_current_file
+        self.catalog.catalog_filepath = str(CatalogsHelper().catalog_filepath)
+
     def draw(self, layout, context=None):
         box = layout.box()
         box.label(text="Move Assets to This Catalog")
         box.prop(self, "mode")
         if self.mode == "Existing":
-            box.prop(self.catalog, "catalog", icon="ASSET_MANAGER")
-            self.catalog.draw_filepath(box)
+            self.catalog.draw(box, context, draw_filter=False)
         elif self.mode == "New":
             box.prop(self, "catalog_name")
 

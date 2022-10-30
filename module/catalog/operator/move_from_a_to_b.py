@@ -39,13 +39,10 @@ class CatalogMoveFromAToBOperatorProperties(PropertyGroup):
     def draw(self, layout, context=None):
         box = layout.box()
         box.label(text="Move Assets :")
-        split = box.split(factor=0.35)
-        split.label(text="FROM")
-        split.prop(self.catalog_from, self.catalog_from.catalog_attribute, icon="ASSET_MANAGER", text="")
-        split = box.split(factor=0.35)
-        split.label(text="TO")
-        split.prop(self.catalog_to, self.catalog_to.catalog_attribute, icon="ASSET_MANAGER", text="")
-        self.catalog_from.draw_filepath(box)
+        for catalog, label in zip((self.catalog_from, self.catalog_to), ("FROM", "TO")):
+            split = box.split(factor=0.35)
+            split.label(text=label)
+            split.prop(catalog, catalog.catalog_attribute, icon="ASSET_MANAGER", text="")
 
 
 class ABU_OT_catalog_move_from_a_to_b(Operator, BatchFolderOperator):
