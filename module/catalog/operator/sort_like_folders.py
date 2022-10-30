@@ -58,9 +58,9 @@ class CatalogSortLikeFoldersOperatorProperties(PropertyGroup):
         layout.prop(self, "are_assets_in_subfolders", text="Assets are contained in individual folders")
 
 
-class ABU_OT_sort_catalogs_like_folders(Operator, BatchFolderOperator):
+class ABU_OT_catalog_sort_like_folders(Operator, BatchFolderOperator):
     ui_library = (LibraryType.UserLibrary.value, LibraryType.FolderExternal.value)
-    bl_idname = "abu.sort_catalogs_like_folders"
+    bl_idname = "abu.catalog_sort_like_folders"
     bl_label = "Create Folder Structure"
 
     operator_settings: PointerProperty(type=CatalogSortLikeFoldersOperatorProperties)

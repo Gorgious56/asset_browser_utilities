@@ -51,8 +51,8 @@ class CustomPropertySetOperatorProperties(PropertyGroup):
         box.prop(self, self.type, text="Value")
 
 
-class ABU_OT_batch_set_custom_property(Operator, BatchFolderOperator):
-    bl_idname = "abu.batch_set_custom_property"
+class ABU_OT_custom_property_set(Operator, BatchFolderOperator):
+    bl_idname = "abu.custom_property_set"
     bl_label = "Set Custom Property"
 
     operator_settings: PointerProperty(type=CustomPropertySetOperatorProperties)

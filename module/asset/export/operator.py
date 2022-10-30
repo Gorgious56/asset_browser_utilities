@@ -32,9 +32,9 @@ class AssetExportOperatorProperties(PropertyGroup):
         layout.prop(self, "overwrite", icon="ASSET_MANAGER")
 
 
-class ABU_OT_batch_export(Operator, BatchFolderOperator):
+class ABU_OT_asset_export(Operator, BatchFolderOperator):
     ui_library = LibraryType.FileCurrent.value
-    bl_idname = "abu.batch_export"
+    bl_idname = "abu.asset_export"
     bl_label = "Export Assets"
     bl_description: str = "Export Assets To External File(s)"
 

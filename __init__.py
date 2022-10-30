@@ -16,11 +16,13 @@ bl_info = {
 
 
 from . import auto_load
+from asset_browser_utilities.core.cache.prop import Cache
 
 
 def register():
     auto_load.init()
     auto_load.register()
+    Cache.init()
 
 
 def unregister():

@@ -20,7 +20,7 @@ class OperationExecute(BatchExecute):
         self.execute_next_blend()
 
 
-class OperationOperatorProperties(PropertyGroup):
+class OperationCustomOperatorProperties(PropertyGroup):
     MAX_OPS = 15
 
     settings: PointerProperty(type=OperationSettings)
@@ -38,7 +38,7 @@ class ABU_OT_operation_custom(Operator, BatchFolderOperator):
     bl_label = "Execute Custom Operations"
     bl_options = {"REGISTER", "UNDO"}
 
-    operator_settings: PointerProperty(type=OperationOperatorProperties)
+    operator_settings: PointerProperty(type=OperationCustomOperatorProperties)
     logic_class = OperationExecute
 
     def invoke(self, context, event):

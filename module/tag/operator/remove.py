@@ -44,8 +44,8 @@ class BatchExecuteOverride(BatchExecute):
         Logger.display(f"Removed tags '{tags_to_remove}' from {asset_tags.id_data.name}")
 
 
-class ABU_OT_batch_remove_tags(Operator, BatchFolderOperator):
-    bl_idname = "abu.batch_remove_tags"
+class ABU_OT_tag_remove(Operator, BatchFolderOperator):
+    bl_idname = "abu.tag_remove"
     bl_label = "Remove tags"
 
     operator_settings: PointerProperty(type=TagAddOrRemoveOperatorProperties)

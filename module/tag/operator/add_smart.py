@@ -29,8 +29,8 @@ class TagAddSmartOperatorProperties(PropertyGroup):
             box.prop(self, "round_mode")
 
 
-class ABU_OT_tags_add_smart(Operator, BatchFolderOperator):
-    bl_idname = "abu.tags_add_smart"
+class ABU_OT_tag_add_smart(Operator, BatchFolderOperator):
+    bl_idname = "abu.tag_add_smart"
     bl_label = "Add Smart Tags"
 
     operator_settings: PointerProperty(type=TagAddSmartOperatorProperties)

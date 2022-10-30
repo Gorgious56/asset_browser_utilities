@@ -17,8 +17,8 @@ class BatchExecuteOverride(BatchExecute):
             Logger.display(f"Added tag '{tag}' to {asset.name}")
 
 
-class ABU_OT_batch_add_tags(Operator, BatchFolderOperator):
-    bl_idname = "abu.batch_add_tags"
+class ABU_OT_tag_add(Operator, BatchFolderOperator):
+    bl_idname = "abu.tag_add"
     bl_label = "Add tags"
 
     operator_settings: PointerProperty(type=TagAddOrRemoveOperatorProperties)

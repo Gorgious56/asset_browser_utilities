@@ -50,7 +50,7 @@ class AssetCopyDataExecute(BatchExecute):
         super().do_on_asset(asset)
 
 
-class AssetCopyDataOperatorProperties(PropertyGroup):
+class AssetDataCopyOperatorProperties(PropertyGroup):
     tags: BoolProperty(name="Tags")
     custom_properties: BoolProperty(name="Custom Properties")
     preview: BoolProperty(name="Preview")
@@ -71,10 +71,10 @@ class AssetCopyDataOperatorProperties(PropertyGroup):
 
 class ABU_OT_copy_from_active(Operator, BatchFolderOperator):
     ui_library = LibraryType.FileCurrent.value
-    bl_idname = "abu.copy_data_from_active"
+    bl_idname = "abu.asset_data_copy"
     bl_label = "Copy Data From Active"
 
-    operator_settings: PointerProperty(type=AssetCopyDataOperatorProperties)
+    operator_settings: PointerProperty(type=AssetDataCopyOperatorProperties)
     logic_class = AssetCopyDataExecute
 
     def invoke(self, context, event):

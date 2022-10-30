@@ -47,8 +47,8 @@ class AssetMarkOperatorProperties(PropertyGroup):
         row.prop(self, "generate_previews", icon="RESTRICT_RENDER_OFF")
 
 
-class ABU_OT_mark(Operator, BatchFolderOperator):
-    bl_idname: str = "abu.mark"
+class ABU_OT_asset_mark(Operator, BatchFolderOperator):
+    bl_idname: str = "abu.asset_mark"
     bl_label: str = "Batch Mark Assets"
     bl_description: str = "Batch Mark Assets"
 
