@@ -23,12 +23,16 @@ class FilterCatalog(PropertyGroup):
 
     @property
     def catalog(self):
-        return self.catalog_from_current_file if self.from_current_file else self.catalog_from_definition
+        return getattr(self, self.catalog_attribute)
+
+    @property
+    def catalog_attribute(self):
+        return "catalog_from_current_file" if self.from_current_file else "catalog_from_definition"
 
     def draw_filepath(self, layout):
         layout.prop(self, "catalog_filepath", icon="FILEBROWSER")
 
-    def draw(self, layout, context, draw_filter=True):
+    def draw(self, layout, context, draw_filter=True, draw_filepath=True):
         if draw_filter:
             layout = layout.box()
             layout.prop(self, "active", icon="FILTER")
@@ -41,4 +45,5 @@ class FilterCatalog(PropertyGroup):
                     layout.prop(self, "catalog_from_definition", icon="ASSET_MANAGER")
                 else:
                     layout.label(text="No catalog in root folder", icon="INFO")
-                self.draw_filepath(layout)
+                if draw_filepath:
+                    self.draw_filepath(layout)

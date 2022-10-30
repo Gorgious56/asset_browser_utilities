@@ -1,4 +1,5 @@
 from asset_browser_utilities.core.cache.tool import get_current_operator_properties
+from asset_browser_utilities.core.library.prop import LibraryType
 from asset_browser_utilities.core.log.logger import Logger
 from bpy.types import Operator, PropertyGroup
 from bpy.props import PointerProperty, StringProperty
@@ -29,15 +30,21 @@ class CatalogMoveFromAToBOperatorProperties(PropertyGroup):
     catalog_from: PointerProperty(type=FilterCatalog)
     catalog_to: PointerProperty(type=FilterCatalog)
 
+    def init(self, from_current_file=False):
+        for catalog in (self.catalog_from, self.catalog_to):
+            catalog.active = True
+            catalog.from_current_file = from_current_file
+            catalog.catalog_filepath = str(CatalogsHelper().catalog_filepath)
+
     def draw(self, layout, context=None):
         box = layout.box()
         box.label(text="Move Assets :")
         split = box.split(factor=0.35)
         split.label(text="FROM")
-        split.prop(self.catalog_from, "catalog", icon="ASSET_MANAGER", text="")
+        split.prop(self.catalog_from, self.catalog_from.catalog_attribute, icon="ASSET_MANAGER", text="")
         split = box.split(factor=0.35)
         split.label(text="TO")
-        split.prop(self.catalog_to, "catalog", icon="ASSET_MANAGER", text="")
+        split.prop(self.catalog_to, self.catalog_to.catalog_attribute, icon="ASSET_MANAGER", text="")
         self.catalog_from.draw_filepath(box)
 
 
@@ -49,4 +56,8 @@ class ABU_OT_catalog_move_from_a_to_b(Operator, BatchFolderOperator):
     logic_class = CatalogMoveFromAToBBatchExecute
 
     def invoke(self, context, event):
-        return self._invoke(context, filter_assets=True)
+        return self._invoke(
+            context,
+            filter_assets=True,
+            init_operator_settings_arguments={"from_current_file": LibraryType.is_file_current(context)},
+        )
