@@ -8,7 +8,6 @@ def test_setting_author_on_all_assets(filepath):
     test_op = TestOperator(
         filepath=filepath,
         filter_assets=True,
-        op_name="op_author_set",
         logic_class=AuthorSetBatchExecute,
     )
 

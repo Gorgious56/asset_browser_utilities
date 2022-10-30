@@ -12,7 +12,7 @@ from asset_browser_utilities.core.filter.catalog import FilterCatalog
 from asset_browser_utilities.module.catalog.tool import CatalogsHelper
 
 
-class CatalogMovetoBatchExecute(BatchExecute):
+class CatalogMoveBatchExecute(BatchExecute):
     def execute_one_file_and_the_next_when_finished(self):
         op_props = get_current_operator_properties()
         if op_props.mode in ("Existing", "New", "File name"):
@@ -107,7 +107,7 @@ class ABU_OT_catalog_move(Operator, BatchFolderOperator):
     bl_label = "Batch Move To Catalog"
 
     operator_settings: PointerProperty(type=CatalogMoveOperatorProperties)
-    logic_class = CatalogMovetoBatchExecute
+    logic_class = CatalogMoveBatchExecute
 
     def invoke(self, context, event):
         return self._invoke(context, filter_assets=True)

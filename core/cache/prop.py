@@ -93,7 +93,6 @@ class Cache(PropertyGroup):
 
     # Operator properties
     op_current: PointerProperty(type=CurrentOperatorProperty)
-
     selected_assets: PointerProperty(type=SelectedAssetFiles)
 
     # UI settings

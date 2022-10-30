@@ -7,7 +7,7 @@ from bpy.props import PointerProperty, StringProperty, FloatProperty, IntPropert
 from asset_browser_utilities.core.operator.tool import BatchExecute, BatchFolderOperator
 
 
-class BatchExecuteOverride(BatchExecute):
+class CustomPropertyRemoveBatchExecute(BatchExecute):
     def do_on_asset(self, asset):
         prop_name = get_current_operator_properties().name
         asset_data = asset.asset_data
@@ -32,7 +32,7 @@ class ABU_OT_custom_property_remove(Operator, BatchFolderOperator):
     bl_label = "Remove Custom Property"
 
     operator_settings: PointerProperty(type=CustomPropertyRemoveOperatorProperties)
-    logic_class = BatchExecuteOverride
+    logic_class = CustomPropertyRemoveBatchExecute
 
     def invoke(self, context, event):
         return self._invoke(context, filter_assets=True)

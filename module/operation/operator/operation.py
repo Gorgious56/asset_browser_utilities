@@ -1,5 +1,4 @@
-from asset_browser_utilities.core.cache.tool import get_current_operator_properties, get_from_cache
-from asset_browser_utilities.core.library.prop import LibraryType
+from asset_browser_utilities.core.cache.tool import get_current_operator_properties
 from asset_browser_utilities.core.log.logger import Logger
 from asset_browser_utilities.module.operation.prop import OperationSettings
 from bpy.types import Operator, PropertyGroup
@@ -8,7 +7,7 @@ from bpy.props import PointerProperty, BoolProperty
 from asset_browser_utilities.core.operator.tool import BatchExecute, BatchFolderOperator
 
 
-class OperationExecute(BatchExecute):
+class OperationCustomBatchExecute(BatchExecute):
     def execute_one_file_and_the_next_when_finished(self):
         if not self.assets:
             self.execute_next_blend()
@@ -39,7 +38,7 @@ class ABU_OT_operation_custom(Operator, BatchFolderOperator):
     bl_options = {"REGISTER", "UNDO"}
 
     operator_settings: PointerProperty(type=OperationCustomOperatorProperties)
-    logic_class = OperationExecute
+    logic_class = OperationCustomBatchExecute
 
     def invoke(self, context, event):
         return self._invoke(context, filter_assets=True)

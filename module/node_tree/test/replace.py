@@ -9,7 +9,6 @@ def test_replacing_gn_tree_A_with_gn_tree_B_in_object_modifier(filepath):
     test_op = TestOperator(
         filepath=filepath,
         filter_assets=False,
-        op_name="op_node_tree_replace",
         logic_class=NodeTreeReplaceBatchExecute,
     )
 
@@ -35,7 +34,6 @@ def test_replacing_gn_tree_A_with_gn_tree_B_in_gn_tree_C(filepath):
     test_op = TestOperator(
         filepath=filepath,
         filter_assets=False,
-        op_name="op_node_tree_replace",
         logic_class=NodeTreeReplaceBatchExecute,
     )
 
@@ -56,7 +54,6 @@ def test_replacing_ng_a_with_ng_b_in_compositing(filepath):
     test_op = TestOperator(
         filepath=filepath,
         filter_assets=False,
-        op_name="op_node_tree_replace",
         logic_class=NodeTreeReplaceBatchExecute,
     )
 
@@ -77,7 +74,6 @@ def test_replacing_ng_a_with_ng_b_in_shader(filepath):
     test_op = TestOperator(
         filepath=filepath,
         filter_assets=False,
-        op_name="op_node_tree_replace",
         logic_class=NodeTreeReplaceBatchExecute,
     )
 

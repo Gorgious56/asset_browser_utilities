@@ -17,7 +17,6 @@ def test_removing_all_assets_from_call_catalogs(filepath):
     test_op = TestOperator(
         filepath=filepath,
         filter_assets=True,
-        op_name="op_catalog_remove",
         logic_class=CatalogRemoveFromBatchExecute,
     )
 
@@ -33,7 +32,6 @@ def test_removing_all_assets_from_a_specific_catalog(filepath):
     test_op = TestOperator(
         filepath=filepath,
         filter_assets=True,
-        op_name="op_catalog_remove",
         logic_class=CatalogRemoveFromBatchExecute,
     )
 

@@ -6,7 +6,7 @@ from asset_browser_utilities.core.operator.tool import BatchExecute, BatchFolder
 from asset_browser_utilities.module.tag.smart_tag import SmartTag, apply_smart_tag
 
 
-class BatchExecuteOverride(BatchExecute):
+class TagAddSmartBatchExecute(BatchExecute):
     def do_on_asset(self, asset):
         apply_smart_tag(asset, get_current_operator_properties())
         super().do_on_asset(asset)
@@ -34,7 +34,7 @@ class ABU_OT_tag_add_smart(Operator, BatchFolderOperator):
     bl_label = "Add Smart Tags"
 
     operator_settings: PointerProperty(type=TagAddSmartOperatorProperties)
-    logic_class = BatchExecuteOverride
+    logic_class = TagAddSmartBatchExecute
 
     def invoke(self, context, event):
         return self._invoke(context, filter_assets=True)

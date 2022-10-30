@@ -6,7 +6,7 @@ from bpy.props import PointerProperty, StringProperty, FloatProperty, IntPropert
 from asset_browser_utilities.core.operator.tool import BatchExecute, BatchFolderOperator
 
 
-class BatchExecuteOverride(BatchExecute):
+class CustomPropertySetBatchExecute(BatchExecute):
     def do_on_asset(self, asset):
         op_props = get_current_operator_properties()
         prop_name = op_props.name
@@ -56,7 +56,7 @@ class ABU_OT_custom_property_set(Operator, BatchFolderOperator):
     bl_label = "Set Custom Property"
 
     operator_settings: PointerProperty(type=CustomPropertySetOperatorProperties)
-    logic_class = BatchExecuteOverride
+    logic_class = CustomPropertySetBatchExecute
 
     def invoke(self, context, event):
         return self._invoke(context, filter_assets=True)

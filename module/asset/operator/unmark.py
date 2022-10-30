@@ -12,8 +12,8 @@ class AssetUnmarkBatchExecute(BatchExecute):
             Logger.display(f"{repr(asset)} Unmarked")
 
 
-class ABU_OT_unmark(Operator, BatchFolderOperator):
-    bl_idname = "abu.unmark"
+class ABU_OT_asset_unmark(Operator, BatchFolderOperator):
+    bl_idname = "abu.asset_unmark"
     bl_label = "Batch Unmark Assets"
     bl_options = {"UNDO"}
 

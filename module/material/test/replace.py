@@ -9,7 +9,6 @@ def test_replacing_material_a_with_material_b_on_assets(filepath):
     test_op = TestOperator(
         filepath=filepath,
         filter_assets=True,
-        op_name="op_material_replace",
         logic_class=MaterialReplaceBatchExecute,
     )
 
@@ -38,7 +37,6 @@ def test_replacing_material_a_with_material_b_on_all_objects(filepath):
     test_op = TestOperator(
         filepath=filepath,
         filter_assets=False,
-        op_name="op_material_replace",
         logic_class=MaterialReplaceBatchExecute,
     )
 

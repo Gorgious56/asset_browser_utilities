@@ -11,7 +11,6 @@ def test_removing_all_empty_catalogs(filepath):
     test_op = TestOperator(
         filepath=filepath,
         filter_assets=False,
-        op_name="op_catalog_remove_empty",
         logic_class=CatalogRemoveEmptyBatchExecute,
     )
 

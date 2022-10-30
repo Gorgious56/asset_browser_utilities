@@ -8,7 +8,7 @@ from asset_browser_utilities.core.operator.tool import BatchExecute, BatchFolder
 from asset_browser_utilities.module.tag.operator.tool import TagAddOrRemoveOperatorProperties
 
 
-class BatchExecuteOverride(BatchExecute):
+class TagRemoveBatchExecute(BatchExecute):
     def do_on_asset(self, asset):
         super().do_on_asset(asset)
         asset_data = asset.asset_data
@@ -49,7 +49,7 @@ class ABU_OT_tag_remove(Operator, BatchFolderOperator):
     bl_label = "Remove tags"
 
     operator_settings: PointerProperty(type=TagAddOrRemoveOperatorProperties)
-    logic_class = BatchExecuteOverride
+    logic_class = TagRemoveBatchExecute
 
     def invoke(self, context, event):
         return self._invoke(context, filter_assets=True, init_operator_settings_arguments={"add": False})

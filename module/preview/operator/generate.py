@@ -8,7 +8,7 @@ from asset_browser_utilities.core.cache.tool import get_current_operator_propert
 from asset_browser_utilities.module.preview.tool import is_preview_generated
 
 
-class BatchExecuteOverride(BatchExecute):
+class PreviewGenerateBatchExecute(BatchExecute):
     def execute_one_file_and_the_next_when_finished(self):
         for asset in self.assets:
             if get_current_operator_properties().overwrite or not is_preview_generated(asset):
@@ -34,7 +34,7 @@ class ABU_OT_preview_generate(Operator, BatchFolderOperator):
     bl_label = "Batch Generate Previews"
 
     operator_settings: PointerProperty(type=PreviewGenerateOperatorProperties)
-    logic_class = BatchExecuteOverride
+    logic_class = PreviewGenerateBatchExecute
 
     def invoke(self, context, event):
         return self._invoke(context, filter_assets=True)

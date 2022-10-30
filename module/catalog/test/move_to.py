@@ -4,7 +4,7 @@ from asset_browser_utilities.module.catalog.tool import CatalogsHelper
 from asset_browser_utilities.core.test.prop import TestOperator
 from asset_browser_utilities.module.catalog.operator.move_to import (
     CatalogMoveOperatorProperties,
-    CatalogMovetoBatchExecute,
+    CatalogMoveBatchExecute,
 )
 
 from asset_browser_utilities.module.asset.tool import all_assets
@@ -18,8 +18,7 @@ def test_moving_all_assets_to_an_already_existing_catalog(filepath):
         test_op = TestOperator(
             filepath=filepath,
             filter_assets=True,
-            op_name="op_catalog_move",
-            logic_class=CatalogMovetoBatchExecute,
+            logic_class=CatalogMoveBatchExecute,
         )
 
         bpy.ops.wm.open_mainfile(filepath=str(filepath))

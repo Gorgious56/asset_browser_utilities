@@ -13,7 +13,6 @@ def test_extracting_previews(filepath):
     test_op = TestOperator(
         filepath=filepath,
         filter_assets=True,
-        op_name="op_preview_extract",
         logic_class=PreviewExtractBatchExecute,
     )
     asset_filter_settings = get_from_cache(AssetFilterSettings)
