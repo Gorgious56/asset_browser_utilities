@@ -151,4 +151,4 @@ class CatalogsHelper:
             if not asset.catalog_simple_name:
                 continue
             catalogs_from_assets_in_current_file.add((asset.catalog_id, asset.catalog_simple_name))
-        return [(uuid, name, "") for (uuid, name) in catalogs_from_assets_in_current_file]
+        return [(uuid, name, "") for (uuid, name) in catalogs_from_assets_in_current_file] or [("None", ) * 3]

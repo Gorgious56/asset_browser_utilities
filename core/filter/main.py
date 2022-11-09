@@ -8,6 +8,7 @@ from asset_browser_utilities.core.filter.container import AssetContainer
 from asset_browser_utilities.core.filter.catalog import FilterCatalog
 from asset_browser_utilities.core.filter.asset import FilterAssets
 from asset_browser_utilities.core.filter.tag import FilterTag
+from asset_browser_utilities.core.filter.author import FilterAuthor
 from asset_browser_utilities.core.tool import copy_simple_property_group
 from asset_browser_utilities.core.cache.tool import get_from_cache
 from asset_browser_utilities.core.library.prop import LibraryExportSettings, LibraryType
@@ -20,6 +21,7 @@ class AssetFilterSettings(PropertyGroup):
     filter_catalog: PointerProperty(type=FilterCatalog)
     filter_assets: PointerProperty(type=FilterAssets)
     filter_tag: PointerProperty(type=FilterTag)
+    filter_author: PointerProperty(type=FilterAuthor)
 
     def init_asset_filter_settings(
         self,
@@ -51,6 +53,8 @@ class AssetFilterSettings(PropertyGroup):
                 asset_container.filter_by_catalog(self.filter_catalog.catalog_uuid)
             if self.filter_tag.active:
                 asset_container.filter_by_tags(self.filter_tag.tags.get_valid_tags(), self.filter_tag.orand)
+            if self.filter_author.active:
+                asset_container.filter_by_author(self.filter_author.name)
 
         if self.filter_name.active:
             asset_container.filter_by_name(
@@ -72,6 +76,7 @@ class AssetFilterSettings(PropertyGroup):
         if self.filter_assets.only_assets:
             self.filter_catalog.draw(box, context)
             self.filter_tag.draw(box, context)
+            self.filter_author.draw(box, context)
 
     def copy_from(self, other):
         # Other is the source, self is the target

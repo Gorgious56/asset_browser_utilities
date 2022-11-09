@@ -16,10 +16,6 @@ class FilterTag(PropertyGroup):
     )
     tags: PointerProperty(type=TagCollection)
 
-    @property
-    def all(self):
-        return [n.name for n in self.tags.items]
-
     def init(self):
         self.tags.init()
         self.tags.add = True

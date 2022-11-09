@@ -34,7 +34,13 @@ class AssetContainer:
     def filter_by_catalog(self, uuid):
         for items in self.assets.values():
             for i in range(len(items) - 1, -1, -1):
-                if not items[i].asset_data.catalog_id == uuid:
+                if items[i].asset_data.catalog_id != uuid:
+                    items.pop(i)
+
+    def filter_by_author(self, name):
+        for items in self.assets.values():
+            for i in range(len(items) - 1, -1, -1):
+                if items[i].asset_data.author != name:
                     items.pop(i)
 
     def filter_by_tags(self, tags, orand):
