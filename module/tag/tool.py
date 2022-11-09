@@ -19,7 +19,7 @@ class TagAddOrRemoveOperatorProperties(PropertyGroup):
         self.tag_collection.draw(box)
         if self.tag_collection.remove_all:
             self.filter_name.draw(box)
-    
+
     @property
     def tags(self):
         return [t.name for t in self.tag_collection.items if not t.is_empty()]

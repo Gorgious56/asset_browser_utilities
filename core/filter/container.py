@@ -37,6 +37,22 @@ class AssetContainer:
                 if not items[i].asset_data.catalog_id == uuid:
                     items.pop(i)
 
+    def filter_by_tags(self, tags, orand):
+        for items in self.assets.values():
+            for i in range(len(items) - 1, -1, -1):
+                asset_tag_names = [t.name for t in items[i].asset_data.tags]
+                if orand == "AND":
+                    for tag in tags:
+                        if tag not in asset_tag_names:
+                            items.pop(i)
+                            break
+                elif orand == "OR":
+                    for tag in tags:
+                        if tag in asset_tag_names:
+                            break
+                    else:
+                        items.pop(i)
+
     def filter_by_name(self, method, value, case_sensitive):
         for items in self.assets.values():
             for i in range(len(items) - 1, -1, -1):

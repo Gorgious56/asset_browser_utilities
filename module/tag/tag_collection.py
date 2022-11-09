@@ -38,6 +38,9 @@ class TagCollection(PropertyGroup):
         while len(self.items) < tags:
             self.items.add()
 
+    def get_valid_tags(self):
+        return [t.name for i, t in enumerate(self.items) if t.name and i < self.shown_tags]
+
     def draw(self, layout, context=None):
         box = layout
         row = box.row()

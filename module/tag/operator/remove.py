@@ -5,7 +5,7 @@ from bpy.types import Operator
 from bpy.props import PointerProperty
 
 from asset_browser_utilities.core.operator.tool import BatchExecute, BatchFolderOperator
-from asset_browser_utilities.module.tag.operator.tool import TagAddOrRemoveOperatorProperties
+from asset_browser_utilities.module.tag.tool import TagAddOrRemoveOperatorProperties
 
 
 class TagRemoveBatchExecute(BatchExecute):

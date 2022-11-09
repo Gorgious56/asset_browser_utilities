@@ -7,6 +7,7 @@ from asset_browser_utilities.core.filter.selection import FilterSelection
 from asset_browser_utilities.core.filter.container import AssetContainer
 from asset_browser_utilities.core.filter.catalog import FilterCatalog
 from asset_browser_utilities.core.filter.asset import FilterAssets
+from asset_browser_utilities.core.filter.tag import FilterTag
 from asset_browser_utilities.core.tool import copy_simple_property_group
 from asset_browser_utilities.core.cache.tool import get_from_cache
 from asset_browser_utilities.core.library.prop import LibraryExportSettings, LibraryType
@@ -18,6 +19,7 @@ class AssetFilterSettings(PropertyGroup):
     filter_selection: PointerProperty(type=FilterSelection)
     filter_catalog: PointerProperty(type=FilterCatalog)
     filter_assets: PointerProperty(type=FilterAssets)
+    filter_tag: PointerProperty(type=FilterTag)
 
     def init_asset_filter_settings(
         self,
@@ -28,6 +30,7 @@ class AssetFilterSettings(PropertyGroup):
         self.filter_selection.init(
             allow=filter_selection and get_from_cache(LibraryExportSettings).source == LibraryType.FileCurrent.value
         )
+        self.filter_tag.init()
         self.filter_assets.only_assets = filter_assets
         self.filter_catalog.allow = filter_assets
         self.filter_types.allow = filter_types
@@ -41,12 +44,14 @@ class AssetFilterSettings(PropertyGroup):
             if (self.filter_types.types_object_filter and self.filter_types.types_global_filter)
             else [t[0] for t in get_object_types()]
         )
-        asset_container = AssetContainer(data_containers, object_types)        
+        asset_container = AssetContainer(data_containers, object_types)
         if self.filter_assets.only_assets:
             asset_container.filter_assets()
             if self.filter_catalog.active:
                 asset_container.filter_by_catalog(self.filter_catalog.catalog_uuid)
-        
+            if self.filter_tag.active:
+                asset_container.filter_by_tags(self.filter_tag.tags.get_valid_tags(), self.filter_tag.orand)
+
         if self.filter_name.active:
             asset_container.filter_by_name(
                 self.filter_name.method,
@@ -63,8 +68,10 @@ class AssetFilterSettings(PropertyGroup):
         if self.filter_types.allow:
             self.filter_types.draw(box)
         self.filter_name.draw(box, name_override="Assets")
-        if self.filter_catalog.allow:
+
+        if self.filter_assets.only_assets:
             self.filter_catalog.draw(box, context)
+            self.filter_tag.draw(box, context)
 
     def copy_from(self, other):
         # Other is the source, self is the target
