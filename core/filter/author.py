@@ -3,8 +3,8 @@ from bpy.props import StringProperty, BoolProperty
 
 
 class FilterAuthor(PropertyGroup):
-    active: BoolProperty()
-    name: StringProperty(name="Name")
+    active: BoolProperty(default=False)
+    name: StringProperty(name="Name", default="")
 
     def init(self):
         self.tags.init()

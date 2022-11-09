@@ -50,7 +50,12 @@ class AssetFilterSettings(PropertyGroup):
         if self.filter_assets.only_assets:
             asset_container.filter_assets()
             if self.filter_catalog.active:
-                asset_container.filter_by_catalog(self.filter_catalog.catalog_uuid)
+                uuid = (
+                    "00000000-0000-0000-0000-000000000000"
+                    if self.filter_catalog.unassigned
+                    else self.filter_catalog.catalog_uuid
+                )
+                asset_container.filter_by_catalog(uuid)
             if self.filter_tag.active:
                 asset_container.filter_by_tags(self.filter_tag.tags.get_valid_tags(), self.filter_tag.orand)
             if self.filter_author.active:

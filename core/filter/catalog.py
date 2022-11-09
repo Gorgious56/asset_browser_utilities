@@ -13,6 +13,7 @@ def update_uuid(self, context):
 class FilterCatalog(PropertyGroup):
     active: BoolProperty(default=False, name="Filter By Catalog")
     allow: BoolProperty(default=False)
+    unassigned: BoolProperty(default=False)
     from_current_file: BoolProperty(default=False)
     catalog_from_definition: EnumProperty(items=CatalogsHelper.get_catalogs, name="Catalog", update=update_uuid)
     catalog_from_current_file: EnumProperty(
@@ -41,6 +42,9 @@ class FilterCatalog(PropertyGroup):
             layout = layout.box()
             layout.prop(self, "active", icon="FILTER")
         if self.active:
+            layout.prop(self, "unassigned", text="Only Assets with no Catalog", toggle=True)
+            if self.unassigned:
+                return
             if self.from_current_file:
                 layout.prop(self, "catalog_from_current_file")
             else:
