@@ -17,8 +17,8 @@ class BlendRenameBatchExecute(BatchExecute):
                 old_name = str(blend)
                 folder_name = blend.parent.name
                 new_name = blend.with_stem(folder_name)
-                while new_name.exists():
-                    new_name = new_name.with_stem(str(new_name.stem) + "_")
+                # while new_name.exists():
+                #     new_name = new_name.with_stem(str(new_name.stem) + "_")
                 blend.rename(new_name)
                 Logger.display(f"Renamed {old_name} to {new_name}")
 
