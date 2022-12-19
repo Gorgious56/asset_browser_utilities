@@ -11,7 +11,7 @@ from asset_browser_utilities.core.cache.tool import get_current_operator_propert
 class AssetMarkBatchExecute(BatchExecute):
     def execute_one_file_and_the_next_when_finished(self):
         if not self.assets:
-            self.execute_next_blend()
+            self.execute_next_file()
             return
         operator_properties = get_current_operator_properties()
         for asset in self.assets:
@@ -26,7 +26,7 @@ class AssetMarkBatchExecute(BatchExecute):
             bpy.app.timers.register(self.sleep_until_previews_are_done_and_execute_next_file)
         else:
             self.save_file()
-            self.execute_next_blend()
+            self.execute_next_file()
 
 
 class AssetMarkOperatorProperties(PropertyGroup):

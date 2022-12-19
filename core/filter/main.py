@@ -28,6 +28,7 @@ class AssetFilterSettings(PropertyGroup):
         filter_selection=False,
         filter_assets=False,
         filter_types=True,
+        filter_name=True,
     ):
         self.filter_selection.init(
             allow=filter_selection and get_from_cache(LibraryExportSettings).source == LibraryType.FileCurrent.value
@@ -36,6 +37,7 @@ class AssetFilterSettings(PropertyGroup):
         self.filter_assets.only_assets = filter_assets
         self.filter_catalog.allow = filter_assets
         self.filter_types.allow = filter_types
+        self.filter_name.allow = filter_name
 
     def get_objects_that_satisfy_filters(self):
         data_containers = (
@@ -61,7 +63,7 @@ class AssetFilterSettings(PropertyGroup):
             if self.filter_author.active:
                 asset_container.filter_by_author(self.filter_author.name)
 
-        if self.filter_name.active:
+        if self.filter_name.allow and self.filter_name.active:
             asset_container.filter_by_name(
                 self.filter_name.method,
                 self.filter_name.value,
@@ -74,8 +76,7 @@ class AssetFilterSettings(PropertyGroup):
     def draw(self, layout, context):
         box = layout.box()
         self.filter_selection.draw(box)
-        if self.filter_types.allow:
-            self.filter_types.draw(box)
+        self.filter_types.draw(box)
         self.filter_name.draw(box, name_override="Assets")
 
         if self.filter_assets.only_assets:
@@ -83,14 +84,13 @@ class AssetFilterSettings(PropertyGroup):
             self.filter_tag.draw(box, context)
             self.filter_author.draw(box, context)
 
-    def copy_from(self, other):
-        # Other is the source, self is the target
-        copy_simple_property_group(other, self)
-        copy_simple_property_group(other.filter_assets, self.filter_assets)
-        copy_simple_property_group(other.filter_types, self.filter_types)
-        copy_simple_property_group(other.filter_name, self.filter_name)
-        copy_simple_property_group(other.filter_selection, self.filter_selection)
-        copy_simple_property_group(other.filter_catalog, self.filter_catalog)
+    def copy_from(self, source):
+        copy_simple_property_group(source, self)
+        copy_simple_property_group(source.filter_assets, self.filter_assets)
+        copy_simple_property_group(source.filter_types, self.filter_types)
+        copy_simple_property_group(source.filter_name, self.filter_name)
+        copy_simple_property_group(source.filter_selection, self.filter_selection)
+        copy_simple_property_group(source.filter_catalog, self.filter_catalog)
 
     @staticmethod
     def are_objects_filtered():

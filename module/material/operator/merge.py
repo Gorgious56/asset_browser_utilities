@@ -37,7 +37,7 @@ class MaterialMergeBatchExecute(BatchExecute):
                     Logger.display(f"Replaced {repr(material)} by {repr(material_to)}")
 
         self.save_file()
-        self.execute_next_blend()
+        self.execute_next_file()
 
 
 class MaterialMergeOperatorProperties(PropertyGroup):

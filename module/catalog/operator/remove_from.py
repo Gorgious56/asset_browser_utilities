@@ -24,7 +24,7 @@ class CatalogRemoveFromBatchExecute(BatchExecute):
                 asset.asset_data.catalog_id = ""
                 Logger.display(f"{repr(asset)} unassigned from its catalog")
         self.save_file()
-        self.execute_next_blend()
+        self.execute_next_file()
 
 
 class CatalogRemoveFromOperatorProperties(PropertyGroup):

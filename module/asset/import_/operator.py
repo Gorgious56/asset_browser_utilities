@@ -21,16 +21,16 @@ class BatchImport(BatchExecute):
     def execute_one_file_and_the_next_when_finished(self):
         if bpy.data.filepath != self.target_filepath:
             self.add_asset_paths()
-            if not self.blends:
+            if not self.files:
                 bpy.ops.wm.open_mainfile(filepath=str(self.target_filepath))
-        if self.blends:
-            self.execute_next_blend()
+        if self.files:
+            self.execute_next_file()
         else:
             bpy.app.timers.register(self.append_assets, first_interval=0.1)
 
     def add_asset_paths(self):
         for asset in self.assets:
-            self.filepaths.append(str(self.blend))
+            self.filepaths.append(str(self.file))
             self.directories.append(str(get_blend_library_name(asset)))
             self.filenames.append(str(asset.name))
             Logger.display(f"Found '{self.filepaths[-1]}\\{self.directories[-1]}\\{self.filenames[-1]}'")
@@ -39,7 +39,7 @@ class BatchImport(BatchExecute):
         for filepath, directory, filename in zip(self.filepaths, self.directories, self.filenames):
             append_asset(filepath, directory, filename)
             Logger.display(f"Import '{filepath}\\{directory}\\{filename}'")
-        self.execute_next_blend()
+        self.execute_next_file()
 
 
 class OperatorProperties(PropertyGroup):

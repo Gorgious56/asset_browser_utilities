@@ -14,7 +14,7 @@ class DescriptionSetBatchExecute(BatchExecute):
             asset.asset_data.description = description
             Logger.display(f"Set {asset.name}'s description to '{description}'")
         self.save_file()
-        self.execute_next_blend()
+        self.execute_next_file()
 
 
 class DescriptionSetOperatorProperties(PropertyGroup):

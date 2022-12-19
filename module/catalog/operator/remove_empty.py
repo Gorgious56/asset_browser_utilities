@@ -27,7 +27,7 @@ class CatalogRemoveEmptyBatchExecute(BatchExecute):
             Logger.display(f"Removed empty catalog '{catalogs[empty_catalog_uuid]}'")
 
         self.save_file()
-        self.execute_next_blend()
+        self.execute_next_file()
 
 
 class CatalogRemoveEmptyOperatorProperties(PropertyGroup):

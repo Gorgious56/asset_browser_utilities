@@ -21,14 +21,14 @@ class OperationCustomBatchExecute(BatchExecute):
     def execute_one_file_and_the_next_when_finished(self):
         operator_properties = get_current_operator_properties()
         if not self.assets:
-            self.execute_next_blend()
+            self.execute_next_file()
             return
         operator_properties = get_current_operator_properties()
         
         if operator_properties.operate_in_batches:
             self.execute_in_batches(self.assets)
             self.save_file()
-            self.execute_next_blend()
+            self.execute_next_file()
         else:
             bpy.app.timers.register(self.execute_in_sequence)
 
@@ -36,7 +36,7 @@ class OperationCustomBatchExecute(BatchExecute):
         if self.asset is None:
             if not self.assets:
                 self.save_file()
-                self.execute_next_blend()
+                self.execute_next_file()
                 return
             self.asset = self.assets.pop(0)
         

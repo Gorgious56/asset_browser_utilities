@@ -40,7 +40,7 @@ class NodeTreeMergeBatchExecute(BatchExecute):
                     node_tree_to_override.user_remap(node_tree_to_keep)
                     Logger.display(f"Replaced {repr(node_tree_to_override)} with {repr(node_tree_to_keep)}")
         self.save_file()
-        self.execute_next_blend()
+        self.execute_next_file()
 
 
 class NodeTreeMergeOperatorProperties(PropertyGroup):

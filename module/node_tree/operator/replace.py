@@ -23,7 +23,7 @@ class NodeTreeReplaceBatchExecute(BatchExecute):
         Logger.display(f"Replaced {repr(node_tree_old)} with {repr(node_tree_new)}")
 
         self.save_file()
-        self.execute_next_blend()
+        self.execute_next_file()
 
 
 class NodeTreeReplaceOperatorProperties(PropertyGroup):

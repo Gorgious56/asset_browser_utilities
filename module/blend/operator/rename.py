@@ -9,10 +9,10 @@ from asset_browser_utilities.core.operator.tool import BatchExecute, BatchFolder
 
 
 class BlendRenameBatchExecute(BatchExecute):
-    def execute_next_blend(self):
+    def execute_next_file(self):
         op_prop = get_current_operator_properties()
         filter_name = get_from_cache(AssetFilterSettings).filter_name
-        for blend in self.blends:
+        for blend in self.files:
             if filter_name.filter(blend.stem):
                 old_name = str(blend)
                 folder_name = blend.parent.name

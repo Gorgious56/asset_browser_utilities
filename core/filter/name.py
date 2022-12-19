@@ -4,6 +4,7 @@ from bpy.props import EnumProperty, StringProperty, BoolProperty
 
 class FilterName(PropertyGroup):
     active: BoolProperty(default=False)
+    allow: BoolProperty(default=True)
 
     method: EnumProperty(
         name="Filter Name By",
@@ -19,6 +20,8 @@ class FilterName(PropertyGroup):
     case_sensitive: BoolProperty(default=True, name="Case sensitive")
 
     def draw(self, layout, name_override=""):
+        if not self.allow:
+            return
         box = layout.box()
         label = "Filter " + (f"{name_override} " if name_override != "" else "") + "By Name"
         box.prop(self, "active", text=label, icon="FILTER")

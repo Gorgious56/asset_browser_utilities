@@ -31,7 +31,7 @@ class CatalogMoveBatchExecute(BatchExecute):
                 Logger.display(f"{repr(asset)} moved to catalog '{name}'")
 
         self.save_file()
-        self.execute_next_blend()
+        self.execute_next_file()
 
     def get_catalog_uuid_and_name(self, op_props, asset=None):
         uuid, name = None, None

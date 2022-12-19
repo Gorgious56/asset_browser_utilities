@@ -4,7 +4,7 @@ from asset_browser_utilities.core.prop import StrProperty
 from asset_browser_utilities.core.tool import copy_simple_property_group
 from asset_browser_utilities.core.cache.tool import get_from_cache
 from asset_browser_utilities.core.filter.name import FilterName
-from asset_browser_utilities.core.library.tool import get_blend_files_in_folder
+from asset_browser_utilities.core.library.tool import get_files_in_folder
 
 import bpy
 from bpy.types import PropertyGroup
@@ -94,17 +94,17 @@ class LibraryExportSettings(PropertyGroup):
     def copy_from(self, other):
         copy_simple_property_group(other, self)
 
-    def get_blend_files(self):
+    def get_files(self, file_extension="blend"):
         files = []
         if self.source == LibraryType.FileCurrent.value:
             files = [Path(bpy.data.filepath)]
         elif self.source == LibraryType.FileExternal.value:
             files = [Path(f) for f in self.files]
         elif self.source == LibraryType.FolderExternal.value:
-            files = get_blend_files_in_folder(self.folder, recursive=self.recursive)
+            files = get_files_in_folder(self.folder, recursive=self.recursive, extension=file_extension)
         else:  # User Library
             folder = Path(self.library_user_path)
-            files = get_blend_files_in_folder(folder, recursive=True)
+            files = get_files_in_folder(folder, recursive=True, extension=file_extension)
         files = [f for f in files if self.filter_files_names.filter(f.stem)]
         return files
 

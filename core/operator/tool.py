@@ -23,17 +23,17 @@ class BatchExecute:
     INTERVAL = 0.01
     INTERVAL_PREVIEW = 0.05
 
-    def __init__(self):
-        self.blends = get_from_cache(LibraryExportSettings).get_blend_files()
-        self.blend = None
+    def __init__(self, file_extension="blend"):
+        self.files = get_from_cache(LibraryExportSettings).get_files(file_extension)
+        self.file = None
         self.assets = []
 
     def callback(self):
         [a.tag_redraw() for a in bpy.context.screen.areas if a.ui_type == "ASSETS" and hasattr(bpy.context, "screen")]
 
-    def execute_next_blend(self):
+    def execute_next_file(self):
         library_export_settings = get_from_cache(LibraryExportSettings)
-        if not self.blends:
+        if not self.files:
             if not bpy.app.background:
                 if library_export_settings.filepath_start != "":
                     open_file_if_different_from_current(str(library_export_settings.filepath_start))
@@ -41,8 +41,8 @@ class BatchExecute:
                 bpy.app.timers.register(lambda: message_box(message="Work completed !"), first_interval=self.INTERVAL)
             bpy.app.timers.register(self.callback, first_interval=self.INTERVAL)
             return
-        Logger.display(f"{len(self.blends)} file{'s' if len(self.blends) > 1 else ''} left")
-        self.open_next_blend()
+        Logger.display(f"{len(self.files)} file{'s' if len(self.files) > 1 else ''} left")
+        self.open_next_file()
         if library_export_settings.source == LibraryType.FileCurrent.value:
             self.assets = get_from_cache(AssetFilterSettings).get_objects_that_satisfy_filters()
 
@@ -52,12 +52,14 @@ class BatchExecute:
             # Wait a little bit for context to initialize
             bpy.app.timers.register(self.execute_one_file_and_the_next_when_finished, first_interval=self.INTERVAL)
 
-    def save_file(self):
-        save_file_as(str(self.blend), remove_backup=get_from_cache(LibraryExportSettings).remove_backup)
+    def save_file(self, filepath=None):
+        if filepath is None:
+            filepath = str(self.file)
+        save_file_as(filepath, remove_backup=get_from_cache(LibraryExportSettings).remove_backup)
 
-    def open_next_blend(self):
-        self.blend = self.blends.pop(0)
-        open_file_if_different_from_current(str(self.blend))
+    def open_next_file(self):
+        self.file = self.files.pop(0)
+        open_file_if_different_from_current(str(self.file))
 
     def sleep_until_previews_are_done_and_execute_next_file(self):
         while self.assets:
@@ -71,7 +73,7 @@ class BatchExecute:
                 else:
                     return self.INTERVAL_PREVIEW
         self.save_file()
-        self.execute_next_blend()
+        self.execute_next_file()
         return None
 
     def execute_one_file_and_the_next_when_finished(self):
@@ -79,7 +81,7 @@ class BatchExecute:
             for asset in self.assets:
                 self.do_on_asset(asset)
             self.save_file()
-        self.execute_next_blend()
+        self.execute_next_file()
 
     def do_on_asset(self, asset):
         pass
@@ -108,6 +110,7 @@ def update_preset(self, context):
 class BatchFolderOperator(ImportHelper):
     bl_options: set[str] = {"UNDO"}
     ui_library = LibraryType.All
+    file_extension = "blend"
     filter_glob: StringProperty(
         default="",
         options={"HIDDEN"},
@@ -128,12 +131,14 @@ class BatchFolderOperator(ImportHelper):
         filter_assets=False,
         filter_type=True,
         filter_selection=True,
+        filter_name=True,
         enforce_filebrowser=False,
-        init_operator_settings_arguments:dict=None
+        init_operator_settings_arguments: dict = None,
     ):
         self.filter_assets = filter_assets
         self.filter_types = filter_type
         self.filter_selection = filter_selection
+        self.filter_name = filter_name
 
         update_preset(self, context)
         self.update_asset_filter_allow()
@@ -142,7 +147,9 @@ class BatchFolderOperator(ImportHelper):
         library_settings = self.init_library_settings(remove_backup)
 
         if library_settings.source in (LibraryType.FolderExternal.value, LibraryType.FileExternal.value):
-            self.filter_glob = "*.blend" if library_settings.source == LibraryType.FileExternal.value else ""
+            self.filter_glob = (
+                ("*." + self.file_extension) if library_settings.source == LibraryType.FileExternal.value else ""
+            )
             context.window_manager.fileselect_add(self)
             return {"RUNNING_MODAL"}
         else:
@@ -161,7 +168,6 @@ class BatchFolderOperator(ImportHelper):
                 current_operator_settings.init(**init_args)
             else:
                 current_operator_settings.init()
-            
 
     def init_library_settings(self, remove_backup):
         library_settings = get_from_cache(LibraryExportSettings)
@@ -182,8 +188,8 @@ class BatchFolderOperator(ImportHelper):
     def execute(self, context):
         self.write_filepath_to_cache()
         save_if_possible_and_necessary()
-        logic = self.logic_class()
-        logic.execute_next_blend()
+        logic = self.logic_class(self.file_extension)
+        logic.execute_next_file()
         return {"FINISHED"}
 
     def write_filepath_to_cache(self):
@@ -213,4 +219,5 @@ class BatchFolderOperator(ImportHelper):
             filter_selection=filter_selection,
             filter_assets=self.filter_assets,
             filter_types=self.filter_types,
+            filter_name=self.filter_name,
         )

@@ -19,7 +19,7 @@ class MaterialReplaceBatchExecute(BatchExecute):
         Logger.display(f"Replaced {repr(material_to_override)} with {repr(material_to_keep)}")
 
         self.save_file()
-        self.execute_next_blend()
+        self.execute_next_file()
 
 
 class MaterialReplaceOperatorProperties(PropertyGroup):

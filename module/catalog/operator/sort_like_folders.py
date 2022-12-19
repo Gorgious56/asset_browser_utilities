@@ -17,7 +17,7 @@ class CatalogSortLikeFoldersBatchExecute(BatchExecute):
         self.library_user_path = get_from_cache(LibraryExportSettings).library_user_path
         self.catalog_map = {}
         cat_helper = CatalogsHelper()
-        for filepath in self.blends:
+        for filepath in self.files:
             try:
                 catalog_tree = Path(str(filepath).replace(self.library_user_path, "")).parents[
                     1 if current_op.are_assets_in_subfolders else 0
@@ -32,7 +32,7 @@ class CatalogSortLikeFoldersBatchExecute(BatchExecute):
 
     def execute_one_file_and_the_next_when_finished(self):
         try:
-            uuid = self.catalog_map[self.blend]
+            uuid = self.catalog_map[self.file]
         except KeyError:
             pass
         else:
@@ -45,7 +45,7 @@ class CatalogSortLikeFoldersBatchExecute(BatchExecute):
                     changed_file = True
             if changed_file:
                 self.save_file()
-        self.execute_next_blend()
+        self.execute_next_file()
 
 
 class CatalogSortLikeFoldersOperatorProperties(PropertyGroup):

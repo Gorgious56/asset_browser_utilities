@@ -81,6 +81,8 @@ class FilterTypes(PropertyGroup):
     )
 
     def draw(self, layout, context=None):
+        if not self.allow:
+            return
         box = layout.box()
 
         row = box.row(align=True)

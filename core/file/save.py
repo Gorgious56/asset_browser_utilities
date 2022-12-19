@@ -30,8 +30,9 @@ def remove_backup_file_if_it_exists(filepath):
         os.remove(backup)
 
 
-def save_file(remove_backup=False):
-    filepath = bpy.data.filepath
+def save_file(remove_backup=False, filepath=None):
+    if filepath is None:
+        filepath = bpy.data.filepath
     try:
         bpy.ops.wm.save_mainfile(compress=get_preferences().save_compress)
     except RuntimeError as e:

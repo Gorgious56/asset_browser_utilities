@@ -13,7 +13,7 @@ class AuthorSetBatchExecute(BatchExecute):
             asset.asset_data.author = author
             Logger.display(f"Set {repr(asset)}'s author to '{author}'")
         self.save_file()
-        self.execute_next_blend()
+        self.execute_next_file()
 
 
 class AuthorSetOperatorProperties(PropertyGroup):

@@ -38,7 +38,7 @@ class PreviewImportBatchExecute(BatchExecute):
                         break
         if imported_preview:
             self.save_file()
-        self.execute_next_blend()
+        self.execute_next_file()
 
     def load_preview(self, asset, image_name):
         image_filepath = str(self.images[self.images_names.index(image_name)])

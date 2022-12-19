@@ -23,7 +23,7 @@ class CatalogMoveFromAToBBatchExecute(BatchExecute):
                     asset_data.catalog_id = uuid_to
                     Logger.display(f"{repr(asset)} moved from catalog '{name_from}' to catalog '{name_to}'")
             self.save_file()
-        self.execute_next_blend()
+        self.execute_next_file()
 
 
 class CatalogMoveFromAToBOperatorProperties(PropertyGroup):
@@ -53,8 +53,4 @@ class ABU_OT_catalog_move_from_a_to_b(Operator, BatchFolderOperator):
     logic_class = CatalogMoveFromAToBBatchExecute
 
     def invoke(self, context, event):
-        return self._invoke(
-            context,
-            filter_assets=True,
-            init_operator_settings_arguments={"from_current_file": LibraryType.is_file_current(context)},
-        )
+        return self._invoke(context)

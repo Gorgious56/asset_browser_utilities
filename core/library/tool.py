@@ -25,13 +25,13 @@ def get_blend_library_name(asset):
     return type(asset).__name__.lower() + "s"
 
 
-def get_blend_files_in_folder(folder, recursive):
+def get_files_in_folder(folder, recursive, extension="blend"):
     if isinstance(folder, str):
         folder = Path(folder)
     if recursive:
-        return [fp for fp in folder.glob("**/*.blend") if fp.is_file()]
+        return [fp for fp in folder.glob("**/*." + extension) if fp.is_file()]
     else:
-        return [fp for fp in folder.glob("*.blend") if fp.is_file()]
+        return [fp for fp in folder.glob("*." + extension) if fp.is_file()]
 
 
 def sanitize_library_name(name):

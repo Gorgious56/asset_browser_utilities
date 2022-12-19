@@ -15,7 +15,7 @@ class ABUOperatorsMenu:
         for op in self.ops_cmd:
             self.add_op(layout, context, *op)
 
-    def add_op(self, layout, context, command, text="", icon=None):
+    def add_op(self, layout, context, command, text="", icon=None, *op):
         library_source = LibraryType.get_library_type_from_context(context)
         ui_library = eval("bpy.types.ABU_OT_" + command.split(".")[1]).ui_library
         if ui_library == LibraryType.All or library_source == ui_library or library_source in ui_library:
@@ -23,6 +23,9 @@ class ABUOperatorsMenu:
                 self.ops.append(layout.operator(command, text=text, icon=icon))
             else:
                 self.ops.append(layout.operator(command, text=text))
+            for kv in op:
+                for k, v in kv.items():
+                    setattr(self.ops[-1], k, v)
 
     def setup_library_source(self, library_source):
         for op in self.ops:
