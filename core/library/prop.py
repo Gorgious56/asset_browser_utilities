@@ -110,7 +110,6 @@ class LibraryExportSettings(PropertyGroup):
         return [f for f in files if get_from_cache(LibraryExportSettings).filter_date.filter(f.stat().st_mtime)]
 
     def get_files(self, file_extension="blend"):
-        self.files = []
         self = get_from_cache(LibraryExportSettings)
         if self.source == LibraryType.FileCurrent.value:
             files = [Path(bpy.data.filepath)]
