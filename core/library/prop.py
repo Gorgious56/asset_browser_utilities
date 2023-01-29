@@ -1,9 +1,14 @@
 from enum import Enum
 from pathlib import Path
 from asset_browser_utilities.core.prop import StrProperty
+
 from asset_browser_utilities.core.tool import copy_simple_property_group
+
 from asset_browser_utilities.core.cache.tool import get_from_cache
+
+from asset_browser_utilities.core.filter.date import FilterDate
 from asset_browser_utilities.core.filter.name import FilterName
+
 from asset_browser_utilities.core.library.tool import get_files_in_folder
 
 import bpy
@@ -55,6 +60,7 @@ class LibraryExportSettings(PropertyGroup):
     folder: StringProperty()
     filepath_start: StringProperty()
     filter_files_names: PointerProperty(type=FilterName)
+    filter_date: PointerProperty(type=FilterDate)
 
     @property
     def files(self):
@@ -77,25 +83,35 @@ class LibraryExportSettings(PropertyGroup):
     def init(self, remove_backup=False):
         self.remove_backup_allow = remove_backup
         self.remove_backup = remove_backup
+        self.filter_date.init()
 
     def draw(self, layout, context):
+        self = get_from_cache(LibraryExportSettings)
         if self.source != LibraryType.FileCurrent.value:
             self.filter_files_names.draw(layout, name_override="Selected Files")
+            self.filter_date.draw(layout)
             if self.source == LibraryType.FolderExternal.value:
                 layout.prop(self, "recursive", icon="FOLDER_REDIRECT")
             elif self.source == LibraryType.UserLibrary.value:
                 box = layout.box()
-                library_pg = get_from_cache(LibraryExportSettings)
-                box.prop(library_pg, "library_user_path", icon="FOLDER_REDIRECT")
-                box.label(text=f"Path : {library_pg.library_user_path}")
+                box.prop(self, "library_user_path", icon="FOLDER_REDIRECT")
+                box.label(text=f"Path : {self.library_user_path}")
         if self.remove_backup_allow:
             layout.prop(self, "remove_backup", icon="TRASH")
 
     def copy_from(self, other):
         copy_simple_property_group(other, self)
 
+    def filter_files_by_name(self, files):
+        return [f for f in files if get_from_cache(LibraryExportSettings).filter_files_names.filter(f.stem)]
+
+    def filter_files_by_date(self, files):
+        # https://pynative.com/python-file-creation-modification-datetime/
+        return [f for f in files if get_from_cache(LibraryExportSettings).filter_date.filter(f.stat().st_mtime)]
+
     def get_files(self, file_extension="blend"):
-        files = []
+        self.files = []
+        self = get_from_cache(LibraryExportSettings)
         if self.source == LibraryType.FileCurrent.value:
             files = [Path(bpy.data.filepath)]
         elif self.source == LibraryType.FileExternal.value:
@@ -105,7 +121,9 @@ class LibraryExportSettings(PropertyGroup):
         else:  # User Library
             folder = Path(self.library_user_path)
             files = get_files_in_folder(folder, recursive=True, extension=file_extension)
-        files = [f for f in files if self.filter_files_names.filter(f.stem)]
+
+        files = self.filter_files_by_name(files)
+        files = self.filter_files_by_date(files)
         return files
 
     def __str__(self) -> str:

@@ -32,6 +32,8 @@ class FilterName(PropertyGroup):
             row.props_enum(self, "method")
 
     def filter(self, test):
+        if not self.allow or not self.active:
+            return True
         return FilterName.filter_static(test, self.method, self.value, self.case_sensitive)
 
     @staticmethod
