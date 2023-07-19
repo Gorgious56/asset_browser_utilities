@@ -31,6 +31,7 @@ class ABU_MT_submenu(Menu):
         layout.menu("ABU_MT_catalogs", icon="OUTLINER_COLLECTION")
         layout.menu("ABU_MT_author", icon="USER")
         layout.menu("ABU_MT_description", icon="FILE_TEXT")
+        layout.menu("ABU_MT_license", icon="FAKE_USER_OFF")
         layout.menu("ABU_MT_material", icon="MATERIAL")
         layout.menu("ABU_MT_node_tree", icon="NODETREE")
         if LibraryType.get_library_type_from_context(context) == LibraryType.UserLibrary.value:
