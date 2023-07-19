@@ -30,6 +30,7 @@ class ABU_MT_submenu(Menu):
         layout.menu("ABU_MT_previews", icon="SEQ_PREVIEW")
         layout.menu("ABU_MT_catalogs", icon="OUTLINER_COLLECTION")
         layout.menu("ABU_MT_author", icon="USER")
+        layout.menu("ABU_MT_copyright", icon="COPY_ID")
         layout.menu("ABU_MT_description", icon="FILE_TEXT")
         layout.menu("ABU_MT_license", icon="FAKE_USER_OFF")
         layout.menu("ABU_MT_material", icon="MATERIAL")
