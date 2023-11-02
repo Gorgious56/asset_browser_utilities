@@ -2,7 +2,6 @@ import calendar
 from datetime import datetime, timedelta
 from bpy.types import PropertyGroup, Operator
 from bpy.props import PointerProperty, BoolProperty, EnumProperty, IntProperty
-from asset_browser_utilities.module.tag.tag_collection import TagCollection
 
 
 class ABU_OT_datetime_update(Operator):
