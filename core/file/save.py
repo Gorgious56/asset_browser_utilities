@@ -1,7 +1,8 @@
+from pathlib import Path
+import os
+import bpy
 from asset_browser_utilities.core.log.logger import Logger
 from asset_browser_utilities.core.preferences.tool import get_preferences
-import bpy
-import os
 
 
 def save_if_possible_and_necessary():
@@ -9,7 +10,23 @@ def save_if_possible_and_necessary():
         save_file()
 
 
+def is_ascii_alnum(character):
+    return "A" <= character <= "Z" or "a" <= character <= "z" or "0" <= character <= "9"
+
+
+def sanitize_filepath(filepath, replace_with="_"):
+    filepath_pathlib = Path(filepath)
+    stem = filepath_pathlib.stem
+    new_stem = ""
+    for char in stem:
+        new_stem += char if is_ascii_alnum(char) else "_"
+    filepath_pathlib = filepath_pathlib.with_stem(new_stem.strip())
+    return str(filepath_pathlib)
+
+
 def create_new_file_and_set_as_current(filepath):
+    filepath = sanitize_filepath(str(filepath))
+    Path(filepath).parent.mkdir(parents=True, exist_ok=True)
     bpy.ops.wm.read_homefile(app_template="")
     save_file_as(str(filepath))
 
