@@ -19,7 +19,13 @@ from asset_browser_utilities.core.console.builder import CommandBuilder
 class AssetExportOperatorProperties(PropertyGroup):
     individual_files: BoolProperty(
         name="Place Assets in Individual Files",
-        description="If this is ON, each asset will be exported to an individual file in the target directory",
+        description="If this is ON, each asset will be exported to an individual file in the target directory.\
+\nEach asset will be placed in a blend file named after itself\
+\nBeware of name collisions",
+    )
+    type_folders: BoolProperty(
+        name="Place Assets in Type Folders",
+        default=True,
     )
     overwrite: BoolProperty(
         name="Overwrite Assets",
@@ -29,6 +35,9 @@ class AssetExportOperatorProperties(PropertyGroup):
 
     def draw(self, layout, context=None):
         layout.prop(self, "individual_files", icon="NEWFOLDER")
+        type_folders_row = layout.row()
+        type_folders_row.prop(self, "type_folders", icon="OUTLINER")
+        type_folders_row.active = self.individual_files
         layout.prop(self, "overwrite", icon="ASSET_MANAGER")
 
 
@@ -67,6 +76,7 @@ class ABU_OT_asset_export(Operator, BatchFolderOperator):
         caller.add_arg_value("remove_backup", get_from_cache(LibraryExportSettings).remove_backup)
         caller.add_arg_value("overwrite", current_operator_properties.overwrite)
         caller.add_arg_value("individual_files", current_operator_properties.individual_files)
+        caller.add_arg_value("type_folders", current_operator_properties.type_folders)
         caller.call()
 
     def populate_asset_and_asset_names(self):
