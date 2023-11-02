@@ -35,7 +35,7 @@ def get_files_in_folder(folder, recursive, extension="blend"):
 
 
 def sanitize_library_name(name):
-    if name == "geometrynodetrees" or name == "nodetrees":
+    if name == "geometrynodetrees" or name == "nodetrees" or name == "shadernodetrees":
         name = "node_groups"
     elif name == "brushs":
         name = "brushes"
