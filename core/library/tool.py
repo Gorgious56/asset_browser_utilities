@@ -24,10 +24,11 @@ def load_preview(filepath, asset=None):
 def get_directory_name(asset):
     name = type(asset).__name__.lower()
     if "nodetree" in name:
-        name = "NodeTree"
+        name = "nodetree"
     elif "texture" in name:
-        name = "Texture"
+        name = "texture"
     return name
+
 
 def get_blend_data_name_from_directory(directory):
     name = directory.lower() + "s"
@@ -38,6 +39,7 @@ def get_blend_data_name_from_directory(directory):
     elif "texture" in name:
         name = "textures"
     return name
+
 
 def get_blend_data_name(asset):
     name = type(asset).__name__.lower() + "s"
@@ -71,18 +73,22 @@ def sanitize_library_name(name):
     return name
 
 
-def link_asset(filepath, directory, filename, relative=False):
-    return append_asset(filepath, directory, filename, link=True, relative=relative)
+def link_asset(filepath, directory, filename, relative=False, create_liboverrides=False):
+    return append_asset(
+        filepath, directory, filename, link=True, relative=relative, create_liboverrides=create_liboverrides
+    )
 
 
-def append_asset(filepath, directory, filename, link=False, relative=False):
+def append_asset(filepath, directory, filename, link=False, relative=False, create_liboverrides=False):
     if is_this_current_file(filepath):
         return
     # directory = sanitize_library_name(directory)
     blend_data_name = get_blend_data_name_from_directory(directory)
     # https://blender.stackexchange.com/a/33998/86891
     library = getattr(bpy.data, blend_data_name)
-    with bpy.data.libraries.load(str(filepath), link=link, relative=relative) as (data_from, data_to):
+    with bpy.data.libraries.load(
+        str(filepath), link=link, relative=relative, create_liboverrides=create_liboverrides
+    ) as (data_from, data_to):
         other_asset = library.get(filename)
         if other_asset is not None:  # If we don't change existing asset with same name, we can't append a new one.
             other_asset.name = "__ABU_TEMP_FOR_APPENDING_"
