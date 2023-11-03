@@ -32,6 +32,11 @@ class AssetExportOperatorProperties(PropertyGroup):
         description="Check to overwrite objects if an object with the same name already exists in target file",
         default=True,
     )
+    link_back: BoolProperty(
+        name="Link Assets Back",
+        description="Remove the assets from current file and link back using the exported file as a library",
+        default=False,
+    )
 
     def draw(self, layout, context=None):
         layout.prop(self, "individual_files", icon="NEWFOLDER")
@@ -39,6 +44,7 @@ class AssetExportOperatorProperties(PropertyGroup):
         type_folders_row.prop(self, "type_folders", icon="OUTLINER")
         type_folders_row.active = self.individual_files
         layout.prop(self, "overwrite", icon="ASSET_MANAGER")
+        layout.prop(self, "link_back", icon="LINKED")
 
 
 class ABU_OT_asset_export(Operator, BatchFolderOperator):
@@ -77,6 +83,7 @@ class ABU_OT_asset_export(Operator, BatchFolderOperator):
         caller.add_arg_value("overwrite", current_operator_properties.overwrite)
         caller.add_arg_value("individual_files", current_operator_properties.individual_files)
         caller.add_arg_value("type_folders", current_operator_properties.type_folders)
+        caller.add_arg_value("link_back", current_operator_properties.link_back)
         caller.call()
 
     def populate_asset_and_asset_names(self):

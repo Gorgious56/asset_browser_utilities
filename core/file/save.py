@@ -36,6 +36,7 @@ def create_new_file_and_set_as_current(filepath, should_switch_to_asset_workspac
     if should_switch_to_asset_workspace:
         bpy.app.timers.register(switch_to_asset_workspace, first_interval=0.001)
     save_file_as(str(filepath))
+    return filepath
 
 
 def get_backup_path(filepath):
