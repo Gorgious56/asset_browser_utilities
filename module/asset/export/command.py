@@ -23,7 +23,7 @@ if __name__ == "__main__":
         for asset_name, asset_type in zip(asset_names, asset_types):
             filepath = Path(folder)
             if type_folders:
-                filepath /= asset_type[:-1]
+                filepath /= asset_type
             filepath /= asset_name + ".blend"
             if filepath.exists():
                 open_file_if_different_from_current(str(filepath))

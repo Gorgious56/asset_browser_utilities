@@ -33,7 +33,7 @@ def get_blend_data_name_from_directory(directory):
     name = directory.lower() + "s"
     if "nodetree" in name:
         name = "node_groups"
-    elif name == "brushs":
+    elif "brush" in name:
         name = "brushes"
     elif "texture" in name:
         name = "textures"
