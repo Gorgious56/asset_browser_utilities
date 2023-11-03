@@ -24,10 +24,17 @@ def sanitize_filepath(filepath, replace_with="_"):
     return str(filepath_pathlib)
 
 
-def create_new_file_and_set_as_current(filepath):
+def switch_to_asset_workspace():
+    if "Asset" in bpy.data.workspaces:
+        bpy.context.window.workspace = bpy.data.workspaces["Asset"]
+
+
+def create_new_file_and_set_as_current(filepath, should_switch_to_asset_workspace=False):
     filepath = sanitize_filepath(str(filepath))
     Path(filepath).parent.mkdir(parents=True, exist_ok=True)
     bpy.ops.wm.read_homefile(app_template="")
+    if should_switch_to_asset_workspace:
+        bpy.app.timers.register(switch_to_asset_workspace, first_interval=0.001)
     save_file_as(str(filepath))
 
 

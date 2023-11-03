@@ -19,20 +19,39 @@ class AssetLinkBatchExecute(BatchExecute):
 
     def execute_one_file_and_the_next_when_finished(self):
         library_dummy = get_current_operator_properties().library
-        asset_dummies = library_dummy.by_filepath(bpy.data.filepath)
+        asset_dummies_in_current_file = library_dummy.by_filepath(bpy.data.filepath)
         assets_to_keep = []
-        for asset_dummy in asset_dummies:
-            assets_to_keep.append(getattr(bpy.data, asset_dummy.blenddata_name)[asset_dummy.name])
-        all_assets_in_file = list(get_all_assets_in_file())
-        assets_to_discard = set(all_assets_in_file) - set(assets_to_keep)
-        for asset_to_discard in assets_to_discard:
-            corresponding_asset_dummy = next(
-                (library_dummy.by_directory_and_name(get_directory_name(asset_to_discard), asset_to_discard.name)),
-                None,
+        for asset_dummy_in_current_file in asset_dummies_in_current_file:
+            assets_to_keep.append(
+                getattr(bpy.data, asset_dummy_in_current_file.blenddata_name)[asset_dummy_in_current_file.name]
             )
-            if corresponding_asset_dummy:
-                link_from_asset_dummy(corresponding_asset_dummy, asset_to_discard)
-        self.save_file()
+        all_assets_in_file = list(get_all_assets_in_file())
+        linked_at_least_one_asset = False
+
+        for asset_in_file in all_assets_in_file:
+            corresponding_asset_dummies = list(library_dummy.by_directory_and_name(
+                get_directory_name(asset_in_file), asset_in_file.name
+            ))
+            corresponding_asset_dummies_out_of_current_file = []
+            for corresponding_asset_dummy in corresponding_asset_dummies:
+                if corresponding_asset_dummy.filepath != bpy.data.filepath:
+                    corresponding_asset_dummies_out_of_current_file.append(corresponding_asset_dummy)
+            if not corresponding_asset_dummies_out_of_current_file:
+                continue
+            
+            validated_asset_dummies = []
+            for possible_asset_dummy in corresponding_asset_dummies_out_of_current_file:
+                if len(list(library_dummy.by_filepath(possible_asset_dummy.filepath))) == 1:
+                    validated_asset_dummies.append(possible_asset_dummy)
+            if not validated_asset_dummies:
+                continue
+                       
+            if len(validated_asset_dummies) == 1:
+                validated_asset_dummy = validated_asset_dummies[0]
+                link_from_asset_dummy(validated_asset_dummy, asset_in_file)
+                linked_at_least_one_asset = True
+        if linked_at_least_one_asset:
+            self.save_file()
         self.execute_next_file()
 
 

@@ -28,7 +28,7 @@ if __name__ == "__main__":
             if filepath.exists():
                 open_file_if_different_from_current(str(filepath))
             else:
-                create_new_file_and_set_as_current(str(filepath))
+                create_new_file_and_set_as_current(str(filepath), should_switch_to_asset_workspace=True)
             append_asset(source_file, asset_type, asset_name)
             save_file(remove_backup=remove_backup)
             Logger.display(f"Exported Asset '{asset_type}/{asset_name}' to '{sanitize_filepath(filepath)}'")
@@ -36,7 +36,7 @@ if __name__ == "__main__":
         if Path(filepath).exists():
             open_file_if_different_from_current(filepath)
         else:
-            create_new_file_and_set_as_current(filepath)
+            create_new_file_and_set_as_current(filepath, should_switch_to_asset_workspace=True)
         for asset_name, asset_type in zip(asset_names, asset_types):
             append_asset(source_file, asset_type, asset_name)
             Logger.display(f"Exported Asset '{asset_type}/{asset_name}' to '{filepath}'")

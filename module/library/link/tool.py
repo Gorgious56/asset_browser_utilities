@@ -16,5 +16,5 @@ def link_from_asset_dummy(asset_dummy, asset_to_discard):
     asset_to_discard.user_remap(linked_asset)
     asset_to_discard.asset_clear()
     asset_to_discard.use_fake_user = False
-    bpy.ops.outliner.orphans_purge(do_local_ids=True, do_linked_ids=True, do_recursive=True)
     Logger.display(f"Remapped users of old asset `{repr(asset_to_discard)}' to {repr(linked_asset)}'")
+    bpy.ops.outliner.orphans_purge(do_local_ids=True, do_linked_ids=True, do_recursive=True)

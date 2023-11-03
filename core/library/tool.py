@@ -22,10 +22,10 @@ def load_preview(filepath, asset=None):
 
 
 def get_directory_name(asset):
-    name = type(asset).__name__
-    if "nodetree" in name.lower():
+    name = type(asset).__name__.lower()
+    if "nodetree" in name:
         name = "NodeTree"
-    elif "texture" in name.lower():
+    elif "texture" in name:
         name = "Texture"
     return name
 
@@ -89,15 +89,17 @@ def append_asset(filepath, directory, filename, link=False, relative=False):
         library_to = getattr(data_to, blend_data_name)
         library_to.append(filename)
 
-    obj = library.get(filename)
-    if obj:
-        if directory == "objects":
-            bpy.context.scene.collection.objects.link(obj)
+    asset = library.get(filename)
+    if asset:
+        if blend_data_name == "objects":
+            bpy.context.scene.collection.objects.link(asset)
+        elif blend_data_name == "collections":
+            bpy.context.scene.collection.children.link(asset)
         else:
-            obj.use_fake_user = True
+            asset.use_fake_user = True
     if other_asset is not None:
         other_asset.name = filename
-    return obj
+    return asset
 
 
 def iterate_over_all_containers():
