@@ -4,6 +4,7 @@ import bpy
 def draw_asset_browser_context_menu_appends(self, context):
     layout = self.layout
     layout.operator("abu.open_asset_folder")
+    # layout.operator("abu.linked_users")
 
 
 def register():
