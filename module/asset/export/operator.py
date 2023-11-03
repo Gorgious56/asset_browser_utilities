@@ -11,7 +11,7 @@ from bpy.props import PointerProperty, PointerProperty, BoolProperty
 
 from asset_browser_utilities.core.file.path import get_folder_from_path
 from asset_browser_utilities.core.log.logger import Logger
-from asset_browser_utilities.core.library.tool import get_blend_library_name
+from asset_browser_utilities.core.library.tool import get_directory_name
 from asset_browser_utilities.core.operator.tool import BatchExecute, BatchFolderOperator
 from asset_browser_utilities.core.console.builder import CommandBuilder
 
@@ -82,4 +82,4 @@ class ABU_OT_asset_export(Operator, BatchFolderOperator):
     def populate_asset_and_asset_names(self):
         assets = get_from_cache(AssetFilterSettings).get_objects_that_satisfy_filters()
         self.asset_names = [a.name for a in assets]
-        self.asset_types = [get_blend_library_name(a) for a in assets]
+        self.asset_types = [get_directory_name(a) for a in assets]

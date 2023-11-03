@@ -1,6 +1,6 @@
 from asset_browser_utilities.core.library.prop import LibraryType
 from asset_browser_utilities.core.log.logger import Logger
-from asset_browser_utilities.core.library.tool import append_asset, get_blend_library_name
+from asset_browser_utilities.core.library.tool import append_asset, get_directory_name
 
 import bpy
 from bpy.types import Operator, OperatorFileListElement, PropertyGroup
@@ -31,7 +31,7 @@ class BatchImport(BatchExecute):
     def add_asset_paths(self):
         for asset in self.assets:
             self.filepaths.append(str(self.file))
-            self.directories.append(str(get_blend_library_name(asset)))
+            self.directories.append(get_directory_name(asset))
             self.filenames.append(str(asset.name))
             Logger.display(f"Found '{self.filepaths[-1]}\\{self.directories[-1]}\\{self.filenames[-1]}'")
 

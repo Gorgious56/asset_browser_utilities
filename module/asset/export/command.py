@@ -9,8 +9,8 @@ from asset_browser_utilities.core.library.tool import append_asset
 
 if __name__ == "__main__":
     parser = ArgumentsParser()
-    asset_names = parser.get_arg_values("asset_names", "asset_types")
-    asset_types = parser.get_arg_values("asset_types", "source_file")
+    asset_names = parser.get_arg_values(arg_name="asset_names", next_arg_name="asset_types")
+    asset_types = parser.get_arg_values(arg_name="asset_types", next_arg_name="source_file")
     source_file = parser.get_arg_value("source_file")
     filepath = parser.get_arg_value("filepath")
     folder = parser.get_arg_value("folder")

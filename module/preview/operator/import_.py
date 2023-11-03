@@ -13,14 +13,14 @@ from asset_browser_utilities.core.file.path import get_supported_images
 
 
 class PreviewImportBatchExecute(BatchExecute):
-    def __init__(self):
+    def __init__(self, file_extension="blend"):
         folder = Path(get_from_cache(LibraryExportSettings).folder)
         self.images = list(get_supported_images(folder, recursive=True))
         look_only_in_folder_with_name = get_current_operator_properties().look_only_in_folder_with_name
         if look_only_in_folder_with_name != "":
             self.images = [img for img in self.images if img.parent.name == look_only_in_folder_with_name]
         self.images_names = [file.stem for file in self.images]
-        super().__init__()
+        super().__init__(file_extension)
 
     def execute_one_file_and_the_next_when_finished(self):
         op_props = get_current_operator_properties()
