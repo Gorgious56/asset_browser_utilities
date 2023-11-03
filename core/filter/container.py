@@ -2,6 +2,7 @@ from collections import defaultdict
 from asset_browser_utilities.module.asset.prop import SelectedAssetFiles
 from asset_browser_utilities.core.cache.tool import get_from_cache
 from asset_browser_utilities.core.filter.name import FilterName
+from asset_browser_utilities.core.filter.type import get_types
 import bpy
 
 
@@ -84,3 +85,9 @@ class AssetContainer:
     def all_assets(self):
         for assets in self.assets.values():
             yield from assets
+
+
+def get_all_assets_in_file():
+    asset_container = AssetContainer(filter_types=[t[0] for t in get_types()])
+    asset_container.filter_assets()
+    return asset_container.all_assets
