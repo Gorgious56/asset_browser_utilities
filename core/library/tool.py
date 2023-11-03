@@ -21,8 +21,33 @@ def load_preview(filepath, asset=None):
     Logger.display(f"Loaded custom preview from '{filepath}' for asset '{asset.name or 'active asset'}'")
 
 
-def get_blend_library_name(asset):
-    return type(asset).__name__.lower() + "s"
+def get_directory_name(asset):
+    name = type(asset).__name__
+    if "nodetree" in name.lower():
+        name = "NodeTree"
+    elif "texture" in name.lower():
+        name = "Texture"
+    return name
+
+def get_blend_data_name_from_directory(directory):
+    name = directory.lower() + "s"
+    if "nodetree" in name:
+        name = "node_groups"
+    elif name == "brushs":
+        name = "brushes"
+    elif "texture" in name:
+        name = "textures"
+    return name
+
+def get_blend_data_name(asset):
+    name = type(asset).__name__.lower() + "s"
+    if "nodetree" in name:
+        name = "node_groups"
+    elif name == "brushs":
+        name = "brushes"
+    elif "texture" in name:
+        name = "textures"
+    return name
 
 
 def get_files_in_folder(folder, recursive, extension="blend"):
@@ -35,7 +60,7 @@ def get_files_in_folder(folder, recursive, extension="blend"):
 
 
 def sanitize_library_name(name):
-    if name == "geometrynodetrees" or name == "nodetrees" or name == "shadernodetrees":
+    if "nodetree" in name:
         name = "node_groups"
     elif name == "brushs":
         name = "brushes"
@@ -46,17 +71,22 @@ def sanitize_library_name(name):
     return name
 
 
-def append_asset(filepath, directory, filename):
+def link_asset(filepath, directory, filename, relative=False):
+    return append_asset(filepath, directory, filename, link=True, relative=relative)
+
+
+def append_asset(filepath, directory, filename, link=False, relative=False):
     if is_this_current_file(filepath):
         return
-    directory = sanitize_library_name(directory)
+    # directory = sanitize_library_name(directory)
+    blend_data_name = get_blend_data_name_from_directory(directory)
     # https://blender.stackexchange.com/a/33998/86891
-    library = getattr(bpy.data, directory)
-    with bpy.data.libraries.load(str(filepath)) as (data_from, data_to):
+    library = getattr(bpy.data, blend_data_name)
+    with bpy.data.libraries.load(str(filepath), link=link, relative=relative) as (data_from, data_to):
         other_asset = library.get(filename)
         if other_asset is not None:  # If we don't change existing asset with same name, we can't append a new one.
             other_asset.name = "__ABU_TEMP_FOR_APPENDING_"
-        library_to = getattr(data_to, directory)
+        library_to = getattr(data_to, blend_data_name)
         library_to.append(filename)
 
     obj = library.get(filename)
@@ -67,6 +97,7 @@ def append_asset(filepath, directory, filename):
             obj.use_fake_user = True
     if other_asset is not None:
         other_asset.name = filename
+    return obj
 
 
 def iterate_over_all_containers():
