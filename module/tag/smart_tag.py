@@ -1,12 +1,7 @@
 from enum import Enum
-from os.path import getsize
 import math
 from asset_browser_utilities.core.log.logger import Logger
-from asset_browser_utilities.core.library.path import get_asset_filepath
-
-import bpy
-from bpy.types import PropertyGroup
-from bpy.props import EnumProperty, StringProperty, IntProperty
+from asset_browser_utilities.module.tag.tool import ensure_asset_has_uuid_tag, has_asset_tag_uuid
 
 
 def get_triangle_count(asset, smart_tag):
@@ -68,12 +63,19 @@ def get_scale(asset, smart_tag):
     return ret
 
 
+def get_uuid(asset, smart_tag):
+    if has_asset_tag_uuid(asset):
+        return
+    return ensure_asset_has_uuid_tag(asset).name
+
+
 class SmartTag(Enum):
     CustomProperty = "Custom Property"
     Dimensions = "Dimensions"
     TriangleCount = "Triangle Count"
     Scale = "Scale"
     VertexCount = "Vertex Count"
+    Uuid = "UUID"
 
     @staticmethod
     def operation(member):
@@ -87,6 +89,8 @@ class SmartTag(Enum):
             return get_dimensions
         elif member == SmartTag.Scale.value:
             return get_scale
+        elif member == SmartTag.Uuid.value:
+            return get_uuid
 
 
 def apply_smart_tag(asset, smart_tag):

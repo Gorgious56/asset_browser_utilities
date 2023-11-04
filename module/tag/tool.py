@@ -1,8 +1,28 @@
 from bpy.types import PropertyGroup
 from bpy.props import PointerProperty
 
-from asset_browser_utilities.module.tag.tag_collection import TagCollection
 from asset_browser_utilities.core.filter.name import FilterName
+from asset_browser_utilities.core.library.tool import generate_uuid
+
+from asset_browser_utilities.module.tag.prop import ASSET_TAG_UUID_PREFIX
+from asset_browser_utilities.module.tag.tag_collection import TagCollection
+
+
+def get_asset_tag_uuid():
+    return f"{ASSET_TAG_UUID_PREFIX}:{generate_uuid()}"
+
+
+def has_asset_tag_uuid(asset):
+    for tag in asset.asset_data.tags:
+        if tag.name.startswith(ASSET_TAG_UUID_PREFIX):
+            return tag
+    return None
+
+
+def ensure_asset_has_uuid_tag(asset):
+    if tag := has_asset_tag_uuid(asset):
+        return tag
+    return asset.asset_data.tags.new(get_asset_tag_uuid())
 
 
 class TagAddOrRemoveOperatorProperties(PropertyGroup):

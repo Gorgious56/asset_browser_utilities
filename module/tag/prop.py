@@ -1,0 +1,1 @@
+ASSET_TAG_UUID_PREFIX = "abu_uuid"
