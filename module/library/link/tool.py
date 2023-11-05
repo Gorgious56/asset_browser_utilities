@@ -21,7 +21,7 @@ def link_from_asset_dummy(asset_dummy, asset_to_discard, purge=False):
         asset_dummy.directory,
         asset_dummy.name,
     )
-    replace_asset_with_linked_one(asset_to_discard, filepath, directory, name, create_liboverrides=True)
+    replace_asset_with_linked_one(asset_to_discard, filepath, directory, name, create_liboverrides=False)
 
     for asset in get_all_assets_in_file():
         add_asset_tag_link_uuid_from_asset_dummy(asset, asset_dummy)

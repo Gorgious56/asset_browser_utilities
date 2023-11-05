@@ -27,7 +27,9 @@ if __name__ == "__main__":
     if link_back:
         assets_to_link_back = []
     if individual_files:
-        for asset_name, directory, folders in zip(asset_names, asset_types, asset_folders):
+        files_to_create = len(asset_folders)
+        for i, (asset_name, directory, folders) in enumerate(zip(asset_names, asset_types, asset_folders)):
+            Logger.display(f"{files_to_create - i +1} Files Left")
             filepath = Path(folder)
             if folders:
                 for subfolder in folders.split("/"):
@@ -64,7 +66,7 @@ if __name__ == "__main__":
                 filepath,
                 directory,
                 asset_name,
-                create_liboverrides=True,
+                create_liboverrides=False,
             )
             save_file(remove_backup=remove_backup)
 

@@ -9,7 +9,7 @@ from asset_browser_utilities.core.operator.tool import BatchExecute, BatchFolder
 
 from asset_browser_utilities.module.library.link.prop import AssetLibraryDummy
 from asset_browser_utilities.module.library.link.tool import link_from_asset_dummy
-from asset_browser_utilities.module.library.tool import get_asset_uuid
+from asset_browser_utilities.module.library.tool import ensure_asset_uuid
 
 
 class AssetLinkBatchExecute(BatchExecute):
@@ -20,22 +20,21 @@ class AssetLinkBatchExecute(BatchExecute):
     def execute_one_file_and_the_next_when_finished(self):
         library_dummy = get_current_operator_properties().library
         should_save = False
+        root_assets_dummies = [library_dummy.assets[i.value] for i in library_dummy.unique_assets_indices]
+        root_assets_dummies_uuids = [root_asset.uuid for root_asset in root_assets_dummies]
         if library_dummy.how_many_assets_in_filepath(bpy.data.filepath) > 1:
             # We only want to link if there is more than one asset in the file
             all_assets_in_file = list(get_all_assets_in_file())
 
             for asset_in_file in all_assets_in_file:
-                corresponding_asset_dummies = library_dummy.by_uuid(get_asset_uuid(asset_in_file))
-                for corresponding_asset_dummy in corresponding_asset_dummies:
-                    if corresponding_asset_dummy.filepath == bpy.data.filepath:
-                        # We don't want to link from ourself
-                        continue
-                    elif library_dummy.how_many_assets_in_filepath(corresponding_asset_dummy.filepath) > 1:
-                        # We only want to link from one-asset-per-file blends
-                        continue
-                    else:
-                        link_from_asset_dummy(corresponding_asset_dummy, asset_in_file, purge=True)
-                        should_save = True
+                asset_in_file_dummy = next(
+                    library_dummy.intersect(filepath=bpy.data.filepath, uuid=ensure_asset_uuid(asset_in_file))
+                , None)
+                if asset_in_file_dummy is None or asset_in_file_dummy in root_assets_dummies:
+                    continue
+                root_asset_dummy = root_assets_dummies[root_assets_dummies_uuids.index(asset_in_file_dummy.uuid)]
+                link_from_asset_dummy(root_asset_dummy, asset_in_file, purge=True)
+                should_save = True
 
         if should_save:
             self.save_file()

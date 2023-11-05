@@ -1,9 +1,11 @@
 from pathlib import Path
+from collections import defaultdict
 
 import bpy
 from bpy.types import PropertyGroup
 from bpy.props import StringProperty, CollectionProperty
 
+from asset_browser_utilities.core.prop import IntPropertyCollection
 from asset_browser_utilities.core.log.logger import Logger
 from asset_browser_utilities.core.cache.tool import get_from_cache
 from asset_browser_utilities.core.library.prop import LibraryExportSettings
@@ -14,7 +16,7 @@ from asset_browser_utilities.core.library.tool import (
 from asset_browser_utilities.core.file.path import open_file_if_different_from_current
 from asset_browser_utilities.core.filter.container import get_all_assets_in_file
 
-from asset_browser_utilities.module.library.tool import get_asset_uuid
+from asset_browser_utilities.module.library.tool import ensure_asset_uuid
 
 
 class AssetDummy(PropertyGroup):
@@ -37,14 +39,13 @@ class AssetDummy(PropertyGroup):
 
 class AssetLibraryDummy(PropertyGroup):
     assets: CollectionProperty(type=AssetDummy)
+    unique_assets_indices: CollectionProperty(type=IntPropertyCollection)
 
-    def populate(self):
-        self.assets.clear()
+    def init_assets(self):
         library_settings = get_from_cache(LibraryExportSettings)
         library_path = Path(library_settings.library_user_path)
         blend_files = [fp for fp in library_path.glob("**/*.blend") if fp.is_file()]
         Logger.display(f"Checking the content of library '{library_path}' :")
-        origin_file = bpy.data.filepath
         for i, blend_file in enumerate(blend_files):
             Logger.display(f"Fetching data... {len(blend_files) - i + 1} files left")
             open_file_if_different_from_current(blend_file)
@@ -55,9 +56,45 @@ class AssetLibraryDummy(PropertyGroup):
                     get_directory_name(asset),
                     asset.name,
                     get_blend_data_name(asset),
-                    get_asset_uuid(asset),
+                    ensure_asset_uuid(asset),
                 )
+
+    def init_unique_assets(self):
+        unique_uuids = []
+        filepath_to_assets_map = self.filepath_to_assets_map()
+        while True:
+            for filepath, assets in filepath_to_assets_map.items():
+                if len(assets) == 0:
+                    del filepath_to_assets_map[filepath]
+                    break
+                elif len(assets) == 1:
+                    self.unique_assets_indices.add().value = self.asset_index(assets[0])
+                    unique_uuids.append(assets[0].uuid)
+                    del filepath_to_assets_map[filepath]
+                    break
+                assets_before = len(assets)
+                filepath_to_assets_map[filepath] = [a for a in assets if a.uuid not in unique_uuids]
+                if assets_before != len(filepath_to_assets_map[filepath]):
+                    break
+            else:
+                for filepath, assets in filepath_to_assets_map.items():
+                    for asset in assets:
+                        self.unique_assets_indices.add().value = self.asset_index(asset)
+                break
+
+    def populate(self):
+        self.assets.clear()
+        self.unique_assets_indices.clear()
+        origin_file = bpy.data.filepath
+        self.init_assets()
         open_file_if_different_from_current(origin_file)
+        self.init_unique_assets()
+
+    def asset_index(self, asset_search):
+        for i, asset in enumerate(self.assets):
+            if asset == asset_search:
+                return i
+        return -1
 
     def by_attribute(self, attr, value):
         for asset in self.assets:
@@ -91,7 +128,13 @@ class AssetLibraryDummy(PropertyGroup):
         assets.intersection_update(self.by_attribute("blenddata_name", blenddata_name))
         yield from assets
 
-    def by_filepath(self, filepath):
+    def filepath_to_assets_map(self):
+        filepath_to_assets_map = defaultdict(list)
+        for asset in self.assets:
+            filepath_to_assets_map[asset.filepath].append(asset)
+        return filepath_to_assets_map
+
+    def by_filepath(self, filepath=None):
         yield from self.by_attribute("filepath", filepath)
 
     def how_many_assets_in_filepath(self, filepath):

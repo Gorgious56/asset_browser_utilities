@@ -13,7 +13,7 @@ def copy_simple_property_group(source, target):
             pass
 
 
-def generate_uuid(length=8):
+def generate_uuid(length=12):
     return "".join(random.choices(ALPHABET, k=length))
 
 
