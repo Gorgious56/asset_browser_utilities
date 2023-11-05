@@ -1,7 +1,9 @@
 from pathlib import Path
+
+import bpy
+
 from asset_browser_utilities.core.log.logger import Logger
 from asset_browser_utilities.core.file.path import is_this_current_file
-import bpy
 
 
 def item_exists(name, _type):

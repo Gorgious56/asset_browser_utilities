@@ -2,7 +2,7 @@ from bpy.types import PropertyGroup
 from bpy.props import PointerProperty
 
 from asset_browser_utilities.core.filter.name import FilterName
-from asset_browser_utilities.core.library.tool import generate_uuid
+from asset_browser_utilities.core.tool import generate_uuid
 
 from asset_browser_utilities.module.tag.prop import ASSET_TAG_UUID_PREFIX
 from asset_browser_utilities.module.tag.tag_collection import TagCollection

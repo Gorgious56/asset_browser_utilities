@@ -1,4 +1,5 @@
 from collections import ChainMap
+import uuid
 
 
 def copy_simple_property_group(source, target):
@@ -9,6 +10,10 @@ def copy_simple_property_group(source, target):
             setattr(target, prop_name, getattr(source, prop_name))
         except (AttributeError, TypeError):
             pass
+
+
+def generate_uuid():
+    return uuid.uuid4()
 
 
 def all_annotations(cls) -> ChainMap:

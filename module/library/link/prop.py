@@ -32,10 +32,10 @@ class AssetLibrary(PropertyGroup):
             directory = str(blend_file.parent.name)
             blenddata_name = get_blend_data_name_from_directory(directory)
             with bpy.data.libraries.load(str(blend_file), assets_only=True) as (file_contents, _):
-                blend_file_assets = getattr(file_contents, blenddata_name)
-                for blend_file_asset in blend_file_assets:
+                blend_file_asset_names = getattr(file_contents, blenddata_name)
+                for blend_file_asset_name in blend_file_asset_names:
                     new_asset_dummy = self.assets.add()
-                    new_asset_dummy.init(blend_file, directory, blend_file_asset, blenddata_name)
+                    new_asset_dummy.init(blend_file, directory, blend_file_asset_name, blenddata_name)
 
     assets: CollectionProperty(type=Asset)
 
