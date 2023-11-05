@@ -3,9 +3,9 @@ from collections import defaultdict
 
 import bpy
 from bpy.types import PropertyGroup
-from bpy.props import StringProperty, CollectionProperty
+from bpy.props import StringProperty, CollectionProperty, PointerProperty
 
-from asset_browser_utilities.core.prop import IntPropertyCollection
+from asset_browser_utilities.core.prop import IntPropertyCollection, AnyID
 from asset_browser_utilities.core.log.logger import Logger
 from asset_browser_utilities.core.cache.tool import get_from_cache
 from asset_browser_utilities.core.library.prop import LibraryExportSettings
@@ -17,6 +17,19 @@ from asset_browser_utilities.core.file.path import open_file_if_different_from_c
 from asset_browser_utilities.core.filter.container import get_all_assets_in_file
 
 from asset_browser_utilities.module.library.tool import ensure_asset_uuid
+
+
+class AssetDummyWithPointer(PropertyGroup):
+    asset: PointerProperty(type=AnyID)
+    name: StringProperty()
+    directory: StringProperty()
+    filepath: StringProperty()
+    blenddata_name: StringProperty()
+    uuid: StringProperty()
+
+
+class AssetLibraryDummyWithPointer(PropertyGroup):
+    assets: CollectionProperty(type=AssetDummyWithPointer)
 
 
 class AssetDummy(PropertyGroup):
@@ -47,7 +60,7 @@ class AssetLibraryDummy(PropertyGroup):
         blend_files = [fp for fp in library_path.glob("**/*.blend") if fp.is_file()]
         Logger.display(f"Checking the content of library '{library_path}' :")
         for i, blend_file in enumerate(blend_files):
-            Logger.display(f"Fetching data... {len(blend_files) - i + 1} files left")
+            Logger.display(f"Fetching data... {len(blend_files) - i} files left")
             open_file_if_different_from_current(blend_file)
             for asset in get_all_assets_in_file():
                 new_asset_dummy = self.assets.add()
@@ -85,9 +98,10 @@ class AssetLibraryDummy(PropertyGroup):
     def populate(self):
         self.assets.clear()
         self.unique_assets_indices.clear()
-        origin_file = bpy.data.filepath
+        origin_file = bpy.data.filepath if bpy.data.is_saved else None
         self.init_assets()
-        open_file_if_different_from_current(origin_file)
+        if origin_file:
+            open_file_if_different_from_current(origin_file)
         self.init_unique_assets()
 
     def asset_index(self, asset_search):
@@ -139,3 +153,7 @@ class AssetLibraryDummy(PropertyGroup):
 
     def how_many_assets_in_filepath(self, filepath):
         return len(list(self.by_filepath(filepath)))
+
+
+def register():
+    bpy.types.Library.abu_asset_library_dummy = PointerProperty(type=AssetLibraryDummyWithPointer)

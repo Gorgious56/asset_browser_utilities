@@ -15,7 +15,7 @@ from asset_browser_utilities.module.library.tool import ensure_asset_uuid
 class AssetLinkBatchExecute(BatchExecute):
     def __init__(self, file_extension="blend"):
         get_current_operator_properties().library.populate()
-        super().__init__(file_extension)
+        super().__init__()
 
     def execute_one_file_and_the_next_when_finished(self):
         library_dummy = get_current_operator_properties().library
@@ -28,8 +28,12 @@ class AssetLinkBatchExecute(BatchExecute):
 
             for asset_in_file in all_assets_in_file:
                 asset_in_file_dummy = next(
-                    library_dummy.intersect(filepath=bpy.data.filepath, uuid=ensure_asset_uuid(asset_in_file))
-                , None)
+                    library_dummy.intersect(
+                        filepath=bpy.data.filepath,
+                        uuid=ensure_asset_uuid(asset_in_file),
+                    ),
+                    None,
+                )
                 if asset_in_file_dummy is None or asset_in_file_dummy in root_assets_dummies:
                     continue
                 root_asset_dummy = root_assets_dummies[root_assets_dummies_uuids.index(asset_in_file_dummy.uuid)]

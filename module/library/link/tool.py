@@ -2,9 +2,8 @@ import bpy
 
 from asset_browser_utilities.core.library.tool import link_asset
 from asset_browser_utilities.core.log.logger import Logger
-from asset_browser_utilities.core.filter.container import get_all_assets_in_file
-from asset_browser_utilities.module.tag.tool import add_asset_tag_link_uuid_from_asset_dummy
 
+from asset_browser_utilities.module.library.tool import ensure_asset_uuid
 
 def replace_asset_with_linked_one(asset_to_discard, filepath, directory, name, create_liboverrides=False):
     linked_asset = link_asset(filepath, directory, name, create_liboverrides=create_liboverrides)
@@ -13,6 +12,16 @@ def replace_asset_with_linked_one(asset_to_discard, filepath, directory, name, c
     asset_to_discard.asset_clear()
     asset_to_discard.use_fake_user = False
     Logger.display(f"Remapped users of old asset `{repr(asset_to_discard)}' to {repr(linked_asset)}'")
+    
+    for library in bpy.data.libraries:
+        if library.filepath == filepath:
+            new_dummy = library.abu_asset_library_dummy.assets.add()
+            new_dummy.filepath = filepath
+            new_dummy.directory = directory
+            new_dummy.name = name
+            new_dummy.uuid = ensure_asset_uuid(linked_asset)
+            new_dummy.asset.set(linked_asset)
+            break
 
 
 def link_from_asset_dummy(asset_dummy, asset_to_discard, purge=False):
@@ -23,7 +32,5 @@ def link_from_asset_dummy(asset_dummy, asset_to_discard, purge=False):
     )
     replace_asset_with_linked_one(asset_to_discard, filepath, directory, name, create_liboverrides=False)
 
-    for asset in get_all_assets_in_file():
-        add_asset_tag_link_uuid_from_asset_dummy(asset, asset_dummy)
     if purge:
         bpy.ops.outliner.orphans_purge(do_local_ids=True, do_linked_ids=True, do_recursive=True)

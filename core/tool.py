@@ -1,5 +1,6 @@
 from collections import ChainMap
 import random
+import uuid
 from .prop import ALPHABET
 
 
@@ -14,6 +15,7 @@ def copy_simple_property_group(source, target):
 
 
 def generate_uuid(length=12):
+    return uuid.uuid4()
     return "".join(random.choices(ALPHABET, k=length))
 
 

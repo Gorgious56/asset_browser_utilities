@@ -29,7 +29,7 @@ if __name__ == "__main__":
     if individual_files:
         files_to_create = len(asset_folders)
         for i, (asset_name, directory, folders) in enumerate(zip(asset_names, asset_types, asset_folders)):
-            Logger.display(f"{files_to_create - i +1} Files Left")
+            Logger.display(f"{files_to_create - i} Files Left")
             filepath = Path(folder)
             if folders:
                 for subfolder in folders.split("/"):

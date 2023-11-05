@@ -18,20 +18,6 @@ def get_asset_tag_uuid_name():
     return f"{ASSET_TAG_UUID_PREFIX}:{generate_uuid()}"
 
 
-def get_asset_tag_link_uuid_name_from_directory_and_name_and_uuid(directory, name, uuid):
-    char_limit = 63 - 3 - len(directory) - len(uuid) - len(ASSET_TAG_LINK_UUID_PREFIX)
-    name = name if len(name) < char_limit else name[0:char_limit]
-    return f"{ASSET_TAG_LINK_UUID_PREFIX}:{directory}:{name}:{uuid}"
-
-
-def get_asset_tag_link_uuid_name_from_asset(asset):
-    return get_asset_tag_link_uuid_name_from_directory_and_name_and_uuid(
-        directory=get_directory_name(asset),
-        name=asset.name,
-        uuid=get_uuid_from_tag(has_asset_tag_uuid(asset)),
-    )
-
-
 def has_asset_tag_uuid(asset):
     for tag in asset.asset_data.tags:
         if tag.name.startswith(ASSET_TAG_UUID_PREFIX):
@@ -48,18 +34,6 @@ def ensure_asset_has_uuid_tag(asset):
     if tag := has_asset_tag_uuid(asset):
         return tag
     return asset.asset_data.tags.new(get_asset_tag_uuid_name())
-
-
-def add_asset_tag_link_uuid_from_asset_dummy(asset, linked_asset_dummy):
-    tag_link_uuid_name = get_asset_tag_link_uuid_name_from_directory_and_name_and_uuid(
-        linked_asset_dummy.directory, linked_asset_dummy.name, linked_asset_dummy.uuid
-    )
-    asset.asset_data.tags.new(tag_link_uuid_name, skip_if_exists=True)
-
-
-def add_asset_tag_link_uuid_from_other_asset(asset, linked_asset):
-    tag_link_uuid_name = get_asset_tag_link_uuid_name_from_asset(linked_asset)
-    asset.asset_data.tags.new(tag_link_uuid_name, skip_if_exists=True)
 
 
 class TagAddOrRemoveOperatorProperties(PropertyGroup):
