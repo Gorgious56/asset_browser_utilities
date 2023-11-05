@@ -57,3 +57,14 @@ def get_selected_assets_folderpaths(context=None) -> typing.Iterable[Path]:
     if context is None:
         context = bpy.context
     return set(p.parents[2] for p in get_selected_assets_fullpaths(context))
+
+
+def get_selected_linked_objects_in_outliner(context=None):
+    context = context or bpy.context
+    selected_assets = set(context.selected_ids)
+    selected_assets.update(context.selected_objects)
+    for selected_id in context.selected_ids:
+        if selected_id.type == "EMPTY" and selected_id.instance_type:
+            selected_id = selected_id.instance_collection
+        if selected_id.library:
+            yield selected_id.library.filepath
