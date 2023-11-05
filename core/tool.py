@@ -1,5 +1,6 @@
 from collections import ChainMap
-import uuid
+import random
+from .prop import ALPHABET
 
 
 def copy_simple_property_group(source, target):
@@ -12,8 +13,8 @@ def copy_simple_property_group(source, target):
             pass
 
 
-def generate_uuid():
-    return uuid.uuid4()
+def generate_uuid(length=8):
+    return "".join(random.choices(ALPHABET, k=length))
 
 
 def all_annotations(cls) -> ChainMap:
