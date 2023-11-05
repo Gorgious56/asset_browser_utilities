@@ -81,7 +81,7 @@ def link_asset(filepath, directory, filename, relative=False, create_liboverride
     )
 
 
-def append_asset(filepath, directory, filename, link=False, relative=False, create_liboverrides=False):
+def append_asset(filepath, directory, filename, link=False, relative=False, create_liboverrides=False, overwrite=False):
     if is_this_current_file(filepath):
         return
     # directory = sanitize_library_name(directory)
@@ -107,6 +107,8 @@ def append_asset(filepath, directory, filename, link=False, relative=False, crea
             asset.use_fake_user = True
     if other_asset is not None:
         other_asset.name = filename
+        if overwrite:
+            library.remove(other_asset)
     return asset
 
 

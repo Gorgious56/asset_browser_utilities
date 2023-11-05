@@ -38,7 +38,7 @@ if __name__ == "__main__":
             else:
                 filepath = create_new_file_and_set_as_current(str(filepath), should_switch_to_asset_workspace=True)
             blend_data_name = get_blend_data_name_from_directory(directory)
-            append_asset(source_file, directory, asset_name)
+            append_asset(source_file, directory, asset_name, overwrite=overwrite)
             if link_back:
                 assets_to_link_back.append([str(filepath), directory, asset_name])
             save_file(remove_backup=remove_backup)
@@ -49,7 +49,7 @@ if __name__ == "__main__":
         else:
             filepath = create_new_file_and_set_as_current(filepath, should_switch_to_asset_workspace=True)
         for asset_name, directory in zip(asset_names, asset_types):
-            append_asset(source_file, directory, asset_name)
+            append_asset(source_file, directory, asset_name, overwrite=overwrite)
             if link_back:
                 assets_to_link_back.append(str(filepath), directory, asset_name)
             Logger.display(f"Exported Asset '{directory}/{asset_name}' to '{filepath}'")
