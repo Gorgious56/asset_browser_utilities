@@ -10,6 +10,8 @@ from asset_browser_utilities.core.operator.tool import BatchExecute, BatchFolder
 
 from asset_browser_utilities.module.library.link.prop import AssetLibraryDummy
 from asset_browser_utilities.module.library.link.tool import link_from_asset_dummy
+from asset_browser_utilities.module.library.tool import get_asset_uuid
+from asset_browser_utilities.module.tag.tool import add_asset_tag_link_uuid_from_other_uuid_and_name
 
 
 class AssetLinkBatchExecute(BatchExecute):
@@ -19,38 +21,32 @@ class AssetLinkBatchExecute(BatchExecute):
 
     def execute_one_file_and_the_next_when_finished(self):
         library_dummy = get_current_operator_properties().library
-        asset_dummies_in_current_file = library_dummy.by_filepath(bpy.data.filepath)
-        assets_to_keep = []
-        for asset_dummy_in_current_file in asset_dummies_in_current_file:
-            assets_to_keep.append(
-                getattr(bpy.data, asset_dummy_in_current_file.blenddata_name)[asset_dummy_in_current_file.name]
-            )
-        all_assets_in_file = list(get_all_assets_in_file())
-        linked_at_least_one_asset = False
+        should_save = False
+        if library_dummy.how_many_assets_in_filepath(bpy.data.filepath) > 1:
+            # We only want to link if there is more than one asset in the file
+            all_assets_in_file = list(get_all_assets_in_file())
 
-        for asset_in_file in all_assets_in_file:
-            corresponding_asset_dummies = list(library_dummy.by_directory_and_name(
-                get_directory_name(asset_in_file), asset_in_file.name
-            ))
-            corresponding_asset_dummies_out_of_current_file = []
-            for corresponding_asset_dummy in corresponding_asset_dummies:
-                if corresponding_asset_dummy.filepath != bpy.data.filepath:
-                    corresponding_asset_dummies_out_of_current_file.append(corresponding_asset_dummy)
-            if not corresponding_asset_dummies_out_of_current_file:
-                continue
-            
-            validated_asset_dummies = []
-            for possible_asset_dummy in corresponding_asset_dummies_out_of_current_file:
-                if len(list(library_dummy.by_filepath(possible_asset_dummy.filepath))) == 1:
-                    validated_asset_dummies.append(possible_asset_dummy)
-            if not validated_asset_dummies:
-                continue
-                       
-            if len(validated_asset_dummies) == 1:
-                validated_asset_dummy = validated_asset_dummies[0]
-                link_from_asset_dummy(validated_asset_dummy, asset_in_file)
-                linked_at_least_one_asset = True
-        if linked_at_least_one_asset:
+            for asset_in_file in all_assets_in_file:
+                corresponding_asset_dummies = library_dummy.by_uuid(get_asset_uuid(asset_in_file))
+                for corresponding_asset_dummy in corresponding_asset_dummies:
+                    if corresponding_asset_dummy.filepath == bpy.data.filepath:
+                        # We don't want to link from ourself
+                        continue
+                    elif library_dummy.how_many_assets_in_filepath(corresponding_asset_dummy.filepath) > 1:
+                        # We only want to link from one-asset-per-file blends
+                        continue
+                    else:
+                        all_assets_in_file.remove(asset_in_file)
+                        link_from_asset_dummy(corresponding_asset_dummy, asset_in_file, purge=True)
+                        for asset in all_assets_in_file:
+                            add_asset_tag_link_uuid_from_other_uuid_and_name(
+                                    asset,
+                                    corresponding_asset_dummy.uuid,
+                                    corresponding_asset_dummy.name,
+                                )
+                        should_save = True
+
+        if should_save:
             self.save_file()
         self.execute_next_file()
 

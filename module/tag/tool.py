@@ -4,25 +4,56 @@ from bpy.props import PointerProperty
 from asset_browser_utilities.core.filter.name import FilterName
 from asset_browser_utilities.core.tool import generate_uuid
 
-from asset_browser_utilities.module.tag.prop import ASSET_TAG_UUID_PREFIX
+from asset_browser_utilities.module.tag.prop import ASSET_TAG_UUID_PREFIX, ASSET_TAG_LINK_UUID_PREFIX
 from asset_browser_utilities.module.tag.tag_collection import TagCollection
 
 
-def get_asset_tag_uuid():
+def get_uuid_from_tag(tag):
+    return tag.name.split(":")[1]
+
+
+def get_asset_tag_uuid_name():
     return f"{ASSET_TAG_UUID_PREFIX}:{generate_uuid()}"
+
+
+def get_asset_tag_link_uuid_name_from_uuid_and_name(asset_uuid, asset_name):
+    char_limit = 63 - 2 - len(asset_uuid) - len(ASSET_TAG_LINK_UUID_PREFIX)
+    name = asset_name if len(asset_name) < char_limit else asset_name[0:char_limit]
+    return f"{ASSET_TAG_LINK_UUID_PREFIX}:{name}:{asset_uuid}"
+
+
+def get_asset_tag_link_uuid_name_from_asset(asset):
+    return get_asset_tag_link_uuid_name_from_uuid_and_name(
+        asset_uuid=get_uuid_from_tag(has_asset_tag_uuid(asset)), asset_name=asset.name
+    )
 
 
 def has_asset_tag_uuid(asset):
     for tag in asset.asset_data.tags:
         if tag.name.startswith(ASSET_TAG_UUID_PREFIX):
             return tag
-    return None
+
+
+def has_asset_tag(asset, tag_name):
+    for tag in asset.asset_data.tags:
+        if tag.name == tag_name:
+            return tag
 
 
 def ensure_asset_has_uuid_tag(asset):
     if tag := has_asset_tag_uuid(asset):
         return tag
-    return asset.asset_data.tags.new(get_asset_tag_uuid())
+    return asset.asset_data.tags.new(get_asset_tag_uuid_name())
+
+
+def add_asset_tag_link_uuid_from_other_uuid_and_name(asset, linked_uuid, linked_name):
+    tag_link_uuid_name = get_asset_tag_link_uuid_name_from_uuid_and_name(linked_uuid, linked_name)
+    asset.asset_data.tags.new(tag_link_uuid_name, skip_if_exists=True)
+
+
+def add_asset_tag_link_uuid_from_other_asset(asset, linked_asset):
+    tag_link_uuid_name = get_asset_tag_link_uuid_name_from_asset(linked_asset)
+    asset.asset_data.tags.new(tag_link_uuid_name, skip_if_exists=True)
 
 
 class TagAddOrRemoveOperatorProperties(PropertyGroup):
