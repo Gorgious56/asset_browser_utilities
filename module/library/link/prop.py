@@ -9,7 +9,7 @@ from asset_browser_utilities.core.library.prop import LibraryExportSettings
 from asset_browser_utilities.core.library.tool import get_blend_data_name_from_directory
 
 
-class Asset(PropertyGroup):
+class AssetDummy(PropertyGroup):
     name: StringProperty()
     directory: StringProperty()
     filepath: StringProperty()
@@ -22,13 +22,16 @@ class Asset(PropertyGroup):
         self.blenddata_name = blenddata_name
 
 
-class AssetLibrary(PropertyGroup):
+class AssetLibraryDummy(PropertyGroup):
+    assets: CollectionProperty(type=AssetDummy)
+
     def populate(self):
         library_settings = get_from_cache(LibraryExportSettings)
         library_path = Path(library_settings.library_user_path)
         blend_files = [fp for fp in library_path.glob("**/*.blend") if fp.is_file()]
         print(f"Checking the content of library '{library_path}' :")
         for blend_file in blend_files:
+            
             directory = str(blend_file.parent.name)
             blenddata_name = get_blend_data_name_from_directory(directory)
             with bpy.data.libraries.load(str(blend_file), assets_only=True) as (file_contents, _):
@@ -36,8 +39,6 @@ class AssetLibrary(PropertyGroup):
                 for blend_file_asset_name in blend_file_asset_names:
                     new_asset_dummy = self.assets.add()
                     new_asset_dummy.init(blend_file, directory, blend_file_asset_name, blenddata_name)
-
-    assets: CollectionProperty(type=Asset)
 
     def by_attribute(self, attr, value):
         for asset in self.assets:

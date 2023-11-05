@@ -8,7 +8,7 @@ from asset_browser_utilities.core.library.prop import LibraryType
 from asset_browser_utilities.core.library.tool import get_directory_name
 from asset_browser_utilities.core.operator.tool import BatchExecute, BatchFolderOperator
 
-from asset_browser_utilities.module.library.link.prop import AssetLibrary
+from asset_browser_utilities.module.library.link.prop import AssetLibraryDummy
 from asset_browser_utilities.module.library.link.tool import link_from_asset_dummy
 
 
@@ -56,7 +56,7 @@ class AssetLinkBatchExecute(BatchExecute):
 
 
 class AssetLinkOperatorProperties(PropertyGroup):
-    library: PointerProperty(type=AssetLibrary)
+    library: PointerProperty(type=AssetLibraryDummy)
 
     def draw(self, layout, context=None):
         return
