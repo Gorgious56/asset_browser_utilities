@@ -7,24 +7,28 @@ from asset_browser_utilities.core.tool import generate_uuid
 from asset_browser_utilities.module.tag.prop import ASSET_TAG_UUID_PREFIX, ASSET_TAG_LINK_UUID_PREFIX
 from asset_browser_utilities.module.tag.tag_collection import TagCollection
 
+from asset_browser_utilities.core.library.tool import get_directory_name
+
 
 def get_uuid_from_tag(tag):
-    return tag.name.split(":")[1]
+    return tag.name.split(":")[-1] if tag else None
 
 
 def get_asset_tag_uuid_name():
     return f"{ASSET_TAG_UUID_PREFIX}:{generate_uuid()}"
 
 
-def get_asset_tag_link_uuid_name_from_uuid_and_name(asset_uuid, asset_name):
-    char_limit = 63 - 2 - len(asset_uuid) - len(ASSET_TAG_LINK_UUID_PREFIX)
-    name = asset_name if len(asset_name) < char_limit else asset_name[0:char_limit]
-    return f"{ASSET_TAG_LINK_UUID_PREFIX}:{name}:{asset_uuid}"
+def get_asset_tag_link_uuid_name_from_directory_and_name_and_uuid(directory, name, uuid):
+    char_limit = 63 - 3 - len(directory) - len(uuid) - len(ASSET_TAG_LINK_UUID_PREFIX)
+    name = name if len(name) < char_limit else name[0:char_limit]
+    return f"{ASSET_TAG_LINK_UUID_PREFIX}:{directory}:{name}:{uuid}"
 
 
 def get_asset_tag_link_uuid_name_from_asset(asset):
-    return get_asset_tag_link_uuid_name_from_uuid_and_name(
-        asset_uuid=get_uuid_from_tag(has_asset_tag_uuid(asset)), asset_name=asset.name
+    return get_asset_tag_link_uuid_name_from_directory_and_name_and_uuid(
+        directory=get_directory_name(asset),
+        name=asset.name,
+        uuid=get_uuid_from_tag(has_asset_tag_uuid(asset)),
     )
 
 
@@ -46,8 +50,10 @@ def ensure_asset_has_uuid_tag(asset):
     return asset.asset_data.tags.new(get_asset_tag_uuid_name())
 
 
-def add_asset_tag_link_uuid_from_other_uuid_and_name(asset, linked_uuid, linked_name):
-    tag_link_uuid_name = get_asset_tag_link_uuid_name_from_uuid_and_name(linked_uuid, linked_name)
+def add_asset_tag_link_uuid_from_asset_dummy(asset, linked_asset_dummy):
+    tag_link_uuid_name = get_asset_tag_link_uuid_name_from_directory_and_name_and_uuid(
+        linked_asset_dummy.directory, linked_asset_dummy.name, linked_asset_dummy.uuid
+    )
     asset.asset_data.tags.new(tag_link_uuid_name, skip_if_exists=True)
 
 

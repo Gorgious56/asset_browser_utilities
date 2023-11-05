@@ -5,13 +5,11 @@ from bpy.props import PointerProperty
 from asset_browser_utilities.core.cache.tool import get_current_operator_properties
 from asset_browser_utilities.core.filter.container import get_all_assets_in_file
 from asset_browser_utilities.core.library.prop import LibraryType
-from asset_browser_utilities.core.library.tool import get_directory_name
 from asset_browser_utilities.core.operator.tool import BatchExecute, BatchFolderOperator
 
 from asset_browser_utilities.module.library.link.prop import AssetLibraryDummy
 from asset_browser_utilities.module.library.link.tool import link_from_asset_dummy
 from asset_browser_utilities.module.library.tool import get_asset_uuid
-from asset_browser_utilities.module.tag.tool import add_asset_tag_link_uuid_from_other_uuid_and_name
 
 
 class AssetLinkBatchExecute(BatchExecute):
@@ -36,14 +34,7 @@ class AssetLinkBatchExecute(BatchExecute):
                         # We only want to link from one-asset-per-file blends
                         continue
                     else:
-                        all_assets_in_file.remove(asset_in_file)
                         link_from_asset_dummy(corresponding_asset_dummy, asset_in_file, purge=True)
-                        for asset in all_assets_in_file:
-                            add_asset_tag_link_uuid_from_other_uuid_and_name(
-                                    asset,
-                                    corresponding_asset_dummy.uuid,
-                                    corresponding_asset_dummy.name,
-                                )
                         should_save = True
 
         if should_save:

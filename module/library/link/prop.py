@@ -30,7 +30,7 @@ class AssetDummy(PropertyGroup):
         self.filepath = str(blend_filepath)
         self.blenddata_name = blenddata_name
         self.uuid = uuid
-    
+
     def __str__(self):
         return f"{self.filepath}, {self.name}, {self.uuid}"
 
@@ -43,9 +43,10 @@ class AssetLibraryDummy(PropertyGroup):
         library_settings = get_from_cache(LibraryExportSettings)
         library_path = Path(library_settings.library_user_path)
         blend_files = [fp for fp in library_path.glob("**/*.blend") if fp.is_file()]
-        print(f"Checking the content of library '{library_path}' :")
+        Logger.display(f"Checking the content of library '{library_path}' :")
         origin_file = bpy.data.filepath
-        for blend_file in blend_files:
+        for i, blend_file in enumerate(blend_files):
+            Logger.display(f"Fetching data... {len(blend_files) - i + 1} files left")
             open_file_if_different_from_current(blend_file)
             for asset in get_all_assets_in_file():
                 new_asset_dummy = self.assets.add()
