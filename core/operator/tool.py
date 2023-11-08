@@ -42,15 +42,17 @@ class BatchExecute:
             bpy.app.timers.register(self.callback, first_interval=self.INTERVAL)
             return
         Logger.display(f"{len(self.files)} file{'s' if len(self.files) > 1 else ''} left")
-        self.open_next_file()
-        if library_export_settings.source == LibraryType.FileCurrent.value:
-            self.assets = get_from_cache(AssetFilterSettings).get_objects_that_satisfy_filters()
+        if self.open_next_file():
+            if library_export_settings.source == LibraryType.FileCurrent.value:
+                self.assets = get_from_cache(AssetFilterSettings).get_objects_that_satisfy_filters()
 
-            self.execute_one_file_and_the_next_when_finished()
+                self.execute_one_file_and_the_next_when_finished()
+            else:
+                self.assets = get_from_cache(AssetFilterSettings).get_objects_that_satisfy_filters()
+                # Wait a little bit for context to initialize
+                bpy.app.timers.register(self.execute_one_file_and_the_next_when_finished, first_interval=self.INTERVAL)
         else:
-            self.assets = get_from_cache(AssetFilterSettings).get_objects_that_satisfy_filters()
-            # Wait a little bit for context to initialize
-            bpy.app.timers.register(self.execute_one_file_and_the_next_when_finished, first_interval=self.INTERVAL)
+            self.execute_next_file()
 
     def save_file(self, filepath=None):
         if filepath is None:
@@ -60,6 +62,7 @@ class BatchExecute:
     def open_next_file(self):
         self.file = self.files.pop(0)
         open_file_if_different_from_current(str(self.file))
+        return True
 
     def sleep_until_previews_are_done_and_execute_next_file(self):
         while self.assets:
