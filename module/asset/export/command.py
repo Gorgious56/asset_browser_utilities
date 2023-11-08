@@ -53,7 +53,7 @@ if __name__ == "__main__":
         for asset_name, directory in zip(asset_names, asset_types):
             append_asset(source_file, directory, asset_name, overwrite=overwrite)
             if link_back:
-                assets_to_link_back.append(str(filepath), directory, asset_name)
+                assets_to_link_back.append([str(filepath), directory, asset_name])
             Logger.display(f"Exported Asset '{directory}/{asset_name}' to '{filepath}'")
         save_file(remove_backup=remove_backup)
 
@@ -69,5 +69,4 @@ if __name__ == "__main__":
                 create_liboverrides=False,
             )
             save_file(remove_backup=remove_backup)
-
     quit()

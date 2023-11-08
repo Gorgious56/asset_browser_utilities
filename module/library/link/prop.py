@@ -58,11 +58,13 @@ class AssetLibraryDummy(PropertyGroup):
         library_settings = get_from_cache(LibraryExportSettings)
         library_path = Path(library_settings.library_user_path)
         blend_files = [fp for fp in library_path.glob("**/*.blend") if fp.is_file()]
-        Logger.display(f"Checking the content of library '{library_path}' :")
+        Logger.display(f"Checking the content of library '{library_path}' :")          
         for i, blend_file in enumerate(blend_files):
             Logger.display(f"Fetching data... {len(blend_files) - i} files left")
             open_file_if_different_from_current(blend_file)
             for asset in get_all_assets_in_file():
+                if asset.library:  # Linked from another file
+                    continue
                 new_asset_dummy = self.assets.add()
                 new_asset_dummy.init(
                     blend_file,
