@@ -11,6 +11,7 @@ class ABU_MT_assets(Menu, ABUOperatorsMenu):
         ("abu.asset_export", "Export", "EXPORT"),
         ("abu.asset_link", "Link", "LINKED"),
         ("abu.asset_link_relocate", "Relocate", "LIBRARY_DATA_BROKEN"),
+        ("abu.asset_update", "Update", "FILE_REFRESH"),
         ("abu.asset_data_copy", "Copy From Active", "COPYDOWN"),
         ("abu.operation_custom", "Custom Operation(s)", "MODIFIER"),
     ]
