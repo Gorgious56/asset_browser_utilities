@@ -18,11 +18,13 @@ class AssetLinkRelocateBatchExecute(BatchExecute):
 
     def execute_one_file_and_the_next_when_finished(self):
         library_dummy = get_current_operator_properties().library
+        should_save = False
         for blend_data_library in bpy.data.libraries:
             if blend_data_library.is_missing:
                 for asset_dummy in blend_data_library.abu_asset_library_dummy.assets:
                     corresponding_asset_dummy = next((library_dummy.by_uuid(asset_dummy.uuid)), None)
                     if corresponding_asset_dummy:
+                        should_save = True
                         link_from_asset_dummy(corresponding_asset_dummy, asset_dummy.asset.get(), purge=True)
             for linked_asset in blend_data_library.users_id:
                 if linked_asset.is_missing:
@@ -30,10 +32,11 @@ class AssetLinkRelocateBatchExecute(BatchExecute):
                         if linked_asset_dummy.asset.get() == linked_asset:
                             corresponding_asset_dummy = next((library_dummy.by_uuid(linked_asset_dummy.uuid)), None)
                             if corresponding_asset_dummy:
+                                should_save = True
                                 link_from_asset_dummy(corresponding_asset_dummy, linked_asset, purge=True)
                                 break
-
-        self.save_file()
+        if should_save:
+            self.save_file()
         self.execute_next_file()
 
 
