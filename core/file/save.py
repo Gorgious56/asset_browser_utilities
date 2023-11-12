@@ -51,8 +51,12 @@ def has_backup(filepath):
 def remove_backup_file_if_it_exists(filepath):
     if has_backup(filepath):
         backup = get_backup_path(filepath)
-        Logger.display("Removing backup " + backup)
-        os.remove(backup)
+        try:
+            os.remove(backup)
+        except FileNotFoundError:
+            pass
+        else:
+            Logger.display("Removed backup " + backup)
 
 
 def save_file(remove_backup=False, filepath=None):
@@ -71,6 +75,7 @@ def save_file(remove_backup=False, filepath=None):
 def save_file_as(filepath: str, remove_backup=False):
     if not filepath:
         return
+    Path(filepath).parent.mkdir(parents=True, exist_ok=True)
     had_backup = has_backup(filepath)
     bpy.ops.wm.save_as_mainfile(filepath=str(filepath), compress=get_preferences().save_compress)
     if remove_backup and not had_backup:

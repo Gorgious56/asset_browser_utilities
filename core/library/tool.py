@@ -81,7 +81,9 @@ def link_asset(filepath, directory, filename, relative=False, create_liboverride
     )
 
 
-def append_asset(filepath, directory, filename, link=False, relative=False, create_liboverrides=False, overwrite=False):
+def append_asset(
+    filepath, directory, filename, link=False, relative=False, create_liboverrides=False, overwrite=False
+):
     if is_this_current_file(filepath):
         return
     # directory = sanitize_library_name(directory)
@@ -99,9 +101,9 @@ def append_asset(filepath, directory, filename, link=False, relative=False, crea
 
     asset = library.get(filename)
     if asset:
-        if blend_data_name == "objects":
+        if blend_data_name == "objects" and asset.name not in bpy.context.scene.collection.objects:
             bpy.context.scene.collection.objects.link(asset)
-        elif blend_data_name == "collections":
+        elif blend_data_name == "collections" and asset.name not in bpy.context.scene.collection.children:
             bpy.context.scene.collection.children.link(asset)
         else:
             asset.use_fake_user = True
