@@ -23,6 +23,19 @@ def load_preview(filepath, asset=None):
     Logger.display(f"Loaded custom preview from '{filepath}' for asset '{asset.name or 'active asset'}'")
 
 
+def get_id_from_file_select(file_select):
+    directory, name = get_directory_and_name_from_file_select(file_select)
+    blend_data_name = get_blend_data_name_from_directory(directory)
+    blend_data = getattr(bpy.data, blend_data_name)
+    return blend_data.get(name)
+
+
+def get_directory_and_name_from_file_select(file_select):
+    directory = file_select.relative_path.split("\\")[0]
+    name = file_select.relative_path[len(directory) + 1 : :]
+    return directory, name
+
+
 def get_directory_name(asset):
     name = type(asset).__name__.lower()
     if "nodetree" in name:

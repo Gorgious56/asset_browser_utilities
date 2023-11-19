@@ -1,7 +1,8 @@
-from asset_browser_utilities.core.library.tool import sanitize_library_name
 import bpy
 from bpy.types import PropertyGroup
 from bpy.props import StringProperty, CollectionProperty, PointerProperty
+
+from asset_browser_utilities.core.library.tool import get_blend_data_name
 
 
 class SelectedAssetFile(PropertyGroup):
@@ -16,17 +17,17 @@ class SelectedAssetFiles(PropertyGroup):
     def init(self):
         self.files_prop.clear()
 
-    def add(self, container, _id):
+    def add(self, _id):
         if _id is None:
             return
         new = self.files_prop.add()
-        new.container = sanitize_library_name(container.lower() + "s")
+        new.container = get_blend_data_name(_id)
         new.name = _id.name
 
-    def set_active(self, container, _id):
+    def set_active(self, _id):
         if _id is None:
             return
-        self.active_asset_prop.container = sanitize_library_name(container.lower() + "s")
+        self.active_asset_prop.container = get_blend_data_name(_id)
         self.active_asset_prop.name = _id.name
 
     @property

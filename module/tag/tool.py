@@ -4,10 +4,8 @@ from bpy.props import PointerProperty
 from asset_browser_utilities.core.filter.name import FilterName
 from asset_browser_utilities.core.tool import generate_uuid
 
-from asset_browser_utilities.module.tag.prop import ASSET_TAG_UUID_PREFIX, ASSET_TAG_LINK_UUID_PREFIX
+from asset_browser_utilities.module.tag.prop import ASSET_TAG_UUID_PREFIX
 from asset_browser_utilities.module.tag.tag_collection import TagCollection
-
-from asset_browser_utilities.core.library.tool import get_directory_name
 
 
 def get_uuid_from_tag(tag):
