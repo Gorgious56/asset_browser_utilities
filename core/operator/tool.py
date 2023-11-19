@@ -1,28 +1,36 @@
-from asset_browser_utilities.module.asset.prop import SelectedAssetFiles
-from asset_browser_utilities.core.operator.prop import CurrentOperatorProperty
-from asset_browser_utilities.core.log.logger import Logger
+import queue
 
-from asset_browser_utilities.core.preferences.tool import get_preferences
 
 import bpy.app.timers
 from bpy.types import OperatorFileListElement
 from bpy.props import StringProperty, CollectionProperty, EnumProperty, BoolProperty
 from bpy_extras.io_utils import ImportHelper
 
+from asset_browser_utilities.core.preferences.tool import get_preferences
 from asset_browser_utilities.core.tool import copy_simple_property_group
 from asset_browser_utilities.core.cache.tool import get_current_operator_properties, get_presets, get_from_cache
 from asset_browser_utilities.core.ui.message import message_box
 from asset_browser_utilities.core.file.path import open_file_if_different_from_current
-from asset_browser_utilities.core.file.save import save_if_possible_and_necessary, save_file_as
+from asset_browser_utilities.core.file.save import save_file_as, save_file
 from asset_browser_utilities.core.filter.main import AssetFilterSettings
 from asset_browser_utilities.core.library.prop import LibraryExportSettings, LibraryType
-from asset_browser_utilities.module.preview.tool import can_preview_be_generated, is_preview_generated
-
-
+from asset_browser_utilities.core.operator.prop import CurrentOperatorProperty
+from asset_browser_utilities.core.log.logger import Logger
 from asset_browser_utilities.core.console.builder import CommandBuilder
-from asset_browser_utilities.core.console import command_execute_on_blend_file
-import queue
+from asset_browser_utilities.core.console import command_line_execute_base, command_execute_on_blend_file
 from asset_browser_utilities.core.threading.tool import ThreadManager
+
+from asset_browser_utilities.module.preview.tool import can_preview_be_generated, is_preview_generated
+from asset_browser_utilities.module.asset.prop import SelectedAssetFiles
+
+
+class BaseOperatorProperties:
+    def run_in_file(self):
+        assets = get_from_cache(AssetFilterSettings).get_objects_that_satisfy_filters()
+        if not assets:
+            return
+        for asset in assets:
+            self.do_on_asset(asset)
 
 
 class BatchExecute:
@@ -116,6 +124,16 @@ def update_preset(self, context):
             copy_simple_property_group(default_properties, setting)
 
 
+class CommandLineExecute(command_line_execute_base.CommandLineExecuteBase):
+    def run(self):
+        get_current_operator_properties().run_in_file()
+        if getattr(get_current_operator_properties(), "generate_previews", False):
+            while bpy.app.is_job_running("RENDER_PREVIEW"):
+                pass
+        save_file()
+        quit()
+
+
 class BatchFolderOperator(ImportHelper):
     bl_options: set[str] = {"UNDO"}
     ui_library = LibraryType.All
@@ -132,6 +150,7 @@ class BatchFolderOperator(ImportHelper):
     files: CollectionProperty(type=OperatorFileListElement, options={"HIDDEN", "SKIP_SAVE"})
     directory: StringProperty()
     logic_class = BatchExecute
+    file_for_command = __file__
 
     def _invoke(
         self,
@@ -196,11 +215,19 @@ class BatchFolderOperator(ImportHelper):
 
     def execute(self, context):
         bpy.ops.wm.save_userpref()
-        self.write_filepath_to_cache()
-        save_if_possible_and_necessary()
-        logic = self.logic_class(self.file_extension)
-        logic.execute_next_file()
+        if get_from_cache(LibraryExportSettings).source == LibraryType.FileCurrent.value:
+            get_current_operator_properties().run_in_file()
+        else:
+            self.run_in_threads()
         return {"FINISHED"}
+
+    # def execute(self, context):
+    #     bpy.ops.wm.save_userpref()
+    #     self.write_filepath_to_cache()
+    #     save_if_possible_and_necessary()
+    #     logic = self.logic_class(self.file_extension)
+    #     logic.execute_next_file()
+    #     return {"FINISHED"}
 
     def write_filepath_to_cache(self):
         library_settings = get_from_cache(LibraryExportSettings)
