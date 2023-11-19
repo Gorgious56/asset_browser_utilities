@@ -13,10 +13,13 @@ class ArgumentsParser:
 
     def get_arg_value(self, arg_name, cast=None):
         index = self.get_arg_index(arg_name)
-        if cast is None:
-            return self.argv[index]
-        else:
-            return cast(json.loads(self.argv[index]))
+        try:
+            if cast is None:
+                return self.argv[index]
+            else:
+                return cast(json.loads(self.argv[index]))
+        except IndexError:
+            return None
 
     def get_arg_values(self, arg_name, next_arg_name=None, cast=None):
         start = self.get_arg_index(arg_name)

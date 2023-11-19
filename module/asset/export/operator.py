@@ -1,5 +1,4 @@
 from pathlib import Path
-import threading
 import queue
 
 import bpy
@@ -29,6 +28,7 @@ from asset_browser_utilities.core.library.tool import (
 )
 from asset_browser_utilities.core.library.prop import LibraryExportSettings, LibraryType
 from asset_browser_utilities.core.operator.tool import BatchExecute, BatchFolderOperator
+from asset_browser_utilities.core.threading.tool import ThreadManager
 
 from asset_browser_utilities.module.library.link.tool import replace_asset_with_linked_one
 from asset_browser_utilities.module.library.tool import ensure_asset_uuid
@@ -42,18 +42,19 @@ class CommandLineExecute(command_line_execute_base.CommandLineExecuteBase):
     asset_directory: str
     asset_filepath: str
     source_file: str
-    remove_backup: bool
-    overwrite: bool
 
     def run(self):
-        print(get_current_operator_properties())
+        op_props = get_current_operator_properties()
         append_asset(
             self.attributes["source_file"],
             self.attributes["asset_directory"],
             self.attributes["asset_name"],
-            overwrite=self.attributes["overwrite"],
+            overwrite=op_props.overwrite,
         )
-        save_file_as(filepath=self.attributes["asset_filepath"], remove_backup=self.attributes["remove_backup"])
+        save_file_as(
+            filepath=self.attributes["asset_filepath"],
+            remove_backup=get_from_cache(LibraryExportSettings).remove_backup,
+        )
         Logger.display(
             f"Exported Asset '{self.attributes['asset_directory']}/{self.attributes['asset_name']}' to '{self.attributes['asset_filepath']}'"
         )
@@ -149,8 +150,6 @@ class ABU_OT_asset_export(Operator, BatchFolderOperator):
             asset_folders_queue.put(asset_folder)
 
         def run():
-            print(threading.current_thread().name, " Starting")
-
             asset_name = asset_names_queue.get()
             asset_directory = asset_directories_queue.get()
             asset_folder = asset_folders_queue.get()
@@ -169,20 +168,10 @@ class ABU_OT_asset_export(Operator, BatchFolderOperator):
             caller.add_arg_value("asset_directory", asset_directory)
             caller.add_arg_value("asset_filepath", asset_filepath)
             caller.add_arg_value("source_file", source_filepath)
-            caller.add_arg_value("remove_backup", get_from_cache(LibraryExportSettings).remove_backup)
-            caller.add_arg_value("overwrite", current_operator_properties.overwrite)
             caller.add_arg_value("source_operator_file", __file__)
             caller.call()
 
-            print(threading.current_thread().name, " Exiting")
-
-        threads = [threading.Thread(name="Thread %d" % i, target=run) for i in range(len(self.asset_names))]
-        print("Starting threads...")
-        for thread in threads:
-            thread.start()
-        print("Waiting for threads to finish...")
-        for thread in threads:
-            thread.join()
+        ThreadManager(run, len(self.asset_names)).run_and_wait_for_execution()
 
         if current_operator_properties.link_back:
             for asset_name, asset_directory, asset_folder in zip(
