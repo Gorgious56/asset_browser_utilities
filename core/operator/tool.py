@@ -34,75 +34,7 @@ class BaseOperatorProperties:
 
 
 class BatchExecute:
-    INTERVAL = 0.01
-    INTERVAL_PREVIEW = 0.05
-
-    def __init__(self, file_extension="blend"):
-        self.files = get_from_cache(LibraryExportSettings).get_files(file_extension)
-        self.file = None
-        self.assets = []
-
-    def callback(self):
-        [a.tag_redraw() for a in bpy.context.screen.areas if a.ui_type == "ASSETS" and hasattr(bpy.context, "screen")]
-
-    def execute_next_file(self):
-        library_export_settings = get_from_cache(LibraryExportSettings)
-        if not self.files:
-            if not bpy.app.background:
-                if library_export_settings.filepath_start != "":
-                    open_file_if_different_from_current(str(library_export_settings.filepath_start))
-                # Wait a little bit for context to initialize
-                bpy.app.timers.register(lambda: message_box(message="Work completed !"), first_interval=self.INTERVAL)
-            bpy.app.timers.register(self.callback, first_interval=self.INTERVAL)
-            return
-        Logger.display(f"{len(self.files)} file{'s' if len(self.files) > 1 else ''} left")
-        if self.open_next_file():
-            if library_export_settings.source == LibraryType.FileCurrent.value:
-                self.assets = get_from_cache(AssetFilterSettings).get_objects_that_satisfy_filters()
-
-                self.execute_one_file_and_the_next_when_finished()
-            else:
-                self.assets = get_from_cache(AssetFilterSettings).get_objects_that_satisfy_filters()
-                # Wait a little bit for context to initialize
-                bpy.app.timers.register(self.execute_one_file_and_the_next_when_finished, first_interval=self.INTERVAL)
-        else:
-            self.execute_next_file()
-
-    def save_file(self, filepath=None):
-        if filepath is None:
-            filepath = str(self.file)
-        save_file_as(filepath, remove_backup=get_from_cache(LibraryExportSettings).remove_backup)
-
-    def open_next_file(self):
-        self.file = self.files.pop(0)
-        open_file_if_different_from_current(str(self.file))
-        return True
-
-    def sleep_until_previews_are_done_and_execute_next_file(self):
-        while self.assets:
-            if hasattr(bpy.app, "is_job_running"):  # Blender 3.3+
-                if bpy.app.is_job_running("RENDER_PREVIEW"):
-                    return self.INTERVAL_PREVIEW
-                break
-            else:  # Blender <= 3.2
-                if not can_preview_be_generated(self.assets[0]) or is_preview_generated(self.assets[0]):
-                    self.assets.pop(0)
-                else:
-                    return self.INTERVAL_PREVIEW
-        self.save_file()
-        self.execute_next_file()
-        return None
-
-    def execute_one_file_and_the_next_when_finished(self):
-        if self.assets:
-            for asset in self.assets:
-                self.do_on_asset(asset)
-            self.save_file()
-        self.execute_next_file()
-
-    def do_on_asset(self, asset):
-        pass
-
+    pass
 
 def update_preset(self, context):
     preset_name = self.preset
@@ -149,7 +81,6 @@ class BatchFolderOperator(ImportHelper):
     # https://docs.blender.org/api/current/bpy.types.OperatorFileListElement.html
     files: CollectionProperty(type=OperatorFileListElement, options={"HIDDEN", "SKIP_SAVE"})
     directory: StringProperty()
-    logic_class = BatchExecute
     file_for_command = __file__
 
     def _invoke(

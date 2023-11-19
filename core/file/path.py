@@ -2,6 +2,10 @@ from pathlib import Path
 import bpy
 
 
+def get_current_file_path():
+    return bpy.data.filepath
+
+
 def get_supported_images(folder, recursive):
     for ext in bpy.path.extensions_image:  # All supported image extensions in Blender
         if recursive:

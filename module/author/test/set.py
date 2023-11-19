@@ -1,5 +1,4 @@
 from asset_browser_utilities.core.test.prop import TestOperator
-from asset_browser_utilities.module.author.set import AuthorSetBatchExecute
 
 from asset_browser_utilities.module.asset.tool import all_assets
 
@@ -8,7 +7,6 @@ def test_setting_author_on_all_assets(filepath):
     test_op = TestOperator(
         filepath=filepath,
         filter_assets=True,
-        logic_class=AuthorSetBatchExecute,
     )
 
     for author in ("test_author", ""):
