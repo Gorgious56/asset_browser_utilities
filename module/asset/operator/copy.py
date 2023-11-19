@@ -7,6 +7,7 @@ from bpy.props import PointerProperty, BoolProperty
 from asset_browser_utilities.core.operator.tool import BatchExecute, BatchFolderOperator
 from asset_browser_utilities.module.custom_property.tool import copy_prop
 from asset_browser_utilities.module.asset.prop import SelectedAssetFiles
+from asset_browser_utilities.module.tag.prop import ASSET_TAG_UUID_PREFIX
 
 
 class AssetDataCopyBatchExecute(BatchExecute):
@@ -21,6 +22,8 @@ class AssetDataCopyBatchExecute(BatchExecute):
         if operator_properties.tags:
             tags_source = asset_data_target.tags
             for tag in asset_data_source.tags:
+                if tag.name.startswith(ASSET_TAG_UUID_PREFIX):
+                    continue
                 tags_source.new(name=tag.name, skip_if_exists=True)
             log_data.append("tags")
         if operator_properties.custom_properties:
@@ -29,7 +32,7 @@ class AssetDataCopyBatchExecute(BatchExecute):
             log_data.append("custom properties")
         if operator_properties.preview:
             source_preview = active_asset.preview
-            if source_preview is not None:
+            if source_preview is not None and asset.preview is not None:
                 asset_preview = asset.preview
                 asset_preview.image_size = source_preview.image_size
                 asset_preview.image_pixels.foreach_set(source_preview.image_pixels)
@@ -37,6 +40,12 @@ class AssetDataCopyBatchExecute(BatchExecute):
         if operator_properties.catalog:
             asset_data_target.catalog_id = asset_data_source.catalog_id
             log_data.append("catalog")
+        if operator_properties.license:
+            asset_data_target.license = asset_data_source.license
+            log_data.append("license")
+        if operator_properties.copyright:
+            asset_data_target.copyright = asset_data_source.copyright
+            log_data.append("copyright")
         if operator_properties.author:
             asset_data_target.author = asset_data_source.author
             log_data.append("author")
@@ -56,6 +65,8 @@ class AssetDataCopyOperatorProperties(PropertyGroup):
     catalog: BoolProperty(name="Catalog")
     author: BoolProperty(name="Author")
     description: BoolProperty(name="Description")
+    license: BoolProperty(name="License")
+    copyright: BoolProperty(name="Copyright")
 
     def draw(self, layout, context=None):
         box = layout.box()
@@ -66,7 +77,8 @@ class AssetDataCopyOperatorProperties(PropertyGroup):
         box.prop(self, "catalog", icon="OUTLINER_COLLECTION")
         box.prop(self, "author", icon="USER")
         box.prop(self, "description", icon="FILE_TEXT")
-
+        box.prop(self, "license", icon="FAKE_USER_OFF")
+        box.prop(self, "copyright", icon="COPY_ID")
 
 class ABU_OT_asset_data_copy(Operator, BatchFolderOperator):
     ui_library = LibraryType.FileCurrent.value
