@@ -148,6 +148,7 @@ class BatchFolderOperator(ImportHelper):
         self.init_operator_settings(init_operator_settings_arguments)
         self.init_selected_asset_files(context)
         library_settings = self.init_library_settings(remove_backup)
+        bpy.ops.wm.save_userpref()
 
         if library_settings.source in (LibraryType.FolderExternal.value, LibraryType.FileExternal.value):
             self.filter_glob = (
