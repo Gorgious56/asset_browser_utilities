@@ -32,26 +32,28 @@ def get_directory_name(asset):
     return name
 
 
-def get_blend_data_name_from_directory(directory):
-    name = directory.lower() + "s"
-    if "nodetree" in name:
-        name = "node_groups"
-    elif "brush" in name:
-        name = "brushes"
-    elif "texture" in name:
-        name = "textures"
-    return name
-
-
-def get_blend_data_name(asset):
-    name = type(asset).__name__.lower() + "s"
+def sanititize_blend_data_name(name):
     if "nodetree" in name:
         name = "node_groups"
     elif name == "brushs":
         name = "brushes"
     elif "texture" in name:
         name = "textures"
+    elif "freestyle" in name:
+        name = "linestyles"
+    elif "mesh" in name:
+        name = "meshes"
     return name
+
+
+def get_blend_data_name_from_directory(directory):
+    name = directory.lower() + "s"
+    return sanititize_blend_data_name(name)
+
+
+def get_blend_data_name(asset):
+    name = type(asset).__name__.lower() + "s"
+    return sanititize_blend_data_name(name)
 
 
 def get_files_in_folder(folder, recursive, extension="blend"):
@@ -109,8 +111,7 @@ def append_asset(
             asset.use_fake_user = True
     if other_asset is not None:
         other_asset.name = filename
-        if overwrite:
-            library.remove(other_asset)
+        bpy.data.batch_remove([other_asset])
     return asset
 
 
