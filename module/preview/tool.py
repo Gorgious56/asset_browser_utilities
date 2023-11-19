@@ -5,6 +5,9 @@ from asset_browser_utilities.core.log.logger import Logger
 import bpy
 
 
+INTERVAL_PREVIEW = 0.05
+
+
 def can_preview_be_generated(asset):
     if isinstance(
         asset,
@@ -31,6 +34,7 @@ def can_preview_be_generated(asset):
         return bool(asset.pixels)
     return False
 
+
 def is_preview_generated(asset):
     preview = asset.preview
     now = time.time()
@@ -54,7 +58,9 @@ def is_preview_generated(asset):
         return True
     return False
 
+
 is_preview_generated.start = sys.maxsize
+
 
 def create_image(name, width, height, alpha=True):
     img = bpy.data.images.new(name=name, width=width, height=height, alpha=alpha)

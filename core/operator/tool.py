@@ -19,6 +19,12 @@ from asset_browser_utilities.core.library.prop import LibraryExportSettings, Lib
 from asset_browser_utilities.module.preview.tool import can_preview_be_generated, is_preview_generated
 
 
+from asset_browser_utilities.core.console.builder import CommandBuilder
+from asset_browser_utilities.core.console import command_execute_on_blend_file
+import queue
+from asset_browser_utilities.core.threading.tool import ThreadManager
+
+
 class BatchExecute:
     INTERVAL = 0.01
     INTERVAL_PREVIEW = 0.05
@@ -148,7 +154,6 @@ class BatchFolderOperator(ImportHelper):
         self.init_operator_settings(init_operator_settings_arguments)
         self.init_selected_asset_files(context)
         library_settings = self.init_library_settings(remove_backup)
-        bpy.ops.wm.save_userpref()
 
         if library_settings.source in (LibraryType.FolderExternal.value, LibraryType.FileExternal.value):
             self.filter_glob = (
@@ -184,12 +189,13 @@ class BatchFolderOperator(ImportHelper):
     def init_selected_asset_files(self, context):
         selected_asset_files_prop = get_from_cache(SelectedAssetFiles)
         selected_asset_files_prop.init()
-        if context.active_file is not None:
-            selected_asset_files_prop.set_active(context.active_file.id_type, context.active_file.local_id)
-        for selected_asset_file in bpy.context.selected_asset_files:
-            selected_asset_files_prop.add(selected_asset_file.id_type, selected_asset_file.local_id)
+        if context.asset:
+            selected_asset_files_prop.set_active(context.asset.local_id)
+        for selected_asset in context.selected_assets:
+            selected_asset_files_prop.add(selected_asset)
 
     def execute(self, context):
+        bpy.ops.wm.save_userpref()
         self.write_filepath_to_cache()
         save_if_possible_and_necessary()
         logic = self.logic_class(self.file_extension)
@@ -225,3 +231,19 @@ class BatchFolderOperator(ImportHelper):
             filter_types=self.filter_types,
             filter_name=self.filter_name,
         )
+
+    def run_in_threads(self):
+        files = get_from_cache(LibraryExportSettings).get_files("blend")
+        file_queue = queue.Queue(maxsize=len(files))
+        for file in files:
+            file_queue.put(file)
+
+        def run():
+            caller = CommandBuilder(
+                script_filepath=command_execute_on_blend_file.__file__,
+                blend_filepath=file_queue.get(),
+            )
+            caller.add_arg_value("source_operator_file", self.file_for_command)
+            caller.call()
+
+        ThreadManager(run, file_queue.qsize()).run_and_wait_for_execution()
