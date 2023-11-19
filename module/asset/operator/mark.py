@@ -4,8 +4,6 @@ from bpy.props import PointerProperty, BoolProperty
 
 from asset_browser_utilities.core.log.logger import Logger
 from asset_browser_utilities.core.operator.tool import BatchFolderOperator, BaseOperatorProperties
-from asset_browser_utilities.core.cache.tool import get_current_operator_properties, get_from_cache
-from asset_browser_utilities.core.filter.main import AssetFilterSettings
 
 from asset_browser_utilities.module.preview.tool import can_preview_be_generated
 from asset_browser_utilities.module.library.tool import ensure_asset_uuid

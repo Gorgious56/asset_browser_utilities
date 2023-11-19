@@ -1,15 +1,17 @@
+import bpy
+
+from bpy.props import PointerProperty
+from bpy.types import Operator, PropertyGroup
+
 from asset_browser_utilities.core.log.logger import Logger
-from bpy.types import Operator
-
-from asset_browser_utilities.core.operator.tool import BatchExecute, BatchFolderOperator
+from asset_browser_utilities.core.operator.tool import BatchFolderOperator, BaseOperatorProperties
 
 
-class AssetUnmarkBatchExecute(BatchExecute):
+class AssetUnmarkOperatorProperties(PropertyGroup, BaseOperatorProperties):
     def do_on_asset(self, asset):
-        super().do_on_asset(asset)
         if asset.asset_data:
             asset.asset_clear()
-            Logger.display(f"{repr(asset)} Unmarked")
+            Logger.display(f"{bpy.data.filepath}\\{repr(asset)} unmarked")
 
 
 class ABU_OT_asset_unmark(Operator, BatchFolderOperator):
@@ -17,7 +19,7 @@ class ABU_OT_asset_unmark(Operator, BatchFolderOperator):
     bl_label = "Batch Unmark Assets"
     bl_options = {"UNDO"}
 
-    logic_class = AssetUnmarkBatchExecute
+    operator_settings: PointerProperty(type=AssetUnmarkOperatorProperties)
 
     def invoke(self, context, event):
         return self._invoke(context, filter_assets=True)

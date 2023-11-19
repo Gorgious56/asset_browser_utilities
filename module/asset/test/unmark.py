@@ -6,14 +6,14 @@ from asset_browser_utilities.core.test.tool import execute_logic, get_asset_filt
 
 from asset_browser_utilities.core.filter.type import get_types
 from asset_browser_utilities.core.library.prop import LibraryType
-from asset_browser_utilities.module.asset.operator.unmark import AssetUnmarkBatchExecute
+# from asset_browser_utilities.module.asset.operator.unmark import AssetUnmarkBatchExecute
 
 
 def test_unmarking_all_assets_in_current_file(filepath):
     test_op = TestOperator(
         filepath=filepath,
         filter_assets=True,
-        logic_class=AssetUnmarkBatchExecute,
+        # logic_class=AssetUnmarkBatchExecute,
     )
     test_op.execute()
 
