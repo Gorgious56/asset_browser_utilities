@@ -13,7 +13,6 @@ class StrProperty(PropertyGroup):
 
 class IntPropertyCollection(PropertyGroup):
     value: IntProperty(min=0)
-    pass
 
 
 class AnyID(PropertyGroup):

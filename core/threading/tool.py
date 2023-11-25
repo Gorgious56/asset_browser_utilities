@@ -1,25 +1,40 @@
 import threading
 
+
 from asset_browser_utilities.core.log.logger import Logger
 
 
 class ThreadManager:
-    def __init__(self, execute_function, thread_count):
-        self.execute_function = execute_function
-        self.thread_count = thread_count
-        self.threads = [
-            threading.Thread(name="Thread %d" % i, target=self.execute_function_wrapper)
-            for i in range(self.thread_count)
+    threads: list[threading.Thread]
+    threads_progress: list[float]
+    
+    @staticmethod
+    def init(execute_function, thread_count, callback=None):
+        ThreadManager.execute_function = execute_function
+        ThreadManager.thread_count = thread_count
+        ThreadManager.threads_finished = 0
+        ThreadManager.threads = [
+            threading.Thread(name="Thread %d" % i, target=ThreadManager.execute_function_wrapper)
+            for i in range(ThreadManager.thread_count)
         ]
+        ThreadManager.callback = callback
+    
+    @staticmethod
+    def get_progress():
+        return ThreadManager.threads_finished / ThreadManager.thread_count
 
-    def run_and_wait_for_execution(self):
-        for thread in self.threads:
+    @staticmethod
+    def run(wait_for_execution=True):
+        for thread in ThreadManager.threads:
             thread.start()
-        for thread in self.threads:
-            thread.join()
-        Logger.display("All threads are closed !")
+        if wait_for_execution:
+            for thread in ThreadManager.threads:
+                thread.join()
+            Logger.display("All threads are closed !")
 
-    def execute_function_wrapper(self):
-        # Logger.display(f"{threading.current_thread().name} Starting")
-        self.execute_function()
+    @staticmethod
+    def execute_function_wrapper():
+        ThreadManager.execute_function()
+        ThreadManager.threads_finished += 1
+        ThreadManager.callback()
         Logger.display(f"{threading.current_thread().name} Exiting")

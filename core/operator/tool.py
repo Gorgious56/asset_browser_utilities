@@ -1,6 +1,5 @@
 import queue
 
-
 import bpy.app.timers
 from bpy.types import OperatorFileListElement
 from bpy.props import StringProperty, CollectionProperty, EnumProperty, BoolProperty
@@ -9,9 +8,7 @@ from bpy_extras.io_utils import ImportHelper
 from asset_browser_utilities.core.preferences.tool import get_preferences
 from asset_browser_utilities.core.tool import copy_simple_property_group
 from asset_browser_utilities.core.cache.tool import get_current_operator_properties, get_presets, get_from_cache
-from asset_browser_utilities.core.ui.message import message_box
-from asset_browser_utilities.core.file.path import open_file_if_different_from_current
-from asset_browser_utilities.core.file.save import save_file_as, save_file
+from asset_browser_utilities.core.file.save import save_file
 from asset_browser_utilities.core.filter.main import AssetFilterSettings
 from asset_browser_utilities.core.library.prop import LibraryExportSettings, LibraryType
 from asset_browser_utilities.core.operator.prop import CurrentOperatorProperty
@@ -20,13 +17,15 @@ from asset_browser_utilities.core.console.builder import CommandBuilder
 from asset_browser_utilities.core.console import command_line_execute_base, command_execute_on_blend_file
 from asset_browser_utilities.core.threading.tool import ThreadManager
 
-from asset_browser_utilities.module.preview.tool import can_preview_be_generated, is_preview_generated
 from asset_browser_utilities.module.asset.prop import SelectedAssetFiles
 
 
-class BaseOperatorProperties:
+class BaseOperatorProps:
+    def get_assets(self):
+        return get_from_cache(AssetFilterSettings).get_objects_that_satisfy_filters()
+
     def run_in_file(self):
-        assets = get_from_cache(AssetFilterSettings).get_objects_that_satisfy_filters()
+        assets = self.get_assets()
         if not assets:
             return
         for asset in assets:
@@ -35,6 +34,7 @@ class BaseOperatorProperties:
 
 class BatchExecute:
     pass
+
 
 def update_preset(self, context):
     preset_name = self.preset
@@ -142,23 +142,23 @@ class BatchFolderOperator(ImportHelper):
         if context.asset:
             selected_asset_files_prop.set_active(context.asset.local_id)
         for selected_asset in context.selected_assets:
-            selected_asset_files_prop.add(selected_asset)
+            selected_asset_files_prop.add(selected_asset.local_id)
+
+    def modal(self, context, event):
+        [a.tag_redraw() for a in context.screen.areas]
+        if ThreadManager.get_progress() >= 1:
+            return {"FINISHED"}
+        return {"PASS_THROUGH"}
 
     def execute(self, context):
         bpy.ops.wm.save_userpref()
         if get_from_cache(LibraryExportSettings).source == LibraryType.FileCurrent.value:
             get_current_operator_properties().run_in_file()
         else:
-            self.run_in_threads()
-        return {"FINISHED"}
-
-    # def execute(self, context):
-    #     bpy.ops.wm.save_userpref()
-    #     self.write_filepath_to_cache()
-    #     save_if_possible_and_necessary()
-    #     logic = self.logic_class(self.file_extension)
-    #     logic.execute_next_file()
-    #     return {"FINISHED"}
+            self.run_in_threads(context)
+        context.window_manager.event_timer_add(time_step=0.1, window=context.window)
+        context.window_manager.modal_handler_add(self)
+        return {"RUNNING_MODAL"}
 
     def write_filepath_to_cache(self):
         library_settings = get_from_cache(LibraryExportSettings)
@@ -190,7 +190,7 @@ class BatchFolderOperator(ImportHelper):
             filter_name=self.filter_name,
         )
 
-    def run_in_threads(self):
+    def run_in_threads(self, context):
         files = get_from_cache(LibraryExportSettings).get_files("blend")
         file_queue = queue.Queue(maxsize=len(files))
         for file in files:
@@ -204,4 +204,11 @@ class BatchFolderOperator(ImportHelper):
             caller.add_arg_value("source_operator_file", self.file_for_command)
             caller.call()
 
-        ThreadManager(run, file_queue.qsize()).run_and_wait_for_execution()
+        def thread_manager_callback():
+            context.window_manager.abu_progress_factor = ThreadManager.get_progress()
+            if context.window_manager.abu_progress_factor == 1:
+                context.window_manager.abu_progress_factor = -1
+
+        ThreadManager.init(run, file_queue.qsize(), callback=thread_manager_callback)
+        ThreadManager.run(wait_for_execution=False)
+        context.window_manager.abu_progress_factor = 0

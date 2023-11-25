@@ -60,7 +60,13 @@ class ABU_MT_menu(Menu):
 
 
 def menu_draw(self, context):
-    self.layout.menu("ABU_MT_menu")
+    factor = context.window_manager.abu_progress_factor
+    if 0 <= factor < 1:
+        row = self.layout.row()
+        row.scale_x = 5
+        row.progress(factor=factor, type="BAR", text=f"Batch Operations ({round(factor,2)*100}%)")
+    else:
+        self.layout.menu("ABU_MT_menu")
 
 
 def register():
