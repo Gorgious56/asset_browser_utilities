@@ -2,91 +2,16 @@ import bpy.app.timers
 from bpy.types import Operator, PropertyGroup
 from bpy.props import PointerProperty, BoolProperty, EnumProperty, CollectionProperty, IntProperty
 
-from asset_browser_utilities.core.cache.tool import get_current_operator_properties
 from asset_browser_utilities.core.log.logger import Logger
 from asset_browser_utilities.core.tool import copy_simple_property_group
-from asset_browser_utilities.core.operator.tool import BatchExecute, BatchFolderOperator
+from asset_browser_utilities.core.operator.tool import BatchFolderOperator, BaseOperatorProps
 
 from asset_browser_utilities.module.custom_operation.prop import OperationSetting
 from asset_browser_utilities.module.custom_operation.tool import set_shown_operation
 from asset_browser_utilities.module.custom_operation.static import OPERATION_MAPPING, NONE_OPERATION
 
 
-class OperationCustomBatchExecute(BatchExecute):
-    def __init__(self):
-        self.asset = None
-        self.operation = -1
-        super().__init__()
-    
-    def execute_one_file_and_the_next_when_finished(self):
-        operator_properties = get_current_operator_properties()
-        if not self.assets:
-            self.execute_next_file()
-            return
-        operator_properties = get_current_operator_properties()
-        
-        if operator_properties.operate_in_batches:
-            self.execute_in_batches(self.assets)
-            self.save_file()
-            self.execute_next_file()
-        else:
-            bpy.app.timers.register(self.execute_in_sequence)
-
-    def execute_in_sequence(self):
-        if self.asset is None:
-            if not self.assets:
-                self.save_file()
-                self.execute_next_file()
-                return
-            self.asset = self.assets.pop(0)
-        
-        operator_properties = get_current_operator_properties()
-        if self.operation < operator_properties.shown_ops - 1:
-            self.operation += 1
-            operation_pg = operator_properties.operations[self.operation]
-            if isinstance(operation_pg, NONE_OPERATION):
-                return 0.01
-            operation_cls = OPERATION_MAPPING.get(operation_pg.type)
-            if not operation_cls or operation_cls == NONE_OPERATION:
-                return 0.01
-            if hasattr(operation_cls, "ATTRIBUTE"):
-                value = getattr(operation_pg, operation_cls.ATTRIBUTE)
-                operation_cls.OPERATION([self.asset], value)
-            elif hasattr(operation_cls, "ATTRIBUTES"):
-                values = [getattr(operation_pg, attr) for attr in operation_cls.ATTRIBUTES]
-                operation_cls.OPERATION([self.asset], *values)
-            else:
-                operation_cls.OPERATION([self.asset])
-            Logger.display(f"Successfully Done '{operation_cls.LABEL}' to asset : {self.asset}")
-            return 0.01
-        else:
-            self.asset = None
-            self.operation = -1
-            return 0.01
-        
-    
-    def execute_in_batches(self, assets):
-        operator_properties = get_current_operator_properties()
-        for i in range(operator_properties.shown_ops):
-            operation_pg = operator_properties.operations[i]
-            if isinstance(operation_pg, NONE_OPERATION):
-                continue
-            operation_cls = OPERATION_MAPPING.get(operation_pg.type)
-            if not operation_cls or operation_cls == NONE_OPERATION:
-                continue
-            if hasattr(operation_cls, "ATTRIBUTE"):
-                value = getattr(operation_pg, operation_cls.ATTRIBUTE)
-                operation_cls.OPERATION(assets, value)
-            elif hasattr(operation_cls, "ATTRIBUTES"):
-                values = [getattr(operation_pg, attr) for attr in operation_cls.ATTRIBUTES]
-                operation_cls.OPERATION(assets, *values)
-            else:
-                operation_cls.OPERATION(assets)
-            Logger.display(f"Successfully Done '{operation_cls.LABEL}' to assets : {list(assets)}")
-        
-
-
-class OperationCustomOperatorProperties(PropertyGroup):
+class OperationCustomOperatorProperties(PropertyGroup, BaseOperatorProps):
     MAX_OPS = 15
 
     operate_in_batches: BoolProperty(
@@ -139,6 +64,8 @@ then each operation is applied to the second asset, etc.",
                         op_box.prop(operation_pg, attr)
 
     def init(self):
+        self.asset = None
+        self.operation = -1
         self.active = True
         for _ in range(self.MAX_OPS):
             self.operations.add()
@@ -150,6 +77,63 @@ then each operation is applied to the second asset, etc.",
             new_op = self.operations.add()
             copy_simple_property_group(op, new_op)
 
+    def run_in_file(self, attributes=None):
+        if self.operate_in_batches:
+            self.execute_in_batches(self.assets)
+            self.save_file()
+            self.execute_next_file()
+        else:
+            bpy.app.timers.register(self.execute_in_sequence)
+
+    def execute_in_sequence(self):
+        if self.asset is None:
+            if not self.assets:
+                self.save_file()
+                self.execute_next_file()
+                return
+            self.asset = self.assets.pop(0)
+
+        if self.operation < self.shown_ops - 1:
+            self.operation += 1
+            operation_pg = self.operations[self.operation]
+            if isinstance(operation_pg, NONE_OPERATION):
+                return 0.01
+            operation_cls = OPERATION_MAPPING.get(operation_pg.type)
+            if not operation_cls or operation_cls == NONE_OPERATION:
+                return 0.01
+            if hasattr(operation_cls, "ATTRIBUTE"):
+                value = getattr(operation_pg, operation_cls.ATTRIBUTE)
+                operation_cls.OPERATION([self.asset], value)
+            elif hasattr(operation_cls, "ATTRIBUTES"):
+                values = [getattr(operation_pg, attr) for attr in operation_cls.ATTRIBUTES]
+                operation_cls.OPERATION([self.asset], *values)
+            else:
+                operation_cls.OPERATION([self.asset])
+            Logger.display(f"Successfully Done '{operation_cls.LABEL}' to asset : {self.asset}")
+            return 0.01
+        else:
+            self.asset = None
+            self.operation = -1
+            return 0.01
+
+    def execute_in_batches(self, assets):
+        for i in range(self.shown_ops):
+            operation_pg = self.operations[i]
+            if isinstance(operation_pg, NONE_OPERATION):
+                continue
+            operation_cls = OPERATION_MAPPING.get(operation_pg.type)
+            if not operation_cls or operation_cls == NONE_OPERATION:
+                continue
+            if hasattr(operation_cls, "ATTRIBUTE"):
+                value = getattr(operation_pg, operation_cls.ATTRIBUTE)
+                operation_cls.OPERATION(assets, value)
+            elif hasattr(operation_cls, "ATTRIBUTES"):
+                values = [getattr(operation_pg, attr) for attr in operation_cls.ATTRIBUTES]
+                operation_cls.OPERATION(assets, *values)
+            else:
+                operation_cls.OPERATION(assets)
+            Logger.display(f"Successfully Done '{operation_cls.LABEL}' to assets : {list(assets)}")
+
 
 class ABU_OT_operation_custom(Operator, BatchFolderOperator):
     bl_idname = "abu.operation_custom"
@@ -157,7 +141,6 @@ class ABU_OT_operation_custom(Operator, BatchFolderOperator):
     bl_options = {"REGISTER", "UNDO"}
 
     operator_settings: PointerProperty(type=OperationCustomOperatorProperties)
-    logic_class = OperationCustomBatchExecute
 
     def invoke(self, context, event):
         return self._invoke(context, filter_assets=True)

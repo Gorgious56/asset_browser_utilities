@@ -2,10 +2,7 @@ from pathlib import Path
 import bpy
 from asset_browser_utilities.module.catalog.tool import CatalogsHelper
 from asset_browser_utilities.core.test.prop import TestOperator
-from asset_browser_utilities.module.catalog.operator.move_to import (
-    CatalogMoveOperatorProperties,
-    CatalogMoveBatchExecute,
-)
+from asset_browser_utilities.module.catalog.operator.move_to import CatalogMoveOperatorProperties
 
 from asset_browser_utilities.module.asset.tool import all_assets
 from asset_browser_utilities.module.catalog.test.tool import CATALOG_TO_UUID, assert_that_asset_is_in_catalog
@@ -18,7 +15,6 @@ def test_moving_all_assets_to_an_already_existing_catalog(filepath):
         test_op = TestOperator(
             filepath=filepath,
             filter_assets=True,
-            logic_class=CatalogMoveBatchExecute,
         )
 
         bpy.ops.wm.open_mainfile(filepath=str(filepath))

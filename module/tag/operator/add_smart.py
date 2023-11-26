@@ -1,22 +1,17 @@
-from asset_browser_utilities.core.cache.tool import get_current_operator_properties
 from bpy.types import Operator, PropertyGroup
-from bpy.props import PointerProperty, EnumProperty, StringProperty, IntProperty
+from bpy.props import PointerProperty, EnumProperty, StringProperty, IntProperty, BoolProperty
 
-from asset_browser_utilities.core.operator.tool import BatchExecute, BatchFolderOperator
+from asset_browser_utilities.core.operator.tool import BatchFolderOperator, BaseOperatorProps
+
 from asset_browser_utilities.module.tag.smart_tag import SmartTag, apply_smart_tag
 
 
-class TagAddSmartBatchExecute(BatchExecute):
-    def do_on_asset(self, asset):
-        apply_smart_tag(asset, get_current_operator_properties())
-        super().do_on_asset(asset)
-
-
-class TagAddSmartOperatorProperties(PropertyGroup):
+class TagAddSmartOperatorProperties(PropertyGroup, BaseOperatorProps):
     operation: EnumProperty(name="Operation", items=[(s_t.value,) * 3 for s_t in SmartTag])
     custom_property_name: StringProperty(name="Custom Property Name")
     increment: IntProperty(min=1, default=500, name="Increment")
     round_mode: EnumProperty(name="Round", items=(("Up",) * 3, ("Down",) * 3))
+    overwrite: BoolProperty(name="Overwrite")
 
     def draw(self, layout, context=None):
         box = layout.box()
@@ -27,6 +22,10 @@ class TagAddSmartOperatorProperties(PropertyGroup):
         if self.operation in (SmartTag.TriangleCount.value, SmartTag.VertexCount.value):
             box.prop(self, "increment")
             box.prop(self, "round_mode")
+        box.prop(self, "overwrite", toggle=True)
+
+    def run_on_asset(self, asset):
+        apply_smart_tag(asset, self)
 
 
 class ABU_OT_tag_add_smart(Operator, BatchFolderOperator):
@@ -34,7 +33,6 @@ class ABU_OT_tag_add_smart(Operator, BatchFolderOperator):
     bl_label = "Add Smart Tags"
 
     operator_settings: PointerProperty(type=TagAddSmartOperatorProperties)
-    logic_class = TagAddSmartBatchExecute
 
     def invoke(self, context, event):
         return self._invoke(context, filter_assets=True)

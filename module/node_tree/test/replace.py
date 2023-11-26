@@ -2,14 +2,11 @@ import bpy
 
 from asset_browser_utilities.core.test.prop import TestOperator
 
-from asset_browser_utilities.module.node_tree.operator.replace import NodeTreeReplaceBatchExecute
-
 
 def test_replacing_gn_tree_A_with_gn_tree_B_in_object_modifier(filepath):
     test_op = TestOperator(
         filepath=filepath,
         filter_assets=False,
-        logic_class=NodeTreeReplaceBatchExecute,
     )
 
     test_op.op_props.tree_type = "GEOMETRY"
@@ -34,7 +31,6 @@ def test_replacing_gn_tree_A_with_gn_tree_B_in_gn_tree_C(filepath):
     test_op = TestOperator(
         filepath=filepath,
         filter_assets=False,
-        logic_class=NodeTreeReplaceBatchExecute,
     )
 
     test_op.op_props.tree_type = "GEOMETRY"
@@ -54,7 +50,6 @@ def test_replacing_ng_a_with_ng_b_in_compositing(filepath):
     test_op = TestOperator(
         filepath=filepath,
         filter_assets=False,
-        logic_class=NodeTreeReplaceBatchExecute,
     )
 
     test_op.op_props.tree_type = "COMPOSITING"
@@ -74,7 +69,6 @@ def test_replacing_ng_a_with_ng_b_in_shader(filepath):
     test_op = TestOperator(
         filepath=filepath,
         filter_assets=False,
-        logic_class=NodeTreeReplaceBatchExecute,
     )
 
     test_op.op_props.tree_type = "SHADER"

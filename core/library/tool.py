@@ -90,31 +90,47 @@ def sanitize_library_name(name):
     return name
 
 
-def link_asset(filepath, directory, filename, relative=False, create_liboverrides=False):
+def link_asset(filepath, directory, filename, relative=False, create_liboverrides=False, overwrite=True):
     return append_asset(
-        filepath, directory, filename, link=True, relative=relative, create_liboverrides=create_liboverrides
+        filepath,
+        directory,
+        filename,
+        link=True,
+        relative=relative,
+        create_liboverrides=create_liboverrides,
+        overwrite=overwrite,
     )
 
 
 def append_asset(
-    filepath, directory, filename, link=False, relative=False, create_liboverrides=False, overwrite=False
+    filepath,
+    directory,
+    asset_name,
+    link=False,
+    relative=False,
+    create_liboverrides=False,
+    overwrite=True,
 ):
     if is_this_current_file(filepath):
         return
-    # directory = sanitize_library_name(directory)
     blend_data_name = get_blend_data_name_from_directory(directory)
     # https://blender.stackexchange.com/a/33998/86891
     library = getattr(bpy.data, blend_data_name)
     with bpy.data.libraries.load(
         str(filepath), link=link, relative=relative, create_liboverrides=create_liboverrides
     ) as (data_from, data_to):
-        other_asset = library.get(filename)
-        if other_asset is not None:  # If we don't change existing asset with same name, we can't append a new one.
-            other_asset.name = "__ABU_TEMP_FOR_APPENDING_"
-        library_to = getattr(data_to, blend_data_name)
-        library_to.append(filename)
+        if not link:
+            already_existing_asset = library.get(asset_name)
+            if already_existing_asset is not None:  # If we don't change existing asset with same name, we can't append a new one.
+                already_existing_asset.name = "__ABU_TEMP_FOR_APPENDING_"
+            if overwrite:
+                library_to = getattr(data_to, blend_data_name)
+                library_to.append(asset_name)
+        else:
+            library_to = getattr(data_to, blend_data_name)
+            library_to.append(asset_name)
 
-    asset = library.get(filename)
+    asset = library[asset_name, str(filepath)] if link else library.get(asset_name)
     if asset:
         if blend_data_name == "objects" and asset.name not in bpy.context.scene.collection.objects:
             bpy.context.scene.collection.objects.link(asset)
@@ -122,9 +138,12 @@ def append_asset(
             bpy.context.scene.collection.children.link(asset)
         else:
             asset.use_fake_user = True
-    if other_asset is not None:
-        other_asset.name = filename
-        bpy.data.batch_remove([other_asset])
+    if not link and already_existing_asset is not None and overwrite:
+        # already_existing_asset.name = asset_name
+        if hasattr(library, "remove"):
+            library.remove(already_existing_asset)
+        else:
+            print(repr(already_existing_asset))
     return asset
 
 

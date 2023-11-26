@@ -4,11 +4,11 @@ from bpy.props import PointerProperty
 from bpy.types import Operator, PropertyGroup
 
 from asset_browser_utilities.core.log.logger import Logger
-from asset_browser_utilities.core.operator.tool import BatchFolderOperator, BaseOperatorProperties
+from asset_browser_utilities.core.operator.tool import BatchFolderOperator, BaseOperatorProps
 
 
-class AssetUnmarkOperatorProperties(PropertyGroup, BaseOperatorProperties):
-    def do_on_asset(self, asset):
+class AssetUnmarkOperatorProperties(PropertyGroup, BaseOperatorProps):
+    def run_on_asset(self, asset):
         if asset.asset_data:
             asset.asset_clear()
             Logger.display(f"{bpy.data.filepath}\\{repr(asset)} unmarked")

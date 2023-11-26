@@ -1,6 +1,6 @@
 from enum import Enum
 from pathlib import Path
-from asset_browser_utilities.core.prop import StrProperty
+from asset_browser_utilities.core.prop import StringPropertyCollection
 
 from asset_browser_utilities.core.tool import copy_simple_property_group
 
@@ -56,7 +56,7 @@ class LibraryExportSettings(PropertyGroup):
         default=True,
     )
     remove_backup_allow: BoolProperty()
-    files_prop: CollectionProperty(type=StrProperty)
+    files_prop: CollectionProperty(type=StringPropertyCollection)
     folder: StringProperty()
     filepath_start: StringProperty()
     filter_files_names: PointerProperty(type=FilterName)

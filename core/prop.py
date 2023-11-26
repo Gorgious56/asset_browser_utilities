@@ -7,7 +7,7 @@ from bpy.props import IntProperty, PointerProperty
 ALPHABET = string.ascii_lowercase + string.digits
 
 
-class StrProperty(PropertyGroup):
+class StringPropertyCollection(PropertyGroup):
     pass
 
 

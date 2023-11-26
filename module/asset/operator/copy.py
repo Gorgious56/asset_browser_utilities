@@ -5,14 +5,14 @@ from bpy.props import PointerProperty, BoolProperty
 from asset_browser_utilities.core.cache.tool import get_from_cache
 from asset_browser_utilities.core.library.prop import LibraryType
 from asset_browser_utilities.core.log.logger import Logger
-from asset_browser_utilities.core.operator.tool import BatchFolderOperator, BaseOperatorProperties
+from asset_browser_utilities.core.operator.tool import BatchFolderOperator, BaseOperatorProps
 
 from asset_browser_utilities.module.custom_property.tool import copy_prop
 from asset_browser_utilities.module.asset.prop import SelectedAssetFiles
 from asset_browser_utilities.module.tag.prop import ASSET_TAG_UUID_PREFIX
 
 
-class AssetDataCopyOperatorProperties(PropertyGroup, BaseOperatorProperties):
+class AssetDataCopyOperatorProperties(PropertyGroup, BaseOperatorProps):
     tags: BoolProperty(name="Tags")
     custom_properties: BoolProperty(name="Custom Properties")
     preview: BoolProperty(name="Preview")
@@ -34,7 +34,7 @@ class AssetDataCopyOperatorProperties(PropertyGroup, BaseOperatorProperties):
         box.prop(self, "license", icon="FAKE_USER_OFF")
         box.prop(self, "copyright", icon="COPY_ID")
 
-    def do_on_asset(self, asset):
+    def run_on_asset(self, asset):
         active_asset = get_from_cache(SelectedAssetFiles).active_asset
         if asset == active_asset:
             return

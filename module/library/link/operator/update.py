@@ -6,7 +6,7 @@ from asset_browser_utilities.core.cache.tool import get_current_operator_propert
 from asset_browser_utilities.core.filter.container import get_all_assets_in_file
 from asset_browser_utilities.core.file.path import open_file_if_different_from_current
 from asset_browser_utilities.core.library.prop import LibraryType
-from asset_browser_utilities.core.operator.tool import BatchExecute, BatchFolderOperator
+from asset_browser_utilities.core.operator.tool import BatchFolderOperator, BaseOperatorProps
 from asset_browser_utilities.core.log.logger import Logger
 
 from asset_browser_utilities.module.library.link.prop import AssetLibraryDummy
@@ -14,35 +14,24 @@ from asset_browser_utilities.module.library.link.tool import replace_with_asset_
 from asset_browser_utilities.module.library.tool import ensure_asset_uuid
 
 
-class AssetUpdateBatchExecute(BatchExecute):
-    def __init__(self, file_extension="blend"):
-        library_dummy = get_current_operator_properties().library
-        library_dummy.populate()
-        self.root_assets_dummies = [library_dummy.assets[i.value] for i in library_dummy.unique_assets_indices]
-        super().__init__()
+class AssetUpdateOperatorProperties(PropertyGroup, BaseOperatorProps):
+    library: PointerProperty(type=AssetLibraryDummy)
+    link_back: BoolProperty(name="Link Back")
 
-    def open_next_file(self):
-        self.file = self.files.pop(0)
-        library_dummy = get_current_operator_properties().library
-        asset_dummies_in_file = library_dummy.by_filepath(str(self.file))
-        for asset_dummy_in_file in asset_dummies_in_file:
-            if asset_dummy_in_file in self.root_assets_dummies:
-                other_asset_dummy = next(
-                    (d for d in library_dummy.by_uuid(asset_dummy_in_file.uuid) if d != asset_dummy_in_file), None
-                )
-                if other_asset_dummy:
-                    open_file_if_different_from_current(str(self.file))
-                    return True
-        Logger.display(f"{str(self.file)} should NOT be updated")
-        return False
+    def draw(self, layout, context=None):
+        layout.prop(self, "link_back", icon="LINKED")
+        return
 
-    def execute_one_file_and_the_next_when_finished(self):
-        library_dummy = get_current_operator_properties().library
+    def init(self):
+        self.library.populate()
+        self.root_assets_dummies = [self.library.assets[i.value] for i in self.library.unique_assets_indices]
+
+    def run_in_file(self, attributes=None):
         should_save = False
         all_assets_in_file = list(get_all_assets_in_file())
         for asset_in_file in all_assets_in_file:
             asset_in_file_dummy = next(
-                library_dummy.intersect(
+                self.library.intersect(
                     filepath=bpy.data.filepath,
                     uuid=ensure_asset_uuid(asset_in_file),
                 ),
@@ -50,7 +39,7 @@ class AssetUpdateBatchExecute(BatchExecute):
             )
             if asset_in_file_dummy in self.root_assets_dummies:
                 other_asset_dummy = next(
-                    (d for d in library_dummy.by_uuid(asset_in_file_dummy.uuid) if d != asset_in_file_dummy), None
+                    (d for d in self.library.by_uuid(asset_in_file_dummy.uuid) if d != asset_in_file_dummy), None
                 )
                 if other_asset_dummy:
                     Logger.display(
@@ -69,18 +58,7 @@ class AssetUpdateBatchExecute(BatchExecute):
                         open_file_if_different_from_current(asset_in_file_dummy.filepath)
                     else:
                         should_save = True
-        if should_save:
-            self.save_file()
-        self.execute_next_file()
-
-
-class AssetUpdateOperatorProperties(PropertyGroup):
-    library: PointerProperty(type=AssetLibraryDummy)
-    link_back: BoolProperty(name="Link Back")
-
-    def draw(self, layout, context=None):
-        layout.prop(self, "link_back", icon="LINKED")
-        return
+        return should_save
 
 
 class ABU_OT_asset_update(Operator, BatchFolderOperator):
@@ -90,7 +68,20 @@ class ABU_OT_asset_update(Operator, BatchFolderOperator):
     bl_description = "Batch Update Assets to an asset library"
 
     operator_settings: PointerProperty(type=AssetUpdateOperatorProperties)
-    logic_class = AssetUpdateBatchExecute
 
     def invoke(self, context, event):
         return self._invoke(context, filter_assets=True)
+
+    def filter_files(self, files):
+        files_to_operate_on = []
+        for file in files:
+            library_dummy = get_current_operator_properties().library
+            asset_dummies_in_file = library_dummy.by_filepath(str(file))
+            for asset_dummy_in_file in asset_dummies_in_file:
+                if asset_dummy_in_file in get_current_operator_properties().root_assets_dummies:
+                    other_asset_dummy = next(
+                        (d for d in library_dummy.by_uuid(asset_dummy_in_file.uuid) if d != asset_dummy_in_file), None
+                    )
+                    if other_asset_dummy:
+                        files_to_operate_on.append(file)
+        return files_to_operate_on

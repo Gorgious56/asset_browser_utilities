@@ -1,6 +1,9 @@
-from asset_browser_utilities.core.library.prop import LibraryType
 import bpy
 from bpy.types import Menu
+
+from asset_browser_utilities.core.library.prop import LibraryType
+from asset_browser_utilities.core.cache.tool import get_current_operator_properties
+
 from .tool import set_layout_library_file_external, set_layout_library_folder, set_layout_library_user
 
 
@@ -60,11 +63,16 @@ class ABU_MT_menu(Menu):
 
 
 def menu_draw(self, context):
-    factor = context.window_manager.abu_progress_factor
+    progress_props = context.window_manager.abu_progress
+    factor = progress_props.factor
     if 0 <= factor < 1:
         row = self.layout.row()
         row.scale_x = 5
-        row.progress(factor=factor, type="BAR", text=f"Batch Operations ({round(factor,2)*100}%)")
+        row.progress(
+            factor=factor,
+            type="BAR",
+            text=f"{get_current_operator_properties().__class__.__name__.replace('OperatorProperties', '')} ({progress_props.tasks_current}/{progress_props.tasks_total})",
+        )
     else:
         self.layout.menu("ABU_MT_menu")
 

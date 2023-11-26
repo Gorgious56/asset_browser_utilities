@@ -14,7 +14,7 @@ if bpy.app.version >= (3, 1, 0):
     asset_types.append(("node_groups", "Node Trees", "Node Trees", "NODETREE", 2 ** next(flags_enum)))
 if bpy.app.version >= (3, 2, 0):
     asset_types.append(("collections", "Collections", "Collections", "OUTLINER_COLLECTION", 2 ** next(flags_enum)))
-if bpy.app.version >= (3, 3, 0):
+if bpy.app.version >= (4, 1, 0):
     asset_types.extend(
         (
             ("hair_curves", "Hairs", "Hairs", "CURVES_DATA", 2 ** next(flags_enum)),
@@ -32,7 +32,7 @@ if bpy.app.version >= (3, 3, 0):
             ("sounds", "Sounds", "Sounds", "SOUND", 2 ** next(flags_enum)),
             ("texts", "Texts", "Texts", "TEXT", 2 ** next(flags_enum)),
             ("textures", "Textures", "Textures", "TEXTURE_DATA", 2 ** next(flags_enum)),
-            ("workspaces", "Workspaces", "Workspaces", "WORKSPACE", 2 ** next(flags_enum)),
+            # ("workspaces", "Workspaces", "Workspaces", "WORKSPACE", 2 ** next(flags_enum)),
         )
     )
 asset_types.sort(key=lambda t: t[0])

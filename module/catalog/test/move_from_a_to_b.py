@@ -1,7 +1,6 @@
 import bpy
 from asset_browser_utilities.core.test.prop import TestOperator
 
-from asset_browser_utilities.module.catalog.operator.move_from_a_to_b import CatalogMoveFromAToBBatchExecute
 
 from asset_browser_utilities.module.catalog.test.tool import (
     all_assets_in_specific_catalog_container_and_name,
@@ -15,7 +14,6 @@ def test_moving_all_assets_from_catalog_a_to_catalog_b(filepath):
     test_op = TestOperator(
         filepath=filepath,
         filter_assets=True,
-        logic_class=CatalogMoveFromAToBBatchExecute,
     )
 
     all_assets_in_from_catalog = all_assets_in_specific_catalog_container_and_name(CATALOG_FROM_UUID)

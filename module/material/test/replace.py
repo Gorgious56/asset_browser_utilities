@@ -2,14 +2,11 @@ import bpy
 
 from asset_browser_utilities.core.test.prop import TestOperator
 
-from asset_browser_utilities.module.material.operator.replace import MaterialReplaceBatchExecute
-
 
 def test_replacing_material_a_with_material_b_on_assets(filepath):
     test_op = TestOperator(
         filepath=filepath,
         filter_assets=True,
-        logic_class=MaterialReplaceBatchExecute,
     )
 
     test_op.op_props.material_to_override = "MATERIAL_REPLACE_FROM"
@@ -37,7 +34,6 @@ def test_replacing_material_a_with_material_b_on_all_objects(filepath):
     test_op = TestOperator(
         filepath=filepath,
         filter_assets=False,
-        logic_class=MaterialReplaceBatchExecute,
     )
 
     test_op.op_props.material_to_override = "MATERIAL_REPLACE_FROM"

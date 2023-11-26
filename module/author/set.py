@@ -1,18 +1,18 @@
 from bpy.types import Operator, PropertyGroup
 from bpy.props import PointerProperty, StringProperty
 
-from asset_browser_utilities.core.operator.tool import BatchFolderOperator, BaseOperatorProperties
+from asset_browser_utilities.core.operator.tool import BatchFolderOperator, BaseOperatorProps
 from asset_browser_utilities.core.log.logger import Logger
 from asset_browser_utilities.core.file.path import get_current_file_path
 
 
-class AuthorSetOperatorProperties(PropertyGroup, BaseOperatorProperties):
+class AuthorSetOperatorProperties(PropertyGroup, BaseOperatorProps):
     author: StringProperty(name="Author")
 
     def draw(self, layout, context=None):
         layout.prop(self, "author", icon="USER")
 
-    def do_on_asset(self, asset):
+    def run_on_asset(self, asset):
         asset.asset_data.author = self.author
         Logger.display(f"{get_current_file_path()} : Set {repr(asset)}'s author to '{self.author}'")
 

@@ -8,10 +8,10 @@ from bpy_extras.io_utils import ExportHelper
 from bpy.types import Operator
 from bpy.props import StringProperty, CollectionProperty, PointerProperty
 
-from asset_browser_utilities.core.operator.tool import BatchExecute, BatchFolderOperator
+from asset_browser_utilities.core.operator.tool import BatchFolderOperator
 
 
-class BatchImport(BatchExecute):
+class BatchImport:
     def __init__(self, *args, **kwargs):
         self.filepaths = []
         self.directories = []
@@ -46,7 +46,7 @@ class OperatorProperties(PropertyGroup):
     target_filepath: StringProperty()
 
 
-class ABU_OT_batch_import(Operator, ExportHelper, BatchFolderOperator):
+class ABU_OT_batch_import(Operator, ExportHelper):
     ui_library = LibraryType.FileExternal.value
     bl_idname = "abu.batch_import"
     bl_label = "Import Assets"

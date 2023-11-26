@@ -1,7 +1,4 @@
 from asset_browser_utilities.core.test.prop import TestOperator
-
-from asset_browser_utilities.module.description.set import DescriptionSetBatchExecute
-
 from asset_browser_utilities.module.asset.tool import all_assets
 
 
@@ -15,7 +12,6 @@ def test_setting_author_on_all_assets(filepath):
     test_op = TestOperator(
         filepath=filepath,
         filter_assets=True,
-        logic_class=DescriptionSetBatchExecute,
     )
     for description in ("test_descr", ""):
         test_op.op_props.description = description

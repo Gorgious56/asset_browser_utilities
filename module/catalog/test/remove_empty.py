@@ -1,7 +1,6 @@
 import bpy
 from asset_browser_utilities.core.test.prop import TestOperator
 
-from asset_browser_utilities.module.catalog.operator.remove_empty import CatalogRemoveEmptyBatchExecute
 
 from asset_browser_utilities.module.catalog.tool import all_catalogs
 from asset_browser_utilities.module.asset.tool import all_assets
@@ -11,7 +10,6 @@ def test_removing_all_empty_catalogs(filepath):
     test_op = TestOperator(
         filepath=filepath,
         filter_assets=False,
-        logic_class=CatalogRemoveEmptyBatchExecute,
     )
 
     catalogs_uuids = set(cat[0] for cat in all_catalogs())

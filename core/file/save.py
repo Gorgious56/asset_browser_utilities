@@ -5,7 +5,7 @@ from asset_browser_utilities.core.log.logger import Logger
 from asset_browser_utilities.core.preferences.tool import get_preferences
 
 
-def save_if_possible_and_necessary():
+def save_if_file_exists_and_is_dirty():
     if bpy.data.is_saved and bpy.data.is_dirty:
         save_file()
 
@@ -19,7 +19,7 @@ def sanitize_filepath(filepath, replace_with="_"):
     stem = filepath_pathlib.stem
     new_stem = ""
     for char in stem:
-        new_stem += char if is_ascii_alnum(char) else "_"
+        new_stem += char if is_ascii_alnum(char) else replace_with
     filepath_pathlib = filepath_pathlib.with_stem(new_stem.strip())
     return str(filepath_pathlib)
 

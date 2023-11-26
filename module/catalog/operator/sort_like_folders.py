@@ -1,26 +1,31 @@
 from pathlib import Path
 from asset_browser_utilities.module.catalog.tool import CatalogsHelper
-from asset_browser_utilities.core.cache.tool import get_current_operator_properties, get_from_cache
+from asset_browser_utilities.core.cache.tool import get_from_cache
 from asset_browser_utilities.core.log.logger import Logger
 from asset_browser_utilities.core.library.prop import LibraryExportSettings, LibraryType
 from bpy.types import Operator, PropertyGroup
 from bpy.props import PointerProperty, PointerProperty, BoolProperty
 
-from asset_browser_utilities.core.operator.tool import BatchExecute, BatchFolderOperator
+from asset_browser_utilities.core.operator.tool import BatchFolderOperator, BaseOperatorProps
 
 
-class CatalogSortLikeFoldersBatchExecute(BatchExecute):
-    def __init__(self):
-        super().__init__()
-        current_op = get_current_operator_properties()
+class CatalogSortLikeFoldersOperatorProperties(PropertyGroup, BaseOperatorProps):
+    are_assets_in_subfolders: BoolProperty(
+        description="Check this if each asset is located in its own individual subfolder",
+        default=False,
+    )
 
+    def draw(self, layout, context=None):
+        layout.prop(self, "are_assets_in_subfolders", text="Assets are contained in individual folders")
+
+    def init(self):
         self.library_user_path = get_from_cache(LibraryExportSettings).library_user_path
         self.catalog_map = {}
         cat_helper = CatalogsHelper()
         for filepath in self.files:
             try:
                 catalog_tree = Path(str(filepath).replace(self.library_user_path, "")).parents[
-                    1 if current_op.are_assets_in_subfolders else 0
+                    1 if self.are_assets_in_subfolders else 0
                 ]
             except IndexError:
                 continue
@@ -30,7 +35,7 @@ class CatalogSortLikeFoldersBatchExecute(BatchExecute):
                 uuid = cat_helper.ensure_or_create_catalog_definition(catalog_tree)
                 self.catalog_map[filepath] = uuid
 
-    def execute_one_file_and_the_next_when_finished(self):
+    def run_in_file(self, attributes=None):
         try:
             uuid = self.catalog_map[self.file]
         except KeyError:
@@ -48,23 +53,12 @@ class CatalogSortLikeFoldersBatchExecute(BatchExecute):
         self.execute_next_file()
 
 
-class CatalogSortLikeFoldersOperatorProperties(PropertyGroup):
-    are_assets_in_subfolders: BoolProperty(
-        description="Check this if each asset is located in its own individual subfolder",
-        default=False,
-    )
-
-    def draw(self, layout, context=None):
-        layout.prop(self, "are_assets_in_subfolders", text="Assets are contained in individual folders")
-
-
 class ABU_OT_catalog_sort_like_folders(Operator, BatchFolderOperator):
     ui_library = (LibraryType.UserLibrary.value, LibraryType.FolderExternal.value)
     bl_idname = "abu.catalog_sort_like_folders"
     bl_label = "Create Folder Structure"
 
     operator_settings: PointerProperty(type=CatalogSortLikeFoldersOperatorProperties)
-    logic_class = CatalogSortLikeFoldersBatchExecute
 
     def invoke(self, context, event):
         return self._invoke(context, filter_assets=True)

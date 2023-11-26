@@ -1,19 +1,14 @@
 from pathlib import Path
-import queue
 
 import bpy
 from bpy.types import Operator, PropertyGroup
-from bpy.props import PointerProperty, PointerProperty, BoolProperty
+from bpy.props import PointerProperty, PointerProperty, BoolProperty, CollectionProperty, StringProperty
 
-from asset_browser_utilities.core.cache.tool import get_current_operator_properties, get_from_cache, get_cache
-from asset_browser_utilities.core.console import command_execute_on_blend_file, command_line_execute_base
-from asset_browser_utilities.core.console.builder import CommandBuilder
+from asset_browser_utilities.core.cache.tool import get_current_operator_properties, get_from_cache
 from asset_browser_utilities.core.file.save import (
-    create_new_file_and_set_as_current,
-    save_if_possible_and_necessary,
     sanitize_filepath,
     save_file_as,
-    save_file,
+    save_if_file_exists_and_is_dirty,
 )
 from asset_browser_utilities.core.file.path import (
     get_folder_from_path,
@@ -27,38 +22,18 @@ from asset_browser_utilities.core.library.tool import (
     append_asset,
 )
 from asset_browser_utilities.core.library.prop import LibraryExportSettings, LibraryType
-from asset_browser_utilities.core.operator.tool import BatchExecute, BatchFolderOperator
-from asset_browser_utilities.core.threading.tool import ThreadManager
+from asset_browser_utilities.core.operator.tool import BatchFolderOperator
 
-from asset_browser_utilities.module.library.link.tool import replace_asset_with_linked_one
 from asset_browser_utilities.module.library.tool import ensure_asset_uuid
 from asset_browser_utilities.module.catalog.tool import CatalogsHelper
-
 from asset_browser_utilities.module.asset.export.tool import get_exported_asset_filepath
+from asset_browser_utilities.module.library.link.prop import AssetDummy
+from asset_browser_utilities.module.library.link.tool import replace_asset_with_linked_one
 
 
-class CommandLineExecute(command_line_execute_base.CommandLineExecuteBase):
-    asset_name: str
-    asset_directory: str
-    asset_filepath: str
-    source_file: str
-
-    def run(self):
-        op_props = get_current_operator_properties()
-        append_asset(
-            self.attributes["source_file"],
-            self.attributes["asset_directory"],
-            self.attributes["asset_name"],
-            overwrite=op_props.overwrite,
-        )
-        save_file_as(
-            filepath=self.attributes["asset_filepath"],
-            remove_backup=get_from_cache(LibraryExportSettings).remove_backup,
-        )
-        Logger.display(
-            f"Exported Asset '{self.attributes['asset_directory']}/{self.attributes['asset_name']}' to '{self.attributes['asset_filepath']}'"
-        )
-        quit()
+class AssetExportPropertyGroup(PropertyGroup):
+    filepath: StringProperty()
+    assets: CollectionProperty(type=AssetDummy)
 
 
 class AssetExportOperatorProperties(PropertyGroup):
@@ -83,6 +58,10 @@ class AssetExportOperatorProperties(PropertyGroup):
         description="Remove the assets from current file and link back using the exported file as a library",
         default=False,
     )
+    file_exports: CollectionProperty(type=AssetExportPropertyGroup)
+    source_filepath: StringProperty()
+    export_root_folder: StringProperty()
+    export_filepath: StringProperty()
 
     def draw(self, layout, context=None):
         layout.prop(self, "individual_files", icon="NEWFOLDER")
@@ -92,127 +71,112 @@ class AssetExportOperatorProperties(PropertyGroup):
         layout.prop(self, "overwrite", icon="ASSET_MANAGER")
         layout.prop(self, "link_back", icon="LINKED")
 
+    def ensure_asset_uuids_are_unique(self):
+        uuids = []
+        for asset in get_from_cache(AssetFilterSettings).get_objects_that_satisfy_filters():
+            asset_uuid = ensure_asset_uuid(asset)
+            if asset_uuid in uuids:
+                assert (
+                    False
+                ), "At least two assets share the same UUID. Please regenerate uuids using Add Smart Tag > UUID."
+            uuids.append(asset_uuid)
+
+    def init_before_exec(self):
+        self.source_filepath = bpy.data.filepath
+        assets = get_from_cache(AssetFilterSettings).get_objects_that_satisfy_filters()
+        self.file_exports.clear()
+        catalogs_map = {c[0]: c[1] for c in CatalogsHelper.get_catalogs()}
+        self.ensure_asset_uuids_are_unique()
+        if self.individual_files:
+            file_export_filepaths = {}
+            for asset in assets:
+                asset_filepath = str(
+                    get_exported_asset_filepath(
+                        self.export_root_folder,
+                        catalogs_map.get(asset.asset_data.catalog_id, ""),
+                        asset.name,
+                        self.catalog_folders,
+                    )
+                )
+                asset_filepath = sanitize_filepath(asset_filepath)
+                if asset_filepath in file_export_filepaths.keys():
+                    file_export = file_export_filepaths[asset_filepath]
+                else:
+                    file_export = self.file_exports.add()
+                    file_export.filepath = asset_filepath
+                    file_export_filepaths[asset_filepath] = file_export
+                new_asset = file_export.assets.add()
+                new_asset.name = asset.name
+                new_asset.directory = get_directory_name(asset)
+                new_asset.uuid = ensure_asset_uuid(asset)
+        else:
+            file_export = self.file_exports.add()
+            file_export.filepath = self.export_filepath
+            for asset in assets:
+                new_asset = file_export.assets.add()
+                new_asset.name = asset.name
+                new_asset.directory = get_directory_name(asset)
+                new_asset.uuid = ensure_asset_uuid(asset)
+
+    def run_in_file(self, attributes=None):
+        file_export = self.file_exports[int(attributes["thread_index"])]
+        if Path(file_export.filepath).exists():
+            open_file_if_different_from_current(file_export.filepath)
+        for asset_dummy in file_export.assets:
+            asset = append_asset(
+                self.source_filepath,
+                asset_dummy.directory,
+                asset_dummy.name,
+                overwrite=self.overwrite,
+            )
+            Logger.display(f"Exported Asset '{repr(asset)}' to '{file_export.filepath}'")
+        save_file_as(
+            filepath=file_export.filepath,
+            remove_backup=get_from_cache(LibraryExportSettings).remove_backup,
+        )
+        return False
+
 
 class ABU_OT_asset_export(Operator, BatchFolderOperator):
     ui_library = LibraryType.FileCurrent.value
     bl_idname = "abu.asset_export"
     bl_label = "Export Assets"
     bl_description: str = "Export Assets To External File(s)"
+    filepath:StringProperty()
 
     operator_settings: PointerProperty(type=AssetExportOperatorProperties)
-    logic_class = BatchExecute
 
     def invoke(self, context, event):
         return self._invoke(context, filter_assets=True, enforce_filebrowser=True)
 
+    def init_after_invoke_but_before_execute(self):
+        op_props = get_current_operator_properties()
+        op_props.export_filepath = self.filepath
+        op_props.export_root_folder = str(get_folder_from_path(self.filepath))
+        op_props.init_before_exec()
+
     def execute(self, context):
-        self.write_filepath_to_cache()
-        self.init()
-        save_file()
-        if len(self.asset_names) > 0:
-            self.run()
-        else:
-            Logger.display("No asset to export")
-        return {"FINISHED"}
+        self.init_after_invoke_but_before_execute()
+        bpy.ops.wm.save_userpref()
+        self.run_in_threads(context)
+        context.window_manager.event_timer_add(time_step=0.1, window=context.window)
+        context.window_manager.modal_handler_add(self)
+        return {"RUNNING_MODAL"}
 
-    def init(self):
-        assets = get_from_cache(AssetFilterSettings).get_objects_that_satisfy_filters()
-        self.asset_names = [a.name for a in assets]
-        self.asset_directories = [get_directory_name(a) for a in assets]
-        self.asset_uuids = [ensure_asset_uuid(a) for a in assets]
-        if len(self.asset_uuids) != len(set(self.asset_uuids)):
-            assert (
-                False
-            ), "At least two assets share the same UUID. Please regenerate uuids using Add Smart Tag > UUID."
-        catalogs_map = {c[0]: c[1] for c in CatalogsHelper.get_catalogs()}
-        self.asset_folders = [catalogs_map.get(a.asset_data.catalog_id, "") for a in assets]
+    def filter_files(self, files):
+        return [None] * len(get_current_operator_properties().file_exports)
 
-    def run(self):
-        root_folder = str(get_folder_from_path(self.filepath))
-        source_filepath = bpy.data.filepath
-        if get_current_operator_properties().individual_files:
-            self.run_batch(root_folder, source_filepath)
-        else:
-            self.run_once(source_filepath)
-
-    def run_batch(self, root_folder, source_filepath):
-        current_operator_properties = get_current_operator_properties()
-        asset_names_queue = queue.Queue(maxsize=len(self.asset_names))
-        for asset_directory in self.asset_names:
-            asset_names_queue.put(asset_directory)
-
-        asset_directories_queue = queue.Queue(maxsize=len(self.asset_directories))
-        for asset_directory in self.asset_directories:
-            asset_directories_queue.put(asset_directory)
-
-        asset_folders_queue = queue.Queue(maxsize=len(self.asset_folders))
-        for asset_folder in self.asset_folders:
-            asset_folders_queue.put(asset_folder)
-
-        def run():
-            asset_name = asset_names_queue.get()
-            asset_directory = asset_directories_queue.get()
-            asset_folder = asset_folders_queue.get()
-            asset_filepath = str(
-                get_exported_asset_filepath(
-                    root_folder, asset_folder, asset_name, current_operator_properties.catalog_folders
-                )
-            )
-            asset_filepath = sanitize_filepath(asset_filepath)
-
-            caller = CommandBuilder(
-                script_filepath=command_execute_on_blend_file.__file__,
-                blend_filepath=asset_filepath if Path(asset_filepath).exists() else None,
-            )
-            caller.add_arg_value("asset_name", asset_name)
-            caller.add_arg_value("asset_directory", asset_directory)
-            caller.add_arg_value("asset_filepath", asset_filepath)
-            caller.add_arg_value("source_file", source_filepath)
-            caller.add_arg_value("source_operator_file", __file__)
-            caller.call()
-
-        ThreadManager(run, len(self.asset_names)).run_and_wait_for_execution()
-
-        if current_operator_properties.link_back:
-            for asset_name, asset_directory, asset_folder in zip(
-                self.asset_names, self.asset_directories, self.asset_folders
-            ):
-                link_filepath = get_exported_asset_filepath(
-                    str(get_folder_from_path(self.filepath)),
-                    asset_folder,
-                    asset_name,
-                    current_operator_properties.catalog_folders,
-                )
-                link_filepath = sanitize_filepath(link_filepath)
-                blend_data_name = get_blend_data_name_from_directory(asset_directory)
-                replace_asset_with_linked_one(
-                    getattr(bpy.data, blend_data_name)[asset_name],
-                    link_filepath,
-                    asset_directory,
-                    asset_name,
-                    create_liboverrides=False,
-                )
-                save_if_possible_and_necessary()
-
-    def run_once(self, source_filepath):
-        current_operator_properties = get_current_operator_properties()
-        target_filepath = sanitize_filepath(self.filepath)
-        if Path(target_filepath).exists():
-            open_file_if_different_from_current(target_filepath)
-        else:
-            create_new_file_and_set_as_current(target_filepath)
-        for asset_name, asset_directory in zip(self.asset_names, self.asset_directories):
-            append_asset(source_filepath, asset_directory, asset_name, overwrite=current_operator_properties.overwrite)
-        save_file()
-        open_file_if_different_from_current(source_filepath)
-        if current_operator_properties.link_back:
-            for asset_name, asset_directory in zip(self.asset_names, self.asset_directories):
-                blend_data_name = get_blend_data_name_from_directory(asset_directory)
-                replace_asset_with_linked_one(
-                    getattr(bpy.data, blend_data_name)[asset_name],
-                    target_filepath,
-                    asset_directory,
-                    asset_name,
-                    create_liboverrides=False,
-                )
-                save_if_possible_and_necessary()
+    def on_finish(self):
+        op_props = get_current_operator_properties()
+        if op_props.link_back:
+            for file_export in op_props.file_exports:
+                for asset in file_export.assets:
+                    blend_data_name = get_blend_data_name_from_directory(asset.directory)
+                    replace_asset_with_linked_one(
+                        getattr(bpy.data, blend_data_name)[asset.name],
+                        file_export.filepath,
+                        asset.directory,
+                        asset.name,
+                        create_liboverrides=False,
+                    )
+            save_if_file_exists_and_is_dirty()

@@ -1,7 +1,6 @@
 import bpy
 from asset_browser_utilities.core.test.prop import TestOperator
 
-from asset_browser_utilities.module.catalog.operator.remove_from import CatalogRemoveFromBatchExecute
 
 
 from asset_browser_utilities.module.asset.tool import all_assets
@@ -17,7 +16,6 @@ def test_removing_all_assets_from_call_catalogs(filepath):
     test_op = TestOperator(
         filepath=filepath,
         filter_assets=True,
-        logic_class=CatalogRemoveFromBatchExecute,
     )
 
     test_op.op_props.filter = False
@@ -32,7 +30,6 @@ def test_removing_all_assets_from_a_specific_catalog(filepath):
     test_op = TestOperator(
         filepath=filepath,
         filter_assets=True,
-        logic_class=CatalogRemoveFromBatchExecute,
     )
 
     all_assets_in_from_catalog = all_assets_in_specific_catalog_container_and_name(CATALOG_FROM_UUID)

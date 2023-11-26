@@ -3,7 +3,6 @@ from asset_browser_utilities.module.asset.test.tool import assert_that_id_is_an_
 import bpy
 
 from asset_browser_utilities.core.filter.type import get_object_types, get_types
-# from asset_browser_utilities.module.asset.operator.mark import AssetMarkBatchExecute
 
 from asset_browser_utilities.module.asset.tool import all_assets_container_and_name
 
@@ -12,7 +11,6 @@ def test_marking_all_assets_in_current_file(filepath):
     test_op = TestOperator(
         filepath=filepath,
         filter_assets=False,
-        # logic_class=AssetMarkBatchExecute,
     )
 
     test_op.op_props.generate_previews = False
@@ -39,7 +37,6 @@ def test_marking_different_asset_types_in_current_file(filepath):
             filter_assets=False,
             filter_types={asset_type},
             filter_object_types=False,
-            # logic_class=AssetMarkBatchExecute,
         )
         assets_start = all_assets_container_and_name()
 
@@ -70,7 +67,6 @@ def test_marking_different_object_types_in_current_file(filepath):
             filter_assets=False,
             filter_types={"objects"},
             filter_object_types={object_type},
-            # logic_class=AssetMarkBatchExecute,
         )
         assets_start = all_assets_container_and_name()
 

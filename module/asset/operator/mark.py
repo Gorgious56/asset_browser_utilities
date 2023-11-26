@@ -3,13 +3,13 @@ from bpy.types import Operator, PropertyGroup
 from bpy.props import PointerProperty, BoolProperty
 
 from asset_browser_utilities.core.log.logger import Logger
-from asset_browser_utilities.core.operator.tool import BatchFolderOperator, BaseOperatorProperties
+from asset_browser_utilities.core.operator.tool import BatchFolderOperator, BaseOperatorProps
 
 from asset_browser_utilities.module.preview.tool import can_preview_be_generated
 from asset_browser_utilities.module.library.tool import ensure_asset_uuid
 
 
-class AssetMarkOperatorProperties(PropertyGroup, BaseOperatorProperties):
+class AssetMarkOperatorProperties(PropertyGroup, BaseOperatorProps):
     overwrite: BoolProperty(
         name="Overwrite assets",
         description="Check to re-mark assets and re-generate preview if the item is already an asset",
@@ -25,7 +25,7 @@ class AssetMarkOperatorProperties(PropertyGroup, BaseOperatorProperties):
         layout.prop(self, "overwrite", icon="ASSET_MANAGER")
         layout.prop(self, "generate_previews", icon="RESTRICT_RENDER_OFF")
 
-    def do_on_asset(self, asset):
+    def run_on_asset(self, asset):
         if asset.asset_data and not self.overwrite:
             return
         asset.asset_mark()

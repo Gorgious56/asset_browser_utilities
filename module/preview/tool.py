@@ -35,33 +35,6 @@ def can_preview_be_generated(asset):
     return False
 
 
-def is_preview_generated(asset):
-    preview = asset.preview
-    now = time.time()
-    if preview is None:
-        is_preview_generated.start = now
-        asset.asset_generate_preview()
-        return False
-    else:
-        if not preview.image_pixels:
-            return True
-    arr = np.zeros((preview.image_size[0] * preview.image_size[1]) * 4, dtype=np.float32)
-    preview.image_pixels_float.foreach_get(arr)
-    are_there_any_pixels = np.any((arr != 0))
-    took_too_long = now - is_preview_generated.start > 20
-    if are_there_any_pixels or took_too_long:
-        if took_too_long:
-            Logger.display(f"Asset '{asset.name}' took too long to generate a preview. Aborting")
-        else:
-            Logger.display(f"Preview generated for '{asset.name}'")
-        is_preview_generated.start = now
-        return True
-    return False
-
-
-is_preview_generated.start = sys.maxsize
-
-
 def create_image(name, width, height, alpha=True):
     img = bpy.data.images.new(name=name, width=width, height=height, alpha=alpha)
     return img

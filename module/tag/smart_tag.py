@@ -1,7 +1,11 @@
 from enum import Enum
 import math
 from asset_browser_utilities.core.log.logger import Logger
-from asset_browser_utilities.module.tag.tool import ensure_asset_has_uuid_tag, has_asset_tag_uuid
+from asset_browser_utilities.module.tag.tool import (
+    ensure_asset_has_uuid_tag,
+    has_asset_tag_uuid,
+    set_new_asset_uuid_tag,
+)
 
 
 def get_triangle_count(asset, smart_tag):
@@ -64,7 +68,10 @@ def get_scale(asset, smart_tag):
 
 
 def get_uuid(asset, smart_tag):
-    if has_asset_tag_uuid(asset):
+    if tag := has_asset_tag_uuid(asset):
+        if smart_tag.overwrite:
+            asset.asset_data.tags.remove(tag)
+            return set_new_asset_uuid_tag(asset).name
         return
     return ensure_asset_has_uuid_tag(asset).name
 
@@ -99,4 +106,4 @@ def apply_smart_tag(asset, smart_tag):
     tag = SmartTag.operation(smart_tag.operation)(asset, smart_tag)
     if tag is not None and tag != "":
         asset_tags.new(str(tag), skip_if_exists=True)
-        Logger.display(f"Added smart tag '{tag}' to '{asset.name}'")
+        Logger.display(f"Added smart tag '{tag}' to '{repr(asset)}'")

@@ -5,16 +5,14 @@ from mathutils import Matrix, Vector
 from bpy.props import StringProperty, BoolProperty, IntProperty, FloatProperty, EnumProperty
 from bpy.types import Operator
 
-from asset_browser_utilities.core.operator.tool import BatchExecute, BatchFolderOperator
-from asset_browser_utilities.core.library.prop import LibraryType, LibraryExportSettings
+from asset_browser_utilities.core.operator.tool import BatchFolderOperator, BaseOperatorProps
+from asset_browser_utilities.core.library.prop import LibraryType
 from asset_browser_utilities.core.log.logger import Logger
 from bpy.types import Operator, PropertyGroup
 from bpy.props import PointerProperty, StringProperty
 
-from asset_browser_utilities.core.operator.tool import BatchExecute, BatchFolderOperator
-from asset_browser_utilities.core.cache.tool import get_current_operator_properties, get_presets, get_from_cache
-from asset_browser_utilities.core.file.path import open_file_if_different_from_current
-from asset_browser_utilities.core.file.save import save_if_possible_and_necessary, save_file_as
+from asset_browser_utilities.core.operator.tool import BatchFolderOperator
+from asset_browser_utilities.core.cache.tool import get_from_cache
 
 
 import_ops_from_file_extension = {
@@ -25,19 +23,7 @@ import_ops_from_file_extension = {
 }
 
 
-class ModelConvertBatchExecute(BatchExecute):
-    def open_next_file(self):
-        self.file = self.files.pop(0)
-        bpy.ops.wm.read_homefile()
-
-    def execute_one_file_and_the_next_when_finished(self):
-        operator_props = get_current_operator_properties()
-        import_ops_from_file_extension[operator_props.file_extension](filepath=str(self.file))
-        self.save_file(filepath=str(self.file.parent / (self.file.parent.name + ".blend")))
-        self.execute_next_file()
-
-
-class ModelConvertOperatorProperties(PropertyGroup):
+class ModelConvertOperatorProperties(PropertyGroup, BaseOperatorProps):
     file_extension: bpy.props.EnumProperty(
         items=(
             ("gltf",) * 3,
@@ -51,6 +37,11 @@ class ModelConvertOperatorProperties(PropertyGroup):
     def draw(self, layout, context=None):
         layout.prop(self, "file_extension")
 
+    def run_in_file(self, attributes=None):
+        import_ops_from_file_extension[self.file_extension](filepath=str(self.file))
+        self.save_file(filepath=str(self.file.parent / (self.file.parent.name + ".blend")))
+        self.execute_next_file()
+
 
 class ABU_OT_ModelConvert(Operator, BatchFolderOperator):
     bl_idname = "abu.model_convert"
@@ -58,11 +49,10 @@ class ABU_OT_ModelConvert(Operator, BatchFolderOperator):
 
     ui_library = (LibraryType.FolderExternal.value, LibraryType.UserLibrary.value, LibraryType.FileExternal.value)
     operator_settings: PointerProperty(type=ModelConvertOperatorProperties)
-    logic_class = ModelConvertBatchExecute
 
     def invoke(self, context, event):
         return self._invoke(context, filter_assets=False, filter_type=False, filter_selection=False, filter_name=False)
-    
+
     @property
     def file_extension(self):
         return get_from_cache(ModelConvertOperatorProperties).file_extension
