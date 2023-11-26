@@ -32,7 +32,7 @@ class CatalogMoveFromAToBOperatorProperties(PropertyGroup, BaseOperatorProps):
         uuid_to, tree_to, name_to = helper.catalog_info_from_uuid(self.catalog_to.catalog)
         if uuid_from != uuid_to:
             helper.ensure_catalog_exists(uuid_to, tree_to, name_to)
-            for asset in self.assets:
+            for asset in self.get_assets():
                 asset_data = asset.asset_data
                 if asset_data.catalog_id == uuid_from:
                     asset_data.catalog_id = uuid_to

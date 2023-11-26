@@ -12,9 +12,8 @@ class LicenseSetOperatorProperties(PropertyGroup, BaseOperatorProps):
         layout.prop(self, "license", icon="USER")
 
     def run_on_asset(self, asset):
-        for asset in self.assets:
-            asset.asset_data.license = self.license
-            Logger.display(f"Set {repr(asset)}'s license to '{self.license}'")
+        asset.asset_data.license = self.license
+        Logger.display(f"Set {repr(asset)}'s license to '{self.license}'")
 
 
 class ABU_OT_license_set(Operator, BatchFolderOperator):

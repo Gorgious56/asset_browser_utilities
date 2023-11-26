@@ -29,12 +29,12 @@ class CatalogRemoveFromOperatorProperties(PropertyGroup, BaseOperatorProps):
         helper = CatalogsHelper()
         if self.filter:
             uuid, _, name = helper.catalog_info_from_uuid(self.catalog.catalog)
-            for asset in self.assets:
+            for asset in self.get_assets():
                 if asset.asset_data.catalog_id == uuid:
                     asset.asset_data.catalog_id = ""
                     Logger.display(f"{repr(asset)} unassigned from catalog '{name}'")
         else:
-            for asset in self.assets:
+            for asset in self.get_assets():
                 asset.asset_data.catalog_id = ""
                 Logger.display(f"{repr(asset)} unassigned from its catalog")
 

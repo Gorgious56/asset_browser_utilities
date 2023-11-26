@@ -19,7 +19,7 @@ from asset_browser_utilities.core.threading.tool import ThreadManager
 from asset_browser_utilities.module.asset.prop import SelectedAssetFiles
 
 
-class BaseOperatorProps:
+class BaseOperatorProps:    
     def get_assets(self):
         return get_from_cache(AssetFilterSettings).get_objects_that_satisfy_filters()
 
@@ -140,6 +140,7 @@ class BatchFolderOperator(ImportHelper):
         return {"PASS_THROUGH"}
 
     def execute(self, context):
+        self.write_filepath_to_cache()
         bpy.ops.wm.save_userpref()
         if get_from_cache(LibraryExportSettings).source == LibraryType.FileCurrent.value:
             get_current_operator_properties().run_in_file()

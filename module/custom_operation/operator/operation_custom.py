@@ -79,20 +79,12 @@ then each operation is applied to the second asset, etc.",
 
     def run_in_file(self, attributes=None):
         if self.operate_in_batches:
-            self.execute_in_batches(self.assets)
-            self.save_file()
-            self.execute_next_file()
+            self.execute_in_batches(self.get_assets())
         else:
-            bpy.app.timers.register(self.execute_in_sequence)
+            for asset in self.get_assets():
+                self.run_on_asset(asset)
 
-    def execute_in_sequence(self):
-        if self.asset is None:
-            if not self.assets:
-                self.save_file()
-                self.execute_next_file()
-                return
-            self.asset = self.assets.pop(0)
-
+    def run_on_asset(self, asset):
         if self.operation < self.shown_ops - 1:
             self.operation += 1
             operation_pg = self.operations[self.operation]
@@ -103,18 +95,13 @@ then each operation is applied to the second asset, etc.",
                 return 0.01
             if hasattr(operation_cls, "ATTRIBUTE"):
                 value = getattr(operation_pg, operation_cls.ATTRIBUTE)
-                operation_cls.OPERATION([self.asset], value)
+                operation_cls.OPERATION([asset], value)
             elif hasattr(operation_cls, "ATTRIBUTES"):
                 values = [getattr(operation_pg, attr) for attr in operation_cls.ATTRIBUTES]
-                operation_cls.OPERATION([self.asset], *values)
+                operation_cls.OPERATION([asset], *values)
             else:
-                operation_cls.OPERATION([self.asset])
-            Logger.display(f"Successfully Done '{operation_cls.LABEL}' to asset : {self.asset}")
-            return 0.01
-        else:
-            self.asset = None
-            self.operation = -1
-            return 0.01
+                operation_cls.OPERATION([asset])
+            Logger.display(f"Successfully Done '{operation_cls.LABEL}' to asset : {asset}")
 
     def execute_in_batches(self, assets):
         for i in range(self.shown_ops):

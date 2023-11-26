@@ -11,7 +11,9 @@ def get_from_cache(cls):
 def get_current_operator_properties():
     cache = get_cache()
     for prop_name in cache.__annotations__:
-        prop = getattr(cache, prop_name)
+        prop = getattr(cache, prop_name, None)
+        if not prop:
+            continue
         if str(prop.__class__) == cache.op_current.class_name:
             return prop
 

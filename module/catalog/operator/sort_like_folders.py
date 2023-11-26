@@ -42,7 +42,7 @@ class CatalogSortLikeFoldersOperatorProperties(PropertyGroup, BaseOperatorProps)
             pass
         else:
             changed_file = False
-            for asset in self.assets:
+            for asset in self.get_assets():
                 Logger.display(f"{repr(asset)} has been moved to catalog {uuid}")
                 asset_data = asset.asset_data
                 if asset_data.catalog_id != uuid:

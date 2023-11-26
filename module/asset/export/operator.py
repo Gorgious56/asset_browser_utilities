@@ -156,6 +156,7 @@ class ABU_OT_asset_export(Operator, BatchFolderOperator):
         op_props.init_before_exec()
 
     def execute(self, context):
+        self.write_filepath_to_cache()
         self.init_after_invoke_but_before_execute()
         bpy.ops.wm.save_userpref()
         self.run_in_threads(context)

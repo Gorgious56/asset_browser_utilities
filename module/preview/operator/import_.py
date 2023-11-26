@@ -29,31 +29,30 @@ class PreviewImportOperatorProperties(PropertyGroup, BaseOperatorProps):
         layout.prop(self, "load_if_name_contains_image_name", icon="OUTLINER_OB_FONT")
         layout.prop(self, "look_only_in_folder_with_name", icon="FILTER")
 
-    def init(self):
+    def run_in_file(self, attributes=None):
         folder = Path(get_from_cache(LibraryExportSettings).folder)
-        self.images = list(get_supported_images(folder, recursive=True))
+        images = list(get_supported_images(folder, recursive=True))
         look_only_in_folder_with_name = self.look_only_in_folder_with_name
         if look_only_in_folder_with_name != "":
-            self.images = [img for img in self.images if img.parent.name == look_only_in_folder_with_name]
-        self.images_names = [file.stem for file in self.images]
-
-    def run_in_file(self, attributes=None):
+            images = [img for img in images if img.parent.name == look_only_in_folder_with_name]
+        images_names = [file.stem for file in images]
         should_save = False
-        for asset in self.assets:
+        for asset in self.get_assets():
             asset_name = asset.name
-            if asset_name in self.images_names:
-                self.load_preview(asset, asset_name)
+            if asset_name in images_names:
+                filepath = str(images[images_names.index(asset_name)])
+                self.load_preview(asset, filepath)
                 should_save = True
             elif self.load_if_name_contains_image_name:
-                for image_name in self.images_names:
+                for image_name in images_names:
                     if asset_name.startswith(image_name):
-                        self.load_preview(asset, image_name)
+                        filepath = str(images[images_names.index(image_name)])
+                        self.load_preview(asset, filepath)
                         should_save = True
                         break
         return should_save
 
-    def load_preview(self, asset, image_name):
-        image_filepath = str(self.images[self.images_names.index(image_name)])
+    def load_preview(self, asset, image_filepath):
         load_preview(image_filepath, asset)
 
 
