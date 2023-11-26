@@ -39,10 +39,12 @@ def update_preset(self, context):
         preset = next(p for p in get_preferences().presets if p.name == preset_name)
     current_op_properties = get_current_operator_properties()
     for attr in preset.__annotations__:
-        if attr == "library_settings":
+        if attr in "library_settings":
             continue
-        default_properties = getattr(preset, attr)
-        if attr.startswith("op_") and not type(default_properties) == type(current_op_properties):
+        default_properties = getattr(preset, attr, None)
+        if default_properties is None:
+            continue
+        if  attr.startswith("op_") and not type(default_properties) == type(current_op_properties):
             continue
         setting = get_from_cache(type(default_properties))
         if hasattr(setting, "copy_from"):  # Assume it's a "complicated" property group if copy_from is implemented

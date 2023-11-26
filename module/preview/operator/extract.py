@@ -21,6 +21,10 @@ class PreviewExtractOperatorProperties(PropertyGroup, BaseOperatorProps):
     def draw(self, layout, context=None):
         if get_from_cache(LibraryExportSettings).source != LibraryType.FileCurrent.value:
             layout.prop(self, "place_at_root", icon="FILEBROWSER")
+            
+    def run_in_file(self, attributes=None):
+        super().run_in_file()
+        return False
 
     def run_on_asset(self, asset):
         if self.place_at_root:
