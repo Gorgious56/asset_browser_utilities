@@ -132,7 +132,7 @@ def append_asset(
 
     asset = library[asset_name, str(filepath)] if link else library.get(asset_name)
     if asset:
-        if blend_data_name == "objects" and asset.name not in bpy.context.scene.collection.objects:
+        if blend_data_name == "objects" and asset.name not in bpy.context.scene.collection.all_objects:
             bpy.context.scene.collection.objects.link(asset)
         elif blend_data_name == "collections" and asset.name not in bpy.context.scene.collection.children:
             bpy.context.scene.collection.children.link(asset)

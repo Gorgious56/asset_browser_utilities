@@ -16,7 +16,7 @@ from asset_browser_utilities.core.console.builder import CommandBuilder
 from asset_browser_utilities.core.console import command_execute_on_blend_file
 from asset_browser_utilities.core.threading.tool import ThreadManager
 
-from asset_browser_utilities.module.asset.prop import SelectedAssetFiles
+from asset_browser_utilities.module.asset.prop import SelectedAssetRepresentations
 
 
 class BaseOperatorProps:    
@@ -124,12 +124,10 @@ class BatchFolderOperator(ImportHelper):
         return library_settings
 
     def init_selected_asset_files(self, context):
-        selected_asset_files_prop = get_from_cache(SelectedAssetFiles)
+        selected_asset_files_prop = get_from_cache(SelectedAssetRepresentations)
         selected_asset_files_prop.init()
-        if context.asset:
-            selected_asset_files_prop.set_active(context.asset.local_id)
-        for selected_asset in context.selected_assets:
-            selected_asset_files_prop.add(selected_asset.local_id)
+        selected_asset_files_prop.add_assets(context.selected_assets)
+        selected_asset_files_prop.set_active(context.asset)
             
     def on_finish(self):
         return

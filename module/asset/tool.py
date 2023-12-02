@@ -2,7 +2,7 @@ from pathlib import Path
 import typing
 import bpy
 from asset_browser_utilities.core.cache.tool import get_from_cache
-from asset_browser_utilities.module.asset.prop import SelectedAssetFiles
+from asset_browser_utilities.module.asset.prop import SelectedAssetRepresentations
 
 
 def ensure_object_is_not_asset(obj):
@@ -34,7 +34,7 @@ def all_assets_container_and_name():
 
 
 def get_selected_asset_files_cache():
-    return get_from_cache(SelectedAssetFiles)
+    return get_from_cache(SelectedAssetRepresentations)
 
 
 def get_selected_assets_fullpaths(context=None) -> typing.Iterable[Path]:

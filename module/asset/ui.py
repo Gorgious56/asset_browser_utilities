@@ -9,6 +9,7 @@ class ABU_MT_assets(Menu, ABUOperatorsMenu):
         ("abu.asset_mark", "Mark", "SHADERFX"),
         ("abu.asset_unmark", "Unmark", "TRASH"),
         ("abu.asset_export", "Export", "EXPORT"),
+        ("abu.asset_import", "Import", "IMPORT"),
         ("abu.asset_link", "Link", "LINKED"),
         ("abu.asset_link_relocate", "Relocate", "LIBRARY_DATA_BROKEN"),
         ("abu.asset_update", "Update", "FILE_REFRESH"),

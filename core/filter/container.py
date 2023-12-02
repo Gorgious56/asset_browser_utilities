@@ -1,5 +1,5 @@
 from collections import defaultdict
-from asset_browser_utilities.module.asset.prop import SelectedAssetFiles
+from asset_browser_utilities.module.asset.prop import SelectedAssetRepresentations
 from asset_browser_utilities.core.cache.tool import get_from_cache
 from asset_browser_utilities.core.filter.name import FilterName
 from asset_browser_utilities.core.filter.type import get_types
@@ -72,8 +72,10 @@ class AssetContainer:
             return
         selected_ids = set()
         if filter_selection.asset_browser:
-            selected_assets = get_from_cache(SelectedAssetFiles).assets
-            selected_ids.update(selected_assets)
+            for asset_representation in get_from_cache(SelectedAssetRepresentations).assets:
+                if not asset_representation.is_local:
+                    continue
+                selected_ids.add(getattr(bpy.data, asset_representation.directory)[asset_representation.name])
         if filter_selection.view_3d:
             selected_ids.update(o for o in bpy.context.visible_objects if o.select_get())
         for items in self.assets.values():

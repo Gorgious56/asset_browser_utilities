@@ -2,7 +2,6 @@ from asset_browser_utilities.core.cache.tool import get_cache, get_current_opera
 from asset_browser_utilities.core.operator.prop import CurrentOperatorProperty
 from asset_browser_utilities.core.filter.main import AssetFilterSettings
 from asset_browser_utilities.core.library.prop import LibraryExportSettings
-from asset_browser_utilities.module.asset.prop import SelectedAssetFiles
 
 
 def get_asset_filter_settings():

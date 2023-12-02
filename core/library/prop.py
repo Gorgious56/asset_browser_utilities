@@ -85,6 +85,11 @@ class LibraryExportSettings(PropertyGroup):
         self.remove_backup = remove_backup
         self.filter_date.init()
 
+    def draw_asset_library(self, layout):
+        box = layout.box()
+        box.prop(self, "library_user_path", icon="FOLDER_REDIRECT")
+        box.label(text=f"Path : {self.library_user_path}")
+
     def draw(self, layout, context):
         self = get_from_cache(LibraryExportSettings)
         if self.source != LibraryType.FileCurrent.value:
@@ -93,9 +98,7 @@ class LibraryExportSettings(PropertyGroup):
             if self.source == LibraryType.FolderExternal.value:
                 layout.prop(self, "recursive", icon="FOLDER_REDIRECT")
             elif self.source == LibraryType.UserLibrary.value:
-                box = layout.box()
-                box.prop(self, "library_user_path", icon="FOLDER_REDIRECT")
-                box.label(text=f"Path : {self.library_user_path}")
+                self.draw_asset_library(layout)
         if self.remove_backup_allow:
             layout.prop(self, "remove_backup", icon="TRASH")
 

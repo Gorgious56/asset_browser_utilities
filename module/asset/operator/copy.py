@@ -8,13 +8,12 @@ from asset_browser_utilities.core.log.logger import Logger
 from asset_browser_utilities.core.operator.tool import BatchFolderOperator, BaseOperatorProps
 
 from asset_browser_utilities.module.custom_property.tool import copy_prop
-from asset_browser_utilities.module.asset.prop import SelectedAssetFiles
+from asset_browser_utilities.module.asset.prop import SelectedAssetRepresentations
 from asset_browser_utilities.module.tag.prop import ASSET_TAG_UUID_PREFIX
 
 
 class AssetDataCopyOperatorProperties(PropertyGroup, BaseOperatorProps):
     tags: BoolProperty(name="Tags")
-    custom_properties: BoolProperty(name="Custom Properties")
     preview: BoolProperty(name="Preview")
     catalog: BoolProperty(name="Catalog")
     author: BoolProperty(name="Author")
@@ -26,7 +25,6 @@ class AssetDataCopyOperatorProperties(PropertyGroup, BaseOperatorProps):
         box = layout.box()
         box.label(text="Copy These Properties From Active Asset")
         box.prop(self, "tags", icon="BOOKMARKS")
-        box.prop(self, "custom_properties", icon="PROPERTIES")
         box.prop(self, "preview", icon="SEQ_PREVIEW")
         box.prop(self, "catalog", icon="OUTLINER_COLLECTION")
         box.prop(self, "author", icon="USER")
@@ -34,8 +32,14 @@ class AssetDataCopyOperatorProperties(PropertyGroup, BaseOperatorProps):
         box.prop(self, "license", icon="FAKE_USER_OFF")
         box.prop(self, "copyright", icon="COPY_ID")
 
+    def run_in_file(self, attributes=None):
+        if not get_from_cache(SelectedAssetRepresentations).active_asset.is_local:
+            return
+        super().run_in_file(attributes)
+
     def run_on_asset(self, asset):
-        active_asset = get_from_cache(SelectedAssetFiles).active_asset
+        active_asset_representation = get_from_cache(SelectedAssetRepresentations).active_asset
+        active_asset = getattr(bpy.data, active_asset_representation.directory)[active_asset_representation.name]
         if asset == active_asset:
             return
         asset_data_source = active_asset.asset_data
@@ -48,10 +52,10 @@ class AssetDataCopyOperatorProperties(PropertyGroup, BaseOperatorProps):
                     continue
                 tags_source.new(name=tag.name, skip_if_exists=True)
             log_data.append("tags")
-        if self.custom_properties:
-            for prop_name in asset_data_source.keys():
-                copy_prop(asset_data_source, asset_data_target, prop_name)
-            log_data.append("custom properties")
+        # if self.custom_properties:
+        #     for prop_name in asset_data_source.keys():
+        #         copy_prop(asset_data_source, asset_data_target, prop_name)
+        #     log_data.append("custom properties")
         if self.preview:
             source_preview = active_asset.preview
             if source_preview is not None and asset.preview is not None:

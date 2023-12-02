@@ -9,7 +9,7 @@ from asset_browser_utilities.core.filter.main import AssetFilterSettings
 from asset_browser_utilities.core.library.prop import LibraryExportSettings
 from asset_browser_utilities.core.operator.prop import CurrentOperatorProperty
 from asset_browser_utilities.module.catalog.prop import CatalogExportSettings
-from asset_browser_utilities.module.asset.prop import SelectedAssetFiles
+from asset_browser_utilities.module.asset.prop import SelectedAssetRepresentations
 
 
 def get_group_sections(self, context):
@@ -32,7 +32,7 @@ class Cache(PropertyGroup):
 
     # Operator properties
     op_current: PointerProperty(type=CurrentOperatorProperty)
-    selected_assets: PointerProperty(type=SelectedAssetFiles)
+    selected_assets: PointerProperty(type=SelectedAssetRepresentations)
 
     # UI settings
 
