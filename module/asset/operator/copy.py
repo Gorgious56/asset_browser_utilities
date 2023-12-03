@@ -52,10 +52,6 @@ class AssetDataCopyOperatorProperties(PropertyGroup, BaseOperatorProps):
                     continue
                 tags_source.new(name=tag.name, skip_if_exists=True)
             log_data.append("tags")
-        # if self.custom_properties:
-        #     for prop_name in asset_data_source.keys():
-        #         copy_prop(asset_data_source, asset_data_target, prop_name)
-        #     log_data.append("custom properties")
         if self.preview:
             source_preview = active_asset.preview
             if source_preview is not None and asset.preview is not None:

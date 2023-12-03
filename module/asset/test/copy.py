@@ -51,7 +51,6 @@ def test_copying_all_props_from_active_to_selected_in_current_file(filepath):
     )
 
     test_op.op_props.tags = True
-    test_op.op_props.custom_properties = True
     test_op.op_props.preview = True
     test_op.op_props.catalog = True
     test_op.op_props.author = True
