@@ -11,7 +11,7 @@ class CommandBuilder:
         self.args = defaultdict(list)
 
     def build_expression(self):
-        self.expression = f"blender {str(self.blend_filepath)} --background --python {json.dumps(str(self.command_path))} --"
+        self.expression = f'blender "{str(self.blend_filepath)}" --background --python {json.dumps(str(self.command_path))} --'
         # defaultdict is ordered so we can do this reliably https://stackoverflow.com/a/52174324/7092409
         for arg in self.args.keys():
             self.expression += " --" + arg
