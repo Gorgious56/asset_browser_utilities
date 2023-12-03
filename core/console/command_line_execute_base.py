@@ -2,7 +2,7 @@ from asset_browser_utilities.core.console.parser import ArgumentsParser
 import bpy
 
 from asset_browser_utilities.core.cache.tool import get_current_operator_properties
-from asset_browser_utilities.core.file.save import save_if_file_exists_and_is_dirty
+from asset_browser_utilities.core.file.save import save_file
 
 
 class CommandLineExecuteBase:
@@ -22,5 +22,5 @@ class CommandLineExecuteBase:
             if getattr(op_props, "generate_previews", False):
                 while bpy.app.is_job_running("RENDER_PREVIEW"):
                     pass
-            save_if_file_exists_and_is_dirty()
+            save_file()
         quit()
