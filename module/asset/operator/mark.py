@@ -27,7 +27,7 @@ class AssetMarkOperatorProperties(PropertyGroup, BaseOperatorProps):
 
     def run_on_asset(self, asset):
         if asset.asset_data and not self.overwrite:
-            return
+            return False
         asset.asset_mark()
         ensure_asset_uuid(asset)
         if self.generate_previews and can_preview_be_generated(asset):

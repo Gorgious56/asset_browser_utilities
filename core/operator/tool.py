@@ -19,16 +19,20 @@ from asset_browser_utilities.core.threading.tool import ThreadManager
 from asset_browser_utilities.module.asset.prop import SelectedAssetRepresentations
 
 
-class BaseOperatorProps:    
+class BaseOperatorProps:
     def get_assets(self):
         return get_from_cache(AssetFilterSettings).get_objects_that_satisfy_filters()
 
     def run_in_file(self, attributes=None):
         assets = self.get_assets()
+        should_save = False
         if not assets:
             return
         for asset in assets:
-            self.run_on_asset(asset)
+            result = self.run_on_asset(asset)
+            if result is None or bool(result):
+                should_save = True
+        return should_save
 
 
 def update_preset(self, context):
@@ -44,7 +48,7 @@ def update_preset(self, context):
         default_properties = getattr(preset, attr, None)
         if default_properties is None:
             continue
-        if  attr.startswith("op_") and not type(default_properties) == type(current_op_properties):
+        if attr.startswith("op_") and not type(default_properties) == type(current_op_properties):
             continue
         setting = get_from_cache(type(default_properties))
         if hasattr(setting, "copy_from"):  # Assume it's a "complicated" property group if copy_from is implemented
@@ -128,7 +132,7 @@ class BatchFolderOperator(ImportHelper):
         selected_asset_files_prop.init()
         selected_asset_files_prop.add_assets(context.selected_assets)
         selected_asset_files_prop.set_active(context.asset)
-            
+
     def on_finish(self):
         return
 

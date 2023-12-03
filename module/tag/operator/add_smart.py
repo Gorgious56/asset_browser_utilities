@@ -25,7 +25,7 @@ class TagAddSmartOperatorProperties(PropertyGroup, BaseOperatorProps):
         box.prop(self, "overwrite", toggle=True)
 
     def run_on_asset(self, asset):
-        apply_smart_tag(asset, self)
+        return apply_smart_tag(asset, self)
 
 
 class ABU_OT_tag_add_smart(Operator, BatchFolderOperator):

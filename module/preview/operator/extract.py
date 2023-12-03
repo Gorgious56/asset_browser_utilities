@@ -32,10 +32,8 @@ class PreviewExtractOperatorProperties(PropertyGroup, BaseOperatorProps):
         else:
             folder = Path(bpy.data.filepath).parent
         asset_preview = asset.preview
-        images = []
         if asset_preview is not None:
             img = create_image(asset.name, asset_preview.image_size[0], asset_preview.image_size[1])
-            images.append(img)
             img.file_format = "PNG"
             for char in ("/", "\\", ":", "|", '"', "!", "?", "<", ">", "*"):
                 if char in img.name:
@@ -48,7 +46,9 @@ class PreviewExtractOperatorProperties(PropertyGroup, BaseOperatorProps):
             else:
                 img.save()
                 Logger.display(f"Saved thumbnail from '{asset.name}' to '{img.filepath}'")
-        bpy.data.batch_remove(images)
+            bpy.data.images.remove(img)
+        else:
+            return False
 
 
 class ABU_OT_preview_extract(Operator, BatchFolderOperator):

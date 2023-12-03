@@ -20,6 +20,8 @@ class PreviewGenerateOperatorProperties(PropertyGroup, BaseOperatorProps):
         if self.overwrite or not asset.preview:
             asset.asset_generate_preview()
             Logger.display(f"Launched preview generation for {asset.name}")
+        else:
+            return False
 
 
 class ABU_OT_preview_generate(Operator, BatchFolderOperator):

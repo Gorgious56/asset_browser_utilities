@@ -7,7 +7,6 @@ from asset_browser_utilities.core.library.prop import LibraryType
 from asset_browser_utilities.core.log.logger import Logger
 from asset_browser_utilities.core.operator.tool import BatchFolderOperator, BaseOperatorProps
 
-from asset_browser_utilities.module.custom_property.tool import copy_prop
 from asset_browser_utilities.module.asset.prop import SelectedAssetRepresentations
 from asset_browser_utilities.module.tag.prop import ASSET_TAG_UUID_PREFIX
 
@@ -41,7 +40,7 @@ class AssetDataCopyOperatorProperties(PropertyGroup, BaseOperatorProps):
         active_asset_representation = get_from_cache(SelectedAssetRepresentations).active_asset
         active_asset = getattr(bpy.data, active_asset_representation.directory)[active_asset_representation.name]
         if asset == active_asset:
-            return
+            return False
         asset_data_source = active_asset.asset_data
         asset_data_target = asset.asset_data
         log_data = []

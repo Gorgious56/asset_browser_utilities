@@ -89,10 +89,10 @@ then each operation is applied to the second asset, etc.",
             self.operation += 1
             operation_pg = self.operations[self.operation]
             if isinstance(operation_pg, NONE_OPERATION):
-                return 0.01
+                return False
             operation_cls = OPERATION_MAPPING.get(operation_pg.type)
             if not operation_cls or operation_cls == NONE_OPERATION:
-                return 0.01
+                return False
             if hasattr(operation_cls, "ATTRIBUTE"):
                 value = getattr(operation_pg, operation_cls.ATTRIBUTE)
                 operation_cls.OPERATION([asset], value)
@@ -102,6 +102,8 @@ then each operation is applied to the second asset, etc.",
             else:
                 operation_cls.OPERATION([asset])
             Logger.display(f"Successfully Done '{operation_cls.LABEL}' to asset : {asset}")
+        else:
+            return False
 
     def execute_in_batches(self, assets):
         for i in range(self.shown_ops):

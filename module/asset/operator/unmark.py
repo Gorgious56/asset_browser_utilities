@@ -12,6 +12,8 @@ class AssetUnmarkOperatorProperties(PropertyGroup, BaseOperatorProps):
         if asset.asset_data:
             asset.asset_clear()
             Logger.display(f"{bpy.data.filepath}\\{repr(asset)} unmarked")
+        else:
+            return False
 
 
 class ABU_OT_asset_unmark(Operator, BatchFolderOperator):

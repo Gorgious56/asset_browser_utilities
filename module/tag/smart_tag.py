@@ -107,3 +107,6 @@ def apply_smart_tag(asset, smart_tag):
     if tag is not None and tag != "":
         asset_tags.new(str(tag), skip_if_exists=True)
         Logger.display(f"Added smart tag '{tag}' to '{repr(asset)}'")
+        return True
+    else:
+        return False
