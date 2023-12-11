@@ -2,6 +2,7 @@ import threading
 
 from asset_browser_utilities.core.log.logger import Logger
 
+
 class ThreadManager:
     THREAD_POOL: int = 25
     threads: list[threading.Thread]
@@ -33,7 +34,6 @@ class ThreadManager:
                 ThreadManager.running_threads += 1
             else:
                 break
-            
 
     @staticmethod
     def run(wait_for_execution=True):
