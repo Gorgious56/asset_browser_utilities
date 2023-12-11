@@ -10,11 +10,6 @@ class AssetBrowserUtilitiesAddonPreferences(AddonPreferences):
     cache: PointerProperty(type=Cache, options={"HIDDEN"})
     defaults: PointerProperty(type=Cache)
     presets: CollectionProperty(type=Cache)
-    show_custom_props: BoolProperty(
-        default=False,
-        name="Show Asset Custom Properties",
-        description="Add a Panel in the Asset Browser interface to display asset custom properties",
-    )
     save_compress: BoolProperty(
         default=True,
         name="Compress Files On Save",
