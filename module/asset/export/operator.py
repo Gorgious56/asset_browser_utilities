@@ -165,6 +165,7 @@ class ABU_OT_asset_export(Operator, BatchFolderOperator):
         return {"RUNNING_MODAL"}
 
     def filter_files(self, files):
+        files = super().filter_files(files)
         return [None] * len(get_current_operator_properties().file_exports)
 
     def on_finish(self):

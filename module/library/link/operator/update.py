@@ -73,6 +73,7 @@ class ABU_OT_asset_update(Operator, BatchFolderOperator):
         return self._invoke(context, filter_assets=True)
 
     def filter_files(self, files):
+        files = super().filter_files(files)
         files_to_operate_on = []
         for file in files:
             library_dummy = get_current_operator_properties().library

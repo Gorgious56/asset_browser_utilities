@@ -1,4 +1,5 @@
 from collections import defaultdict
+from pathlib import Path
 from asset_browser_utilities.module.asset.prop import SelectedAssetRepresentations
 from asset_browser_utilities.core.cache.tool import get_from_cache
 from asset_browser_utilities.core.filter.name import FilterName
@@ -71,12 +72,11 @@ class AssetContainer:
         if not filter_selection.active:
             return
         selected_ids = set()
-        if filter_selection.asset_browser:
+        if filter_selection.selection_type == "Asset Browser":
             for asset_representation in get_from_cache(SelectedAssetRepresentations).assets:
-                if not asset_representation.is_local:
-                    continue
-                selected_ids.add(getattr(bpy.data, asset_representation.directory)[asset_representation.name])
-        if filter_selection.view_3d:
+                if Path(asset_representation.full_library_path) == Path(bpy.data.filepath):
+                    selected_ids.add(getattr(bpy.data, asset_representation.directory)[asset_representation.name])
+        elif filter_selection.selection_type == "3D Viewport":
             selected_ids.update(o for o in bpy.context.visible_objects if o.select_get())
         for items in self.assets.values():
             for i in range(len(items) - 1, -1, -1):

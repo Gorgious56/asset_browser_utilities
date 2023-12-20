@@ -1,4 +1,5 @@
 import queue
+from pathlib import Path
 
 import bpy.app.timers
 from bpy.types import OperatorFileListElement
@@ -185,6 +186,14 @@ class BatchFolderOperator(ImportHelper):
         )
 
     def filter_files(self, files):
+        filter_selection = get_from_cache(AssetFilterSettings).filter_selection
+        if filter_selection.active and filter_selection.selection_type == "Asset Browser":
+            files_filter = set()
+            for asset_representation in get_from_cache(SelectedAssetRepresentations).assets:
+                files_filter.add(Path(asset_representation.full_library_path))
+            for file in reversed(files):
+                if Path(file) not in files_filter:
+                    files.remove(file)
         return files
 
     def thread_manager_callback(self, context):

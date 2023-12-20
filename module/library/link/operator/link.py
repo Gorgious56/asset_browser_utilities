@@ -56,6 +56,7 @@ class ABU_OT_asset_link(Operator, BatchFolderOperator):
         return self._invoke(context, filter_assets=True)
 
     def filter_files(self, files):
+        files = super().filter_files(files)
         files_that_should_be_linked = []
         for file in files:
             library_dummy = get_from_cache(AssetLinkOperatorProperties).library
