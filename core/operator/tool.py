@@ -90,11 +90,11 @@ class BatchFolderOperator(ImportHelper):
         self.filter_selection = filter_selection
         self.filter_name = filter_name
 
+        library_settings = self.init_library_settings(remove_backup)
         update_preset(self, context)
         self.update_asset_filter_allow()
         self.init_operator_settings(init_operator_settings_arguments)
         self.init_selected_asset_files(context)
-        library_settings = self.init_library_settings(remove_backup)
 
         if library_settings.source in (LibraryType.FolderExternal.value, LibraryType.FileExternal.value):
             self.filter_glob = (
