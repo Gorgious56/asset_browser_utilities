@@ -38,12 +38,7 @@ class AssetFilterSettings(PropertyGroup):
         filter_name=True,
     ):
         source = get_from_cache(LibraryExportSettings).source
-        self.filter_selection.init(
-            allow=filter_selection
-            and source
-            in (LibraryType.FileCurrent.value, LibraryType.UserLibrary.value),
-            allow_view_3d=source == LibraryType.FileCurrent.value,
-        )
+        self.filter_selection.init(allow=filter_selection)
         self.filter_tag.init()
         self.filter_assets.only_assets = filter_assets
         self.filter_catalog.allow = filter_assets
@@ -52,16 +47,11 @@ class AssetFilterSettings(PropertyGroup):
 
     def get_objects_that_satisfy_filters(self):
         data_containers = (
-            list(self.filter_types.types)
-            if self.filter_types.types_global_filter
-            else [t[0] for t in get_types()]
+            list(self.filter_types.types) if self.filter_types.types_global_filter else [t[0] for t in get_types()]
         )
         object_types = (
             list(self.filter_types.types_object)
-            if (
-                self.filter_types.types_object_filter
-                and self.filter_types.types_global_filter
-            )
+            if (self.filter_types.types_object_filter and self.filter_types.types_global_filter)
             else [t[0] for t in get_object_types()]
         )
         asset_container = AssetContainer(data_containers, object_types)
@@ -75,9 +65,7 @@ class AssetFilterSettings(PropertyGroup):
                 )
                 asset_container.filter_by_catalog(uuid)
             if self.filter_tag.active:
-                asset_container.filter_by_tags(
-                    self.filter_tag.tags.get_valid_tags(), self.filter_tag.orand
-                )
+                asset_container.filter_by_tags(self.filter_tag.tags.get_valid_tags(), self.filter_tag.orand)
             if self.filter_author.active:
                 asset_container.filter_by_author(self.filter_author.name)
 
@@ -118,8 +106,6 @@ class AssetFilterSettings(PropertyGroup):
     @staticmethod
     def are_mesh_objects_filtered():
         filter_types = get_from_cache(AssetFilterSettings).filter_types
-        return (
-            "objects" in filter_types.types or not filter_types.types_global_filter
-        ) and (
+        return ("objects" in filter_types.types or not filter_types.types_global_filter) and (
             "MESH" in filter_types.types_object or not filter_types.types_object_filter
         )

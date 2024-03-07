@@ -30,7 +30,8 @@ class PreviewImportOperatorProperties(PropertyGroup, BaseOperatorProps):
     match_sequence: IntProperty(
         name="Match Character Sequence",
         description="Match Image and Asset Name if there is a sequence of characters of at least this length in common\n\
-        (eg. image name = 'def.jpg' and asset name = 'abcde', if sequence = 2, it will match, if sequence = 3, it won't)",
+        (eg. image name = 'def.jpg' and asset name = 'abcde', if sequence = 2, it will match, if sequence = 3, it won't)\n\
+        Leave at 0 to disable",
         default=0,
         min=0,
         max=256,
@@ -72,7 +73,7 @@ class PreviewImportOperatorProperties(PropertyGroup, BaseOperatorProps):
                             self.load_preview(asset, filepath)
                             should_save = True
                             break
-                elif self.match_sequence > 0:
+                elif self.match_sequence > 1:
                     for image_name in images_names:
                         if self.check_sequence(image_name, asset_name, sequence_length=self.match_sequence):
                             filepath = str(images[images_names.index(image_name)])

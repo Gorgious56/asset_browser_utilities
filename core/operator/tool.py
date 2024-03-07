@@ -170,16 +170,8 @@ class BatchFolderOperator(ImportHelper):
         get_from_cache(AssetFilterSettings).draw(layout, context)
 
     def update_asset_filter_allow(self):
-        filter_selection = (
-            not get_from_cache(LibraryExportSettings).source
-            in (
-                LibraryType.FolderExternal.value,
-                LibraryType.FileExternal.value,
-            )
-            and self.filter_selection
-        )
         get_from_cache(AssetFilterSettings).init_asset_filter_settings(
-            filter_selection=filter_selection,
+            filter_selection=self.filter_selection,
             filter_assets=self.filter_assets,
             filter_types=self.filter_types,
             filter_name=self.filter_name,
