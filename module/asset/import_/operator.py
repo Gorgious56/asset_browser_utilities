@@ -41,8 +41,8 @@ class AssetImportOperatorProperties(PropertyGroup, BaseOperatorProps):
 
     def run_in_file(self, attributes=None):
         if self.source == "Asset Browser Selection":
-            selected_asset_files_prop = get_from_cache(SelectedAssetRepresentations)
-            for asset_representation in selected_asset_files_prop.assets:
+            selected_assets_prop = get_from_cache(SelectedAssetRepresentations)
+            for asset_representation in selected_assets_prop.assets:
                 if asset_representation.is_local:
                     continue
                 name_filter = get_from_cache(AssetFilterSettings).filter_name

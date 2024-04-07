@@ -95,7 +95,7 @@ class BatchFolderOperator(ImportHelper):
         update_preset(self, context)
         self.update_asset_filter_allow()
         self.init_operator_settings(init_operator_settings_arguments)
-        self.init_selected_asset_files(context)
+        self.init_selected_assets(context)
 
         if library_settings.source in (LibraryType.FolderExternal.value, LibraryType.FileExternal.value):
             self.filter_glob = (
@@ -128,11 +128,11 @@ class BatchFolderOperator(ImportHelper):
         library_settings.filepath_start = bpy.data.filepath
         return library_settings
 
-    def init_selected_asset_files(self, context):
-        selected_asset_files_prop = get_from_cache(SelectedAssetRepresentations)
-        selected_asset_files_prop.init()
-        selected_asset_files_prop.add_assets(context.selected_assets)
-        selected_asset_files_prop.set_active(context.asset)
+    def init_selected_assets(self, context):
+        selected_assets_prop = get_from_cache(SelectedAssetRepresentations)
+        selected_assets_prop.init()
+        selected_assets_prop.add_assets(context.selected_assets)
+        selected_assets_prop.set_active(context.asset)
 
     def on_finish(self):
         return

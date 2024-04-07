@@ -33,7 +33,7 @@ def all_assets_container_and_name():
     return asset_names
 
 
-def get_selected_asset_files_cache():
+def get_selected_assets_cache():
     return get_from_cache(SelectedAssetRepresentations)
 
 
@@ -41,22 +41,20 @@ def get_selected_assets_fullpaths(context=None) -> typing.Iterable[Path]:
     # https://blender.stackexchange.com/a/261321/86891
     if context is None:
         context = bpy.context
-    current_library_name = context.area.spaces.active.params.asset_library_ref
+    current_library_name = context.area.spaces.active.params.asset_library_reference
 
     if current_library_name == "LOCAL":  # Current file
-        library_path = Path(bpy.data.filepath)
-        for asset_file in context.selected_asset_files:
-            yield library_path / asset_file.relative_path / asset_file.local_id.name
+        for asset_file in context.selected_assets:
+            yield Path(asset_file.full_path)
     else:
-        library_path = Path(context.preferences.filepaths.asset_libraries.get(current_library_name).path)
-        for asset_file in context.selected_asset_files:
-            yield library_path / asset_file.relative_path
+        for asset_file in context.selected_assets:
+            yield Path(asset_file.full_library_path)
 
 
 def get_selected_assets_folderpaths(context=None) -> typing.Iterable[Path]:
     if context is None:
         context = bpy.context
-    return set(p.parents[2] for p in get_selected_assets_fullpaths(context))
+    return set(p.parent for p in get_selected_assets_fullpaths(context))
 
 
 def get_selected_linked_objects_in_outliner(context=None):

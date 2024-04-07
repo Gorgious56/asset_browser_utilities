@@ -12,7 +12,7 @@ class ABU_OT_open_asset_folder(bpy.types.Operator):
     def execute(self, context):
         if context is None:
             context = bpy.context
-        current_library_name = context.area.spaces.active.params.asset_library_ref
+        current_library_name = context.area.spaces.active.params.asset_library_reference
 
         if current_library_name == "LOCAL":  # Current file
             pass
@@ -20,7 +20,7 @@ class ABU_OT_open_asset_folder(bpy.types.Operator):
             library_path = Path(context.preferences.filepaths.asset_libraries.get(current_library_name).path)
             blend_files = [fp for fp in library_path.glob("**/*.blend") if fp.is_file()]
             print(f"Checking the content of library '{library_path}' :")
-            for asset_file in context.selected_asset_files:
+            for asset_file in context.selected_assets:
                 blend_data_name = get_blend_data_name_from_directory(asset_file.id_type)
                 users = 0
                 for blend_file in blend_files:

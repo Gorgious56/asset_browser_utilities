@@ -1,7 +1,7 @@
 from asset_browser_utilities.core.test.prop import TestOperator
 import bpy
 
-from asset_browser_utilities.module.asset.tool import get_selected_asset_files_cache
+from asset_browser_utilities.module.asset.tool import get_selected_assets_cache
 from asset_browser_utilities.core.filter.type import get_types
 
 from asset_browser_utilities.module.asset.tool import is_asset
@@ -57,8 +57,8 @@ def test_copying_all_props_from_active_to_selected_in_current_file(filepath):
     test_op.op_props.description = True
 
     asset_copy_from_name = "asset_copy_from"
-    selected_asset_files = get_selected_asset_files_cache()
-    selected_asset_files.set_active("object", bpy.data.objects[asset_copy_from_name])
+    selected_assets = get_selected_assets_cache()
+    selected_assets.set_active("object", bpy.data.objects[asset_copy_from_name])
 
     supported_asset_types = [a_t[0] for a_t in get_types()]
     for d in dir(bpy.data):
@@ -69,13 +69,13 @@ def test_copying_all_props_from_active_to_selected_in_current_file(filepath):
                     if asset == bpy.data.objects[asset_copy_from_name]:
                         continue
                     else:
-                        selected_asset_files.add(d, asset)
+                        selected_assets.add(d, asset)
 
     test_op.execute()
 
     asset_from = bpy.data.objects[asset_copy_from_name]
     asset_data_from = asset_from.asset_data
-    for asset_to_file in selected_asset_files.files_prop:
+    for asset_to_file in selected_assets.files_prop:
         asset_to = getattr(bpy.data, asset_to_file.container)[asset_to_file.name]
         if not is_asset(asset_to):
             continue

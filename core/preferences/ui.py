@@ -24,7 +24,6 @@ class AssetBrowserUtilitiesAddonPreferences(AddonPreferences):
     def draw(self, context):
         layout = self.layout
         layout.prop(self, "verbose", icon="INFO")
-        layout.prop(self, "show_custom_props", icon="PROPERTIES")
         layout.prop(self, "save_compress", icon="FILE_BLEND")
 
         self.defaults.asset_filter_settings.filter_selection.allow = True
