@@ -97,12 +97,6 @@ Setup the preset on top of the operator popup panel
 
 ![image](https://user-images.githubusercontent.com/25156105/165246257-10420ffe-6af2-4ea2-86b5-4582d7617a74.png)
 
-3. __Asset custom properties__
-
-Display asset custom properties with a toggle in the addon preferences
-
-![image](https://user-images.githubusercontent.com/25156105/165246047-39b3b3e8-43dc-489c-80a8-23e09c551148.png)
-
 
 4.__Custom Operations__
 
