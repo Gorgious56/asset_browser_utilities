@@ -15,6 +15,8 @@ def all_catalogs():
 
 class CatalogsHelper:
     CATALOGS_FILENAME = "blender_assets.cats.txt"
+    # https://blender.stackexchange.com/questions/216230/is-there-a-workaround-for-the-known-bug-in-dynamic-enumproperty
+    CATALOGS_ENUM_HANDLE = {}
 
     def __init__(self):
         self.catalog_filepath = self.get_catalog_filepath()
@@ -135,14 +137,15 @@ class CatalogsHelper:
     @staticmethod
     def get_catalogs(filter_catalog=None, context=None):  # Keep both arguments even if not used. It's a callback !
         helper = CatalogsHelper()
-        catalogs = []
+        CatalogsHelper.CATALOGS_ENUM_HANDLE[helper.catalog_filepath] = []
+
         if helper.has_catalogs:
             for line in helper.iterate_over_catalogs():
                 uuid, tree, name = helper.catalog_info_from_line(line)
-                catalogs.append((uuid, tree, name))
+                CatalogsHelper.CATALOGS_ENUM_HANDLE[helper.catalog_filepath].append((uuid, tree, name))
         else:
-            catalogs = [("",) * 3]
-        return catalogs
+            CatalogsHelper.CATALOGS_ENUM_HANDLE[helper.catalog_filepath] = [("",) * 3]
+        return CatalogsHelper.CATALOGS_ENUM_HANDLE[helper.catalog_filepath]
 
     @staticmethod
     def get_catalogs_from_assets_in_current_file(filter_catalog=None, context=None) -> list[str]:
@@ -151,4 +154,4 @@ class CatalogsHelper:
             if not asset.catalog_simple_name:
                 continue
             catalogs_from_assets_in_current_file.add((asset.catalog_id, asset.catalog_simple_name))
-        return [(uuid, name, "") for (uuid, name) in catalogs_from_assets_in_current_file] or [("None", ) * 3]
+        return [(uuid, name, "") for (uuid, name) in catalogs_from_assets_in_current_file] or [("None",) * 3]
