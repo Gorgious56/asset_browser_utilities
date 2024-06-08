@@ -18,6 +18,9 @@ class PreviewImportOperatorProperties(PropertyGroup, BaseOperatorProps):
         description="Look only in subfolders with this name. \nLeave empty to not filter folders.",
         default="",
     )
+    case_sensitive: BoolProperty(
+        name="Case Sensitive", default=True, description="Should the match be case sensitive ?"
+    )
     exact_match: BoolProperty(
         name="Match Name Exactly", default=True, description="Match Image and Asset names exactly"
     )
@@ -40,6 +43,7 @@ class PreviewImportOperatorProperties(PropertyGroup, BaseOperatorProps):
     def draw(self, layout, context=None):
         layout.prop(self, "look_only_in_folder_with_name", icon="FILTER")
         layout.prop(self, "exact_match")
+        layout.prop(self, "case_sensitive")
         if not self.exact_match:
             layout.prop(self, "load_if_name_contains_image_name", icon="OUTLINER_OB_FONT")
             layout.prop(self, "match_sequence")
@@ -58,9 +62,11 @@ class PreviewImportOperatorProperties(PropertyGroup, BaseOperatorProps):
         if look_only_in_folder_with_name != "":
             images = [img for img in images if img.parent.name == look_only_in_folder_with_name]
         images_names = [file.stem for file in images]
+        if not self.case_sensitive:
+            images_names = [name.lower() for name in images_names]
         should_save = False
         for asset in self.get_assets():
-            asset_name = asset.name
+            asset_name = asset.name if self.case_sensitive else asset.name.lower()
             if asset_name in images_names:
                 filepath = str(images[images_names.index(asset_name)])
                 self.load_preview(asset, filepath)
