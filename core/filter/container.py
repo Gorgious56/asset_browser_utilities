@@ -4,6 +4,7 @@ from asset_browser_utilities.module.asset.prop import SelectedAssetRepresentatio
 from asset_browser_utilities.core.cache.tool import get_from_cache
 from asset_browser_utilities.core.filter.name import FilterName
 from asset_browser_utilities.core.filter.type import get_types
+from asset_browser_utilities.core.library.prop import LibraryExportSettings, LibraryType
 import bpy
 
 
@@ -72,11 +73,12 @@ class AssetContainer:
         if not filter_selection.active:
             return
         selected_ids = set()
+        is_library_current_file = get_from_cache(LibraryExportSettings).source == LibraryType.FileCurrent.value
         if filter_selection.selection_type == "Asset Browser":
             for asset_representation in get_from_cache(SelectedAssetRepresentations).assets:
-                if asset_representation.is_local or Path(asset_representation.full_library_path) == Path(
-                    bpy.data.filepath
-                ):
+                if (asset_representation.is_local and is_library_current_file) or Path(
+                    asset_representation.full_library_path
+                ) == Path(bpy.data.filepath):
                     selected_ids.add(getattr(bpy.data, asset_representation.directory)[asset_representation.name])
         elif filter_selection.selection_type == "3D Viewport":
             selected_ids.update(o for o in bpy.context.visible_objects if o.select_get())
