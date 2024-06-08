@@ -1,10 +1,10 @@
 import threading
 
 from asset_browser_utilities.core.log.logger import Logger
+from asset_browser_utilities.core.preferences.tool import get_preferences
 
 
 class ThreadManager:
-    THREAD_POOL: int = 25
     threads: list[threading.Thread]
     threads_progress: list[float]
 
@@ -28,7 +28,7 @@ class ThreadManager:
 
     @staticmethod
     def update_threads():
-        while ThreadManager.running_threads < ThreadManager.THREAD_POOL:
+        while ThreadManager.running_threads < get_preferences().max_threads:
             if ThreadManager.threads_to_run:
                 ThreadManager.threads_to_run.pop(0).start()
                 ThreadManager.running_threads += 1

@@ -1,5 +1,5 @@
 from bpy.types import AddonPreferences
-from bpy.props import PointerProperty, BoolProperty, CollectionProperty
+from bpy.props import PointerProperty, BoolProperty, CollectionProperty, IntProperty
 
 from asset_browser_utilities.core.cache.prop import Cache
 
@@ -20,11 +20,13 @@ class AssetBrowserUtilitiesAddonPreferences(AddonPreferences):
         description="Check this to get some information in the system console",
         default=True,
     )
+    max_threads: IntProperty(default=8, min=1, soft_max=48, name="Maximum number of threads", description="This number of files will be launched concurrently when batch-executing on external files. The optimal number highly depends on the specifics of your machine. Don't set it too high or your computer will freeze.")
 
     def draw(self, context):
         layout = self.layout
         layout.prop(self, "verbose", icon="INFO")
         layout.prop(self, "save_compress", icon="FILE_BLEND")
+        layout.prop(self, "max_threads", icon="COLLAPSEMENU")
 
         self.defaults.asset_filter_settings.filter_selection.allow = True
         self.defaults.asset_filter_settings.filter_catalog.allow = False
