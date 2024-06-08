@@ -74,7 +74,9 @@ class AssetContainer:
         selected_ids = set()
         if filter_selection.selection_type == "Asset Browser":
             for asset_representation in get_from_cache(SelectedAssetRepresentations).assets:
-                if Path(asset_representation.full_library_path) == Path(bpy.data.filepath):
+                if asset_representation.is_local or Path(asset_representation.full_library_path) == Path(
+                    bpy.data.filepath
+                ):
                     selected_ids.add(getattr(bpy.data, asset_representation.directory)[asset_representation.name])
         elif filter_selection.selection_type == "3D Viewport":
             selected_ids.update(o for o in bpy.context.visible_objects if o.select_get())

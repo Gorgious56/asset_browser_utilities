@@ -7,6 +7,7 @@ from asset_browser_utilities.core.library.tool import get_blend_data_name_from_d
 
 class AssetRepresentation(PropertyGroup):
     full_library_path: StringProperty()
+    full_path: StringProperty()
     id_type: StringProperty()
     directory: StringProperty()
     name: StringProperty()
@@ -28,6 +29,7 @@ class SelectedAssetRepresentations(PropertyGroup):
     def add_asset(self, asset_representation):
         new = self.assets.add()
         new.full_library_path = asset_representation.full_library_path
+        new.full_path = asset_representation.full_path
         new.id_type = asset_representation.id_type
         new.directory = get_blend_data_name_from_directory(new.id_type)
         new.name = asset_representation.name
