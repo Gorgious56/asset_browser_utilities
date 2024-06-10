@@ -40,7 +40,6 @@ class ModelConvertOperatorProperties(PropertyGroup, BaseOperatorProps):
     def run_in_file(self, attributes=None):
         import_ops_from_file_extension[self.file_extension](filepath=str(self.file))
         self.save_file(filepath=str(self.file.parent / (self.file.parent.name + ".blend")))
-        self.execute_next_file()
 
 
 class ABU_OT_ModelConvert(Operator, BatchFolderOperator):
@@ -74,10 +73,10 @@ def scale_my_model(obj, scale, expected_dimension, context):
     dim = max(obj.dimensions) / 1000
     i = 0
     while True:
-        if dim // (10 ** i) == 0:
+        if dim // (10**i) == 0:
             break
         i += 1
-    obj.scale = (scale / (10 ** i),) * 3
+    obj.scale = (scale / (10**i),) * 3
     bpy.ops.object.transform_apply({"selected_editable_objects": [obj]}, location=True, rotation=True, scale=True)
 
 

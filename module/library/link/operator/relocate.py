@@ -4,7 +4,10 @@ from bpy.props import PointerProperty
 
 from asset_browser_utilities.core.log.logger import Logger
 from asset_browser_utilities.core.library.prop import LibraryType
-from asset_browser_utilities.core.operator.tool import BatchFolderOperator, BaseOperatorProps
+from asset_browser_utilities.core.operator.tool import (
+    BatchFolderOperator,
+    BaseOperatorProps,
+)
 
 from asset_browser_utilities.module.library.link.prop import AssetLibraryDummy
 from asset_browser_utilities.module.library.link.tool import link_from_asset_dummy
@@ -16,7 +19,7 @@ class AssetLinkRelocateOperatorProperties(PropertyGroup, BaseOperatorProps):
     def draw(self, layout, context=None):
         return
 
-    def init(self):
+    def init(self, from_current_file=False):
         self.library.populate()
 
     def run_in_file(self, attributes=None):
@@ -27,7 +30,11 @@ class AssetLinkRelocateOperatorProperties(PropertyGroup, BaseOperatorProps):
                     corresponding_asset_dummy = next((self.library.by_uuid(asset_dummy.uuid)), None)
                     if corresponding_asset_dummy:
                         should_save = True
-                        link_from_asset_dummy(corresponding_asset_dummy, asset_dummy.asset.get(), purge=True)
+                        link_from_asset_dummy(
+                            corresponding_asset_dummy,
+                            asset_dummy.asset.get(),
+                            purge=True,
+                        )
             for linked_asset in blend_data_library.users_id:
                 if linked_asset.is_missing:
                     for linked_asset_dummy in blend_data_library.abu_asset_library_dummy.assets:

@@ -18,11 +18,12 @@ class CatalogSortLikeFoldersOperatorProperties(PropertyGroup, BaseOperatorProps)
     def draw(self, layout, context=None):
         layout.prop(self, "are_assets_in_subfolders", text="Assets are contained in individual folders")
 
-    def init(self):
+    def init(self, attributes=None):
         self.library_user_path = get_from_cache(LibraryExportSettings).library_user_path
+        files = get_from_cache(LibraryExportSettings).files
         self.catalog_map = {}
         cat_helper = CatalogsHelper()
-        for filepath in self.files:
+        for filepath in files:
             try:
                 catalog_tree = Path(str(filepath).replace(self.library_user_path, "")).parents[
                     1 if self.are_assets_in_subfolders else 0
@@ -36,21 +37,19 @@ class CatalogSortLikeFoldersOperatorProperties(PropertyGroup, BaseOperatorProps)
                 self.catalog_map[filepath] = uuid
 
     def run_in_file(self, attributes=None):
+        changed_file = False
         try:
             uuid = self.catalog_map[self.file]
         except KeyError:
             pass
         else:
-            changed_file = False
             for asset in self.get_assets():
                 Logger.display(f"{repr(asset)} has been moved to catalog {uuid}")
                 asset_data = asset.asset_data
                 if asset_data.catalog_id != uuid:
                     asset_data.catalog_id = uuid
                     changed_file = True
-            if changed_file:
-                self.save_file()
-        self.execute_next_file()
+        return changed_file
 
 
 class ABU_OT_catalog_sort_like_folders(Operator, BatchFolderOperator):

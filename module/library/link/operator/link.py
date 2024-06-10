@@ -19,7 +19,7 @@ class AssetLinkOperatorProperties(PropertyGroup, BaseOperatorProps):
     def draw(self, layout, context=None):
         return
 
-    def init(self):
+    def init(self, from_current_file=False):
         self.library.populate()
         self.root_assets_dummies = [self.library.assets[i.value] for i in self.library.unique_assets_indices]
         self.root_assets_dummies_uuids = [root_asset.uuid for root_asset in self.root_assets_dummies]

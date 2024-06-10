@@ -63,7 +63,7 @@ then each operation is applied to the second asset, etc.",
                     else:
                         op_box.prop(operation_pg, attr)
 
-    def init(self):
+    def init(self, from_current_file=False):
         self.asset = None
         self.operation = -1
         self.active = True

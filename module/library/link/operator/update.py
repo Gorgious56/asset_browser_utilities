@@ -22,7 +22,7 @@ class AssetUpdateOperatorProperties(PropertyGroup, BaseOperatorProps):
         layout.prop(self, "link_back", icon="LINKED")
         return
 
-    def init(self):
+    def init(self, from_current_file=False):
         self.library.populate()
         self.root_assets_dummies = [self.library.assets[i.value] for i in self.library.unique_assets_indices]
 
