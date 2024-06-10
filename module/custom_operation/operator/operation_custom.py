@@ -66,7 +66,7 @@ then each operation is applied to the second asset, etc.",
                         else:
                             op_box.prop(operation_pg, attr)
         else:
-            row.prop_enum(self, "operation_internal", value="NONE", icon="ADD", text="")
+            row.prop_enum(self, "operation_internal", value="-", icon="ADD", text="")
 
     def ensure_operations_amount(self):
         while len(self.operations) < self.MAX_OPS:
@@ -77,8 +77,6 @@ then each operation is applied to the second asset, etc.",
         self.operation = -1
         self.active = True
         self.ensure_operations_amount()
-        for _ in range(self.MAX_OPS):
-            self.operations.add()
 
     def copy_from(self, source):
         copy_simple_property_group(source, self)
