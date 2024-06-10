@@ -46,6 +46,18 @@ class AssetContainer:
                 if items[i].asset_data.author != name:
                     items.pop(i)
 
+    def filter_by_copyright(self, name):
+        for items in self.assets.values():
+            for i in range(len(items) - 1, -1, -1):
+                if items[i].asset_data.copyright != name:
+                    items.pop(i)
+
+    def filter_by_license(self, name):
+        for items in self.assets.values():
+            for i in range(len(items) - 1, -1, -1):
+                if items[i].asset_data.license != name:
+                    items.pop(i)
+
     def filter_by_tags(self, tags, orand):
         for items in self.assets.values():
             for i in range(len(items) - 1, -1, -1):

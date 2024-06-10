@@ -4,7 +4,9 @@ from bpy.props import PointerProperty
 from asset_browser_utilities.core.filter.asset import FilterAssets
 from asset_browser_utilities.core.filter.author import FilterAuthor
 from asset_browser_utilities.core.filter.catalog import FilterCatalog
+from asset_browser_utilities.core.filter.copyright import FilterCopyright
 from asset_browser_utilities.core.filter.container import AssetContainer
+from asset_browser_utilities.core.filter.license import FilterLicense
 from asset_browser_utilities.core.filter.name import FilterName
 from asset_browser_utilities.core.filter.selection import FilterSelection
 from asset_browser_utilities.core.filter.tag import FilterTag
@@ -22,13 +24,15 @@ from asset_browser_utilities.core.library.prop import LibraryExportSettings, Lib
 
 
 class AssetFilterSettings(PropertyGroup):
-    filter_types: PointerProperty(type=FilterTypes)
-    filter_name: PointerProperty(type=FilterName)
-    filter_selection: PointerProperty(type=FilterSelection)
-    filter_catalog: PointerProperty(type=FilterCatalog)
-    filter_assets: PointerProperty(type=FilterAssets)
-    filter_tag: PointerProperty(type=FilterTag)
-    filter_author: PointerProperty(type=FilterAuthor)
+    filter_assets: PointerProperty(type=FilterAssets)  # type: ignore
+    filter_author: PointerProperty(type=FilterAuthor)  # type: ignore
+    filter_catalog: PointerProperty(type=FilterCatalog)  # type: ignore
+    filter_copyright: PointerProperty(type=FilterCopyright)  # type: ignore
+    filter_license: PointerProperty(type=FilterLicense)  # type: ignore
+    filter_name: PointerProperty(type=FilterName)  # type: ignore
+    filter_selection: PointerProperty(type=FilterSelection)  # type: ignore
+    filter_tag: PointerProperty(type=FilterTag)  # type: ignore
+    filter_types: PointerProperty(type=FilterTypes)  # type: ignore
 
     def init_asset_filter_settings(
         self,
@@ -42,7 +46,11 @@ class AssetFilterSettings(PropertyGroup):
         self.filter_tag.init()
         self.filter_assets.only_assets = filter_assets
         self.filter_catalog.allow = filter_assets
+        self.filter_copyright.allow = filter_assets
+        self.filter_license.allow = filter_assets
+
         self.filter_types.allow = filter_types
+
         self.filter_name.allow = filter_name
 
     def get_objects_that_satisfy_filters(self):
@@ -68,6 +76,10 @@ class AssetFilterSettings(PropertyGroup):
                 asset_container.filter_by_tags(self.filter_tag.tags.get_valid_tags(), self.filter_tag.orand)
             if self.filter_author.active:
                 asset_container.filter_by_author(self.filter_author.name)
+            if self.filter_license.active:
+                asset_container.filter_by_license(self.filter_license.name)
+            if self.filter_copyright.active:
+                asset_container.filter_by_copyright(self.filter_copyright.name)
 
         if self.filter_name.allow and self.filter_name.active:
             asset_container.filter_by_name(
@@ -89,6 +101,8 @@ class AssetFilterSettings(PropertyGroup):
             self.filter_catalog.draw(box, context)
             self.filter_tag.draw(box, context)
             self.filter_author.draw(box, context)
+            self.filter_license.draw(box, context)
+            self.filter_copyright.draw(box, context)
 
     def copy_from(self, source):
         copy_simple_property_group(source, self)
