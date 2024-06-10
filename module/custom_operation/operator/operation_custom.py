@@ -7,7 +7,7 @@ from asset_browser_utilities.core.tool import copy_simple_property_group
 from asset_browser_utilities.core.operator.tool import BatchFolderOperator, BaseOperatorProps
 
 from asset_browser_utilities.module.custom_operation.prop import OperationSetting
-from asset_browser_utilities.module.custom_operation.tool import set_shown_operation
+from asset_browser_utilities.module.custom_operation.tool import update_operations_amount
 from asset_browser_utilities.module.custom_operation.static import OPERATION_MAPPING, NONE_OPERATION
 
 
@@ -20,53 +20,63 @@ class OperationCustomOperatorProperties(PropertyGroup, BaseOperatorProps):
         description="Check this to apply the first operation to all assets, then the second operation, etc. \
 If unchecked, each operation is applied to the first asset, \
 then each operation is applied to the second asset, etc.",
-    )
+    )  # type: ignore
     operation_internal: EnumProperty(
         items=(
             ("NONE",) * 3,
             ("+",) * 3,
             ("-",) * 3,
         ),
-        set=set_shown_operation,
-    )
-    shown_ops: IntProperty(default=1, min=1)
-    operations: CollectionProperty(type=OperationSetting)
+        set=update_operations_amount,
+    )  # type: ignore
+    shown_ops: IntProperty(default=1, min=1)  # type: ignore
+    operations: CollectionProperty(type=OperationSetting)  # type: ignore
 
     def draw(self, layout, context=None):
         box = layout.box()
         box.prop(self, "operate_in_batches")
         row = box.row(align=True)
-        row.prop_enum(self, "operation_internal", value="+", icon="ADD", text="")
-        row.prop_enum(self, "operation_internal", value="-", icon="REMOVE", text="")
-        for i in range(self.shown_ops):
-            operation_pg = self.operations[i]
-            op_box = box.box()
-            op_box.prop(operation_pg, "type")
-            operation_cls = OPERATION_MAPPING.get(operation_pg.type)
-            if operation_cls and not isinstance(operation_cls, NONE_OPERATION):
-                if hasattr(operation_cls, "draw"):
-                    operation_cls.draw(op_box, operation_pg)
-                    continue
-                elif hasattr(operation_cls, "ATTRIBUTE"):
-                    attributes = [operation_cls.ATTRIBUTE]
-                    attributes_names = (
-                        [operation_cls.ATTRIBUTE_NAME] if hasattr(operation_cls, "ATTRIBUTE_NAME") else [None]
-                    )
-                elif hasattr(operation_cls, "ATTRIBUTES"):
-                    attributes = operation_cls.ATTRIBUTES
-                    attributes_names = operation_cls.ATTRIBUTES_NAMES
-                else:
-                    continue
-                for attr, name in zip(attributes, attributes_names):
-                    if name is not None:
-                        op_box.prop(operation_pg, attr, text=name)
+        if self.operations:
+            row.prop_enum(self, "operation_internal", value="+", icon="ADD", text="")
+            remove_row = row.row()
+            remove_row.prop_enum(self, "operation_internal", value="-", icon="REMOVE", text="")
+            remove_row.enabled = self.shown_ops > 1
+            for i in range(self.shown_ops):
+                operation_pg = self.operations[i]
+                op_box = box.box()
+                op_box.prop(operation_pg, "type")
+                operation_cls = OPERATION_MAPPING.get(operation_pg.type)
+                if operation_cls and not isinstance(operation_cls, NONE_OPERATION):
+                    if hasattr(operation_cls, "draw"):
+                        operation_cls.draw(op_box, operation_pg)
+                        continue
+                    elif hasattr(operation_cls, "ATTRIBUTE"):
+                        attributes = [operation_cls.ATTRIBUTE]
+                        attributes_names = (
+                            [operation_cls.ATTRIBUTE_NAME] if hasattr(operation_cls, "ATTRIBUTE_NAME") else [None]
+                        )
+                    elif hasattr(operation_cls, "ATTRIBUTES"):
+                        attributes = operation_cls.ATTRIBUTES
+                        attributes_names = operation_cls.ATTRIBUTES_NAMES
                     else:
-                        op_box.prop(operation_pg, attr)
+                        continue
+                    for attr, name in zip(attributes, attributes_names):
+                        if name is not None:
+                            op_box.prop(operation_pg, attr, text=name)
+                        else:
+                            op_box.prop(operation_pg, attr)
+        else:
+            row.prop_enum(self, "operation_internal", value="NONE", icon="ADD", text="")
+
+    def ensure_operations_amount(self):
+        while len(self.operations) < self.MAX_OPS:
+            self.operations.add()
 
     def init(self, from_current_file=False):
         self.asset = None
         self.operation = -1
         self.active = True
+        self.ensure_operations_amount()
         for _ in range(self.MAX_OPS):
             self.operations.add()
 

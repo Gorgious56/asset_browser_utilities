@@ -7,8 +7,9 @@ def get_available_operations():
             yield operation
 
 
-def set_shown_operation(self, value):
+def update_operations_amount(self, value):
     # This is extremely hacky but emulates dynamically adding or removing operations
+    self.ensure_operations_amount()
     if value == 1:
         self.shown_ops += 1
         if self.shown_ops >= len(self.operations):
