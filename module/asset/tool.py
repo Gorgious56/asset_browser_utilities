@@ -64,5 +64,5 @@ def get_selected_linked_objects_in_outliner(context=None):
     for selected_id in context.selected_ids:
         if hasattr(selected_id, "type") and selected_id.type == "EMPTY" and selected_id.instance_type:
             selected_id = selected_id.instance_collection
-        if selected_id.library:
+        if selected_id and selected_id.library:
             yield selected_id.library.filepath
