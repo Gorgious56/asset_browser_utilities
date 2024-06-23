@@ -1,7 +1,8 @@
 from asset_browser_utilities.core.console.parser import ArgumentsParser
 import bpy
 
-from asset_browser_utilities.core.cache.tool import get_current_operator_properties
+from asset_browser_utilities.core.library.prop import LibraryExportSettings
+from asset_browser_utilities.core.cache.tool import get_current_operator_properties, get_from_cache
 from asset_browser_utilities.core.file.save import save_file
 
 
@@ -22,5 +23,5 @@ class CommandLineExecuteBase:
             if getattr(op_props, "generate_previews", False):
                 while bpy.app.is_job_running("RENDER_PREVIEW"):
                     pass
-            save_file()
+            save_file(remove_backup=get_from_cache(LibraryExportSettings).remove_backup)
         quit()
