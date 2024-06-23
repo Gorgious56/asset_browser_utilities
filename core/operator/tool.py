@@ -192,18 +192,20 @@ class BatchFolderOperator(ImportHelper):
         context.window_manager.abu_progress.update_for_task_finished()
 
     def run_in_threads(self, context):
-        files = get_from_cache(LibraryExportSettings).get_files("blend")
+        files = get_from_cache(LibraryExportSettings).get_files(self.file_extension)
         files = self.filter_files(files)
         file_queue = queue.Queue(maxsize=len(files))
         for file in files:
             file_queue.put(file)
 
         def run(index=-1):
+            file = str(file_queue.get())
             caller = CommandBuilder(
                 script_filepath=command_execute_on_blend_file.__file__,
-                blend_filepath=file_queue.get(),
+                blend_filepath=file if file.endswith(".blend") else "",
             )
             caller.add_arg_value("thread_index", index)
+            caller.add_arg_value("filepath", file)
             caller.call()
 
         ThreadManager.init(

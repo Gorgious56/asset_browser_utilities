@@ -8,6 +8,7 @@ from asset_browser_utilities.core.file.save import save_file
 
 class CommandLineExecuteBase:
     thread_index: int
+    filepath: str
 
     def __init__(self) -> None:
         parser = ArgumentsParser()
