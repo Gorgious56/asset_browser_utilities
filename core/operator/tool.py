@@ -1,6 +1,8 @@
 import queue
+import webbrowser
 from pathlib import Path
 
+import bpy
 import bpy.app.timers
 from bpy.types import OperatorFileListElement
 from bpy.props import StringProperty, CollectionProperty, EnumProperty, BoolProperty
@@ -18,6 +20,18 @@ from asset_browser_utilities.core.console import command_execute_on_blend_file
 from asset_browser_utilities.core.threading.tool import ThreadManager
 
 from asset_browser_utilities.module.asset.prop import SelectedAssetRepresentations
+
+
+class ABU_OT_open_url(bpy.types.Operator):
+    bl_idname = "abu.open_url"
+    bl_label = "Open URL"
+    bl_options = {"UNDO", "REGISTER"}
+    url: bpy.props.StringProperty()  # type: ignore
+
+    def execute(self, context):
+        if self.url:
+            webbrowser.open(str(self.url))
+        return {"FINISHED"}
 
 
 class BaseOperatorProps:
